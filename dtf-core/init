@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# Android Device Testing Framework ("dtf")
+# Copyright 2013-2014 Jake Valletta (@jake_valletta)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# DTF Initialization script. 
+. dtf_log.sh
+
+# Override printing to stdout
+LOG_TO_STDOUT=0
+
+abort()
+{
+    echo "Exiting DTF initialization!!" 1>&2
+    rm .dtfini 2> /dev/null
+    exit -4
+}
+
+echo "Initializing dtf directory..."
+
+log_i "Project initialization started."
+
+if [ -e .dtfini ]; then
+    echo "[ERROR] Configuration already exists!"
+    log_e "Project configuration already exists, failing."
+    exit -1
+fi
+
+# DTF is going to try to help us setting a serial, but it doesnt exist yet (which breaks the adb wait).
+# We're going to blow it away for now. 
+unset ANDROID_SERIAL
+
+# Sometimes there are errors, and we need to bail.  We'll remove the (protentially) incomplete .dtfini.
+trap abort 1 2 15
+
+echo -n "Please connect the test device, and only the test device (press any key to continue)"
+read _
+
+echo "Restarting ADB..."
+adb kill-server && adb start-server > /dev/null
+
+echo "Waiting for a device to be connected..."
+adb wait-for-device
+
+serial=$(adb devices | grep -E "device$" |awk '{print $1}')
+
+echo -n "Got serial ${serial}, is this correct? [Y/n] "
+read res
+
+if [ "$res" = "n" ]; then
+   echo "Bailing!"
+   exit -4
+fi
+
+touch .dtfini
+
+dtf prop set Info serial "${serial}"
+
+# Get the kernel
+kernel=$(adb shell "cat /proc/version")
+
+dtf prop set Info kernel "${kernel}"
+
+# Get the SDK version
+sdk=$(adb shell getprop ro.build.version.sdk)
+
+dtf prop set Info SDK "${sdk}"
+
+# Set path
+path=$(adb shell set |grep -E "^PATH" | sed 's/^PATH\=//g')
+dtf prop set Info path "${path}"
+
+# Set bootclasspath
+bcp=$(adb shell set |grep -E "^BOOTCLASSPATH" | sed 's/^BOOTCLASSPATH\=//g')
+dtf prop set Info bootclasspath-jars "${bcp}"
+
+# Set the "Local variables"
+mkdir reports 2>/dev/null
+mkdir .dbs 2>/dev/null
+mkdir local_modules 2>/dev/null
+
+dtf prop set Local reports-dir "reports"
+dtf prop set Local db-dir ".dbs"
+
+# Install the DTF Client. It's really lightweight.
+dtf client install
+
+log_i "Project initialization complete!"

@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+
+# Source all the good stuff
+. dtf_core.sh
+. dtf_log.sh
+
+# Globals.
+DTF_DB=${DTF_DIR}/main.db
+
+# Only log errors and warnings to screen, and please log debugging
+LOG_LEVEL=3
+LOG_TO_STDOUT=1
+LOG_TO_FILE=1
+
+SAFE=0
+
+upsearch () {
+    test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
+}
+
+usage () {
+    echo "Android Device Testing Framework (dtf) version ${DTF_VERSION}"
+    echo "Usage: dtf [command] <command_args>"
+    echo ""
+    echo "Run with \"-h\" or \"help\" for additional information."
+
+    exit $1
+}
+
+help () {
+
+    echo "Android Device Testing Framework (dtf) version ${DTF_VERSION}"
+    echo "Usage: dtf [command] <command_args>"
+    echo "   Core Commmands:"
+    echo "     client      Install/remove the DTF client."
+    echo "     help        Prints this help screen."
+    echo "     init        Initializes a project."
+    echo "     local       Display all local modules."
+    echo "     logcat      Tail the DTF logfile."
+    echo "     modules     Print all global and local modules."
+    echo "     pm          DTF package manager."
+    echo "     prop        DTF property manager."
+    echo "     reset       Removes the DTF project configuration from the current directory."
+    echo "     shell       Creates a shell on your test device."
+    echo "     status      Get the status of your test device (connected/disconnected)."
+
+    exit $1
+}
+
+test_bash () {
+    if [[ $(readlink -f $(which sh)) =~ "bash" ]]; then
+        return 0
+    else
+        echo "[ERROR] This version of DTF requires a true BASH shell. Can you confirm you use BASH?"
+        exit -5
+    fi
+}
+
+generate_libs() {
+    lib_path=""
+
+    sql="SELECT l.install_name 
+         FROM libraries l"
+
+    ORIG_IFS=$IFS        # Save the original IFS
+    LINE_IFS=$'\n'$'\r'  # For splitting input into lines
+    FIELD_IFS=\|         # For splitting lines into fields
+
+    results=$(sqlite3 "${DTF_DB}" "${sql}" 2>/dev/null)
+
+    if [ -z "$results" ]; then
+        echo ""
+        return 0
+    fi
+
+    IFS=$LINE_IFS
+    for LINE in $results; do
+        IFS=$FIELD_IFS
+        FIELDS=($LINE)
+        IFS=$LINE_IFS
+
+        if [ -z "$lib_path" ]; then
+            lib_path=${DTF_LIBS}/${FIELDS[0]}
+        else
+            lib_path=${lib_path}:${DTF_LIBS}/${FIELDS[0]}
+        fi
+    done
+
+    echo ${lib_path}
+
+}
+
+# This is the module launcher.  It parses the #@ markers.
+launchmodule() {
+
+    # All Systems Go
+    log_d "Calling module: $1"
+
+    # No module should need to specify a serial when using ADB.  This is a turbo hack.
+    if [ "$ANDROID_SERIAL" == "" ]  && [ "$1" != "${DTF_CORE}/prop" ]; then
+        export ANDROID_SERIAL=$(dtf prop get Info serial)
+    fi
+
+    # We need to use the main.db to construct our python dependences.
+    included_libs=$(generate_libs)
+
+    #hack=${DTF_DIR}/lib/AppDb
+    tmp_PYTHONPATH=$DTF_DIR:$PYTHONPATH:$included_libs
+
+    # Launch our module, passing the PYTHONPATH for extra fun
+    PYTHONPATH=$tmp_PYTHONPATH $@
+    ret=$?
+
+    log_d "Module \"$1\" completed (${ret})"
+    return ${ret}
+
+
+}
+ 
+# Main
+
+# Eventually we need to get off this.
+test_bash
+
+if [ -z "$1" ]; then
+    usage -1
+fi
+
+if [ "$1" == "help" -o "$1" == "-h" -o "$1" == "--help" ]; then
+    help 0
+fi
+
+module=$1
+
+# Determine where we are, so we can set the TOP
+TOP=$(upsearch .dtfini)
+
+if [ -z "$TOP" ] && [ "$module" != "init" ] && [ "$module" != "pm" ] && [ "$module" != "modules" ]; then
+
+    echo "[ERROR] Unable to find a .dtfini file recursively, are you sure you meant to run this?"
+    exit -4
+
+fi 
+
+export TOP
+
+shift 
+
+# Look for the arg in the core command directory
+search=$(find ${DTF_DIR}/dtf-core -name ${module} 2>/dev/null|head -n 1)
+
+if [ -n "${search}" ]; then
+    launchmodule ${search} $@
+    exit $?
+fi
+
+# Look up module using main database.
+sql="SELECT m.install_name 
+     FROM modules m 
+     WHERE m.name='${module}'
+     LIMIT 1"
+
+result=$(sqlite3 "${DTF_DB}" "${sql}" 2>/dev/null) 
+
+if [ ! -z "${result}" ]; then
+    launchmodule ${DTF_MODULES}/${result}  $@
+    exit $?
+fi
+
+# Look for the arg locally first
+search=$(find ./local_modules -name ${module} 2>/dev/null|head -n 1)
+
+if [ -n "${search}" ]; then
+
+    launchmodule ${search}  $@
+    exit $?
+fi
+
+echo "[ERROR] Module or command \"${module}\" not found."
+echo ""
+help -1

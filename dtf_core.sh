@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Android Device Testing Framework ("dtf")
+# Copyright 2013-2014 Jake Valletta (@jake_valletta)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Modules that want to take advantage of built-in functionality should source this file.
+
+# Other stuff.
+DTF_VERSION=1.0b
+DTF_RELEASE_NUMBER=1
+
+# This allows modules to access dtf resources
+DTF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DTF_API_DATA=${DTF_DIR}/api-data
+DTF_BINS=${DTF_DIR}/bin
+DTF_CORE=${DTF_DIR}/dtf-core
+DTF_INCLUDED=${DTF_DIR}/included
+DTF_LIBS=${DTF_DIR}/lib
+DTF_MODULES=${DTF_DIR}/modules
+DTF_PACKAGES=${DTF_DIR}/packages
+DTF_PYDTF=${DTF_DIR}/pydtf
+
+# Additional sourcing. Move this eventually?
+. ${DTF_INCLUDED}/dtf_apksign.sh
+. ${DTF_INCLUDED}/dtf_apktool.sh
+. ${DTF_INCLUDED}/dtf_baksmali.sh
+. ${DTF_INCLUDED}/dtf_dex2jar.sh
+. ${DTF_INCLUDED}/dtf_smali.sh
+
+# Test if a element is in an array
+# arg1 : element
+# arg2 : array
+# returns : 1 if element in array, 0 if not found.
+containsElement () {
+    local e
+    for e in "${@:2}"; do
+        if [[ "$e" == "$1" ]]; then
+            echo "1"
+            return
+        fi
+    done
+    echo "0"
+}
+
+
+# Method to check if device is connected.
+# returns 1 if connected, 0 if not connected. 
+dtf_device_connected ()
+{
+    state=$(adb get-state)
+
+    if [ "$state" == "device" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+# Execute a busybox command (requies client)
+dtf_busybox ()
+{
+    busybox=$(dtf prop get Info busybox)
+
+    adb shell run-as com.dtf.client ${busybox} $@
+
+}
+
+export DFT_DIR DTF_BINS DTF_CORE DTF_INCLUDED DTF_LIBS DTF_MODULES DTF_PACKAGES DTF_PYDTF
