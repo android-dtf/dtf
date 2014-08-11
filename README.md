@@ -1,5 +1,5 @@
-CobraDroid 1.0 Beta
-===================
+Android Device Testing Framework (dtf)
+======================================
 
 About
 -----
