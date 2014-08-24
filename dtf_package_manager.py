@@ -1054,9 +1054,9 @@ def parseSingleItem(args):
         log.d(TAG, "local_name is null, using name...")
         local_name = name
 
-        item.install_name = install_name
-        item.local_name = local_name
- 
+    item.install_name = install_name
+    item.local_name = local_name
+
     if item.type == TYPE_BINARY:
         if not localExists(item.local_name):
             print "[ERROR] Local item '%s' does not exist. Exiting." % (item.local_name)
