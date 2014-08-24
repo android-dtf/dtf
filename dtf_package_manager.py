@@ -890,16 +890,25 @@ def parseLibrary(zip_f, item):
 def autoParseModule(args):
 
     name = args.single_name
+    install_name = args.single_install_name
+    local_name = args.single_local_name
+
+    if install_name is None:
+        log.d(TAG, "install_name is null, using name...")
+        install_name = name
+    if local_name is None:
+        log.d(TAG, "local_name is null, using name...")
+        local_name = name
 
     # Does the resource even exist?
-    if not localExists(name):
-        log.e(TAG, "Local module resource '%s' does not exist! Skipping." % (name))
-        return -1
+    if not localExists(local_name):
+        log.e(TAG, "Local module resource '%s' does not exist! Skipping." % (local_name))
+        return None
 
     attributes = dict()
 
     # Parse file for "#@", strings, store in dictionary.
-    for line in open(name).read().split("\n"):
+    for line in open(local_name).read().split("\n"):
         m = re.match("#@[a-zA-Z\- ]+\:.*", line)
         if m == None: continue
 
@@ -915,8 +924,8 @@ def autoParseModule(args):
     item = Item()
     item.type = TYPE_MODULE
     item.name = name
-    item.local_name = name
-    item.install_name = name
+    item.local_name = local_name
+    item.install_name = install_name
     item.author = safeDictAccess(attributes, "Author")
     item.about = safeDictAccess(attributes, "About")
 
