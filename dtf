@@ -72,6 +72,15 @@ test_bash () {
     fi
 }
 
+test_sqlite3 () {
+    if [[ `sqlite3 --version 2>/dev/null` ]]; then 
+        return 0
+    else
+        echo "[ERROR] Using DTF requires the \"sqlite3\" utility. Can you confirm it's installed?"
+        exit -5
+    fi
+}
+
 generate_libs() {
     lib_path=""
 
@@ -137,6 +146,7 @@ launchmodule() {
 
 # Eventually we need to get off this.
 test_bash
+test_sqlite3
 
 if [ -z "$1" ]; then
     usage -1

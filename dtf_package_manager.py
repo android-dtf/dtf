@@ -55,6 +55,8 @@ TYPE_LIBRARY= "library"
 TYPE_BINARY = "binary"
 TYPE_PACKAGE = "package"
 
+force_mode = False
+
 def usage():
 
     print "DTF Package Manager Version %s" % __VERSION__
@@ -712,6 +714,12 @@ def deleteTree(install_path):
 
 def promptDelete(inst_item):
 
+    global force_mode
+
+    if force_mode:
+        log.i(TAG, "Forcing component removal.")
+        return True
+
     print "Installed Item Details:"
     print str(inst_item)
 
@@ -724,6 +732,12 @@ def promptDelete(inst_item):
         return False
 
 def promptInstall(local_item, inst_item):
+
+    global force_mode
+
+    if force_mode:
+        log.i(TAG, "Forcing component installation.")
+        return True
 
     print "Installed Item Details:"
     print str(inst_item)
@@ -1170,6 +1184,8 @@ def parseZip(zip_file_name):
 
 def installCmd(in_args):
 
+    global force_mode
+
     # Pop off the "install" line.
     in_args.pop(0)
 
@@ -1195,11 +1211,14 @@ def installCmd(in_args):
                         help="Item health [SINGLE ONLY].")
     parser.add_argument('--auto', dest='single_auto', action='store_const',const=True,
                         default=False, help="Automatically parse module [SINGLE MODULE ONLY].")
+    parser.add_argument('--force', dest='force', action='store_const',const=True,
+                        default=False, help="Force installation of component(s).")
 
     args = parser.parse_args(in_args)
 
     zipfile = args.zipfile
     single_type = args.single_type
+    force_mode = args.force
 
     if zipfile != None and single_type != None:
         print "[ERROR] Cannot install both DTF ZIP and single item. Exiting."
@@ -1259,6 +1278,8 @@ def installCmd(in_args):
 
 def deleteCmd(in_args):
 
+    global force_mode
+
     # Pop off the "delete" line.
     in_args.pop(0)
 
@@ -1270,8 +1291,12 @@ def deleteCmd(in_args):
                         help='The type of the item')
     parser.add_argument('--name', metavar="val", dest='single_name', default=None,
                         help="Item to uninstall.")
+    parser.add_argument('--force', dest='force', action='store_const',const=True,
+                        default=False, help="Force deletion of component.")
 
     args = parser.parse_args(in_args)
+
+    force_mode = args.force
 
     # Just a place holder.
     item = Item()
