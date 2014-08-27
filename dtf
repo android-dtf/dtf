@@ -12,7 +12,7 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
-# limitations under the License.#!/usr/bin/python
+# limitations under the License.
 #
 # dtf Launcher
 
@@ -63,6 +63,15 @@ help () {
     exit $1
 }
 
+test_adb () {
+    if [[ `adb version 2>/dev/null|grep "Android Debug Bridge"` ]]; then
+        return 0
+    else
+        echo "[ERROR] DTF requires knowledge of the Android Debug Bridge (adb). Can you confirm you have it?"
+        exit -5
+    fi
+}
+
 test_bash () {
     if [[ $(readlink -f $(which sh)) =~ "bash" ]]; then
         return 0
@@ -80,6 +89,25 @@ test_sqlite3 () {
         exit -5
     fi
 }
+
+test_java () {
+    if [[ `java -version 2>&1|head -n1| grep -E "\"1\.7\.[0-9]*_[0-9]*\""` ]]; then
+        return 0
+    else
+        echo "[ERROR] Using DTF requires the JRE 1.7. Can you confirm it's installed?"
+        exit -5
+    fi
+}
+
+test_python () {
+    if [[ `python --version  2>&1|head -n1| grep -E "Python 2\.[6-9]\.[0-9]*$"` ]]; then
+        return 0
+    else
+        echo "[ERROR] Using DTF requires Python 2.6 or higher. Can you confirm it's installed?"
+        exit -5
+    fi
+}
+
 
 generate_libs() {
     lib_path=""
@@ -144,8 +172,11 @@ launchmodule() {
  
 # Main
 
-# Eventually we need to get off this.
+# Dependency Testing
+test_adb
 test_bash
+test_java
+test_python
 test_sqlite3
 
 if [ -z "$1" ]; then

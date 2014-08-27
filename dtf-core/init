@@ -44,7 +44,7 @@ unset ANDROID_SERIAL
 # Sometimes there are errors, and we need to bail.  We'll remove the (protentially) incomplete .dtfini.
 trap abort 1 2 15
 
-echo -n "Please connect the test device, and only the test device (press any key to continue)"
+echo -n "Please connect the test device, and only the test device (press any key to continue) "
 read _
 
 echo "Restarting ADB..."

@@ -38,8 +38,13 @@ if [ -z "$1" ]; then
 fi
 
 if [ "$1" = "install" ]; then
-    log_i "Installing DTF Client..."
+
     adb wait-for-device
+
+    log_i "Removing old client if it exists..."
+    adb uninstall ${PACKAGE_NAME} >/dev/null 2>&1
+
+    log_i "Installing DTF Client..."
     adb install ${DTF_INCLUDED}/DtfClient/dtfclient-0.0.1-signed.apk
     adb shell am startservice -a com.dtf.action.name.INITIALIZE
     dtf prop set Info busybox "/data/data/${PACKAGE_NAME}/files/busybox"

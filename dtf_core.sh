@@ -17,8 +17,7 @@
 # Modules that want to take advantage of built-in functionality should source this file.
 
 # Other stuff.
-DTF_VERSION=1.0b
-DTF_RELEASE_NUMBER=1
+DTF_VERSION=1.0.1
 
 # This allows modules to access dtf resources
 DTF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

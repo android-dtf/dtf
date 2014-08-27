@@ -9,7 +9,7 @@ Prerequisites
 -------------
 To use dtf, you will need at least the following:
 
-- JRE 1.6
+- JRE 1.7
 - Python 2.6 or higher
 - A true Bash shell (no Dash!!!), with general purpose Linux utilities (sed, awk, etc.)
 - sqlite3

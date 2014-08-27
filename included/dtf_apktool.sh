@@ -20,7 +20,7 @@ name=dtf_apktool
 
 dtf_apktool()
 {
-    jarfile=${DTF_INCLUDED}/apktool/apktool1.5.2.jar
+    jarfile=${DTF_INCLUDED}/apktool/apktool_2.0.0b9.jar
     if [ ! -r "$jarfile" ]; then
 	    echo "${name}: can't find $jarfile"
 	    return 1
