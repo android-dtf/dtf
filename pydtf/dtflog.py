@@ -24,7 +24,7 @@ LOG_LEVEL_FILE = 4   # By default, log E-V
 LOG_LEVEL_STDOUT = 4 # By default, log E-V
 
 # Internals ###########################################################
-__log_file = open(".dtflog", "a")
+__log_file = None
 
 def __getDate():
     return strftime("%a %b %d %H:%M:%S %Z %Y", localtime())
@@ -41,7 +41,14 @@ def __log_to_stdout(date, tag, message):
 
 # Low level file print
 def __log_to_file(date, tag, message):
-    
+
+
+    # Lazy Load
+    global __log_file
+
+    if __log_file == None:
+        __log_file = open(".dtflog", "a")
+        
     entry = "[%s] %s - %s\n" % (date, tag, message)
     __log(__log_file, entry)
 # ######################################################################

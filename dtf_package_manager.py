@@ -57,6 +57,9 @@ TYPE_PACKAGE = "package"
 
 force_mode = False
 
+# No log to file.
+log.LOG_LEVEL_FILE = 0
+
 def usage():
 
     print "DTF Package Manager Version %s" % __VERSION__
@@ -1116,8 +1119,8 @@ def parseZip(zip_file_name):
     # Read Manifest
     try:
         manifest_root = etree.XML(manifest_data)
-    except etree.XMLSyntaxError:
-        print "[ERROR] Error parsing XML file '%s'. Exiting." % (MANIFEST_NAME)
+    except etree.XMLSyntaxError as e:
+        print "[ERROR] Error parsing XML file '%s' : \"%s\" (%i). Exiting." % (MANIFEST_NAME, e.strerror, e.errno)
         return -4
 
     # Processing Stuff
