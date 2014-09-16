@@ -17,7 +17,7 @@
 # Modules that want to take advantage of built-in functionality should source this file.
 
 # Other stuff.
-DTF_VERSION=1.0.2
+DTF_VERSION=1.0.3
 
 # This allows modules to access dtf resources
 DTF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -72,7 +72,86 @@ dtf_busybox ()
     busybox=$(dtf prop get Info busybox)
 
     adb shell run-as com.dtf.client ${busybox} $@
+}
 
+# Check if a module is installed.
+dtf_has_module ()
+{
+    dtf_db=${DTF_DIR}/main.db
+    module_name=$1
+
+    sql="SELECT m.id
+         FROM modules m
+         WHERE m.name='${module_name}'
+         LIMIT 1"
+
+    rtn=$(sqlite3 ${dtf_db} "${sql}")
+
+    if [[ -z "$rtn" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+# Check if a binary is installed.
+dtf_has_binary ()
+{
+    dtf_db=${DTF_DIR}/main.db
+    binary_name=$1
+
+    sql="SELECT b.id
+         FROM binaries b
+         WHERE b.name='${binary_name}'
+         LIMIT 1"
+
+    rtn=$(sqlite3 ${dtf_db} "${sql}")
+
+    if [[ -z "$rtn" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+# Check if a library is installed.
+dtf_has_library ()
+{
+    dtf_db=${DTF_DIR}/main.db
+    library_name=$1
+
+    sql="SELECT l.id
+         FROM libraries l
+         WHERE l.name='${library_name}'
+         LIMIT 1"
+
+    rtn=$(sqlite3 ${dtf_db} "${sql}")
+
+    if [[ -z "$rtn" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+# Check if a package is installed.
+dtf_has_package ()
+{
+    dtf_db=${DTF_DIR}/main.db
+    package_name=$1
+
+    sql="SELECT p.id
+         FROM packages p
+         WHERE p.name='${package_name}'
+         LIMIT 1"
+
+    rtn=$(sqlite3 ${dtf_db} "${sql}")
+
+    if [[ -z "$rtn" ]]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 export DFT_DIR DTF_BINS DTF_CORE DTF_INCLUDED DTF_LIBS DTF_MODULES DTF_PACKAGES DTF_PYDTF

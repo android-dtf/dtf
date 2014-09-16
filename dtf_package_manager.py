@@ -68,6 +68,7 @@ def usage():
     print "    delete      Delete an item from main database."
     print "    export      Export entire main database to DTF ZIP."
     print "    install     Install a DTF ZIP or single item."
+    print "    list        List all installed items."
     print ""
 
 
@@ -160,6 +161,150 @@ def getAttrib(element, attrib, default=None):
         return default
 
 # DB Stuff
+def printInstalledBinaries(verbose):
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    c = dtf_db.cursor()
+    sql = ('SELECT name, major_version, minor_version, '
+           'about, author, health '
+           'FROM binaries')
+
+    c.execute(sql)
+
+    print "Installed Binaries:"
+    while True:
+        item = c.fetchone()
+        if item is None:
+            break
+        name = item[0]
+        major_version = item[1]
+        minor_version = item[2]
+        if verbose:
+            about = item[3]
+            author = item[4]
+            health = item[5]
+
+        if minor_version == None and major_version == None:
+            version = "No Version"
+        else:
+            if major_version == None: major_version = "0"
+            if minor_version == None: minor_version = "0"
+            version = "v%s.%s" % (major_version, minor_version)
+
+        print "\t%s (%s)" % (name, version)
+        if verbose:
+            print "\t   About: %s" % about
+            print "\t   Author: %s" % author
+            print "\t   Health: %s" % health
+
+def printInstalledLibraries(verbose):
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    c = dtf_db.cursor()
+    sql = ('SELECT name, major_version, minor_version, '
+           'about, author, health '
+           'FROM libraries')
+
+    c.execute(sql)
+
+    print "Installed Libraries:"
+    while True:
+        item = c.fetchone()
+        if item is None:
+            break
+        name = item[0]
+        major_version = item[1]
+        minor_version = item[2]
+        if verbose:
+            about = item[3]
+            author = item[4]
+            health = item[5]
+
+        if minor_version == None and major_version == None:
+            version = "No Version"
+        else:
+            if major_version == None: major_version = "0"
+            if minor_version == None: minor_version = "0"
+            version = "v%s.%s" % (major_version, minor_version)
+
+        print "\t%s (%s)" % (name, version)
+        if verbose:
+            print "\t   About: %s" % about
+            print "\t   Author: %s" % author
+            print "\t   Health: %s" % health
+
+def printInstalledModules(verbose):
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    c = dtf_db.cursor()
+    sql = ('SELECT name, major_version, minor_version, '
+           'about, author, health '
+           'FROM modules')
+
+    c.execute(sql)
+
+    print "Installed Modules"
+    while True:
+        item = c.fetchone()
+        if item is None:
+            break
+        name = item[0]
+        major_version = item[1]
+        minor_version = item[2]
+        if verbose:
+            about = item[3]
+            author = item[4]
+            health = item[5]
+
+        if minor_version == None and major_version == None:
+            version = "No Version"
+        else:
+            if major_version == None: major_version = "0"
+            if minor_version == None: minor_version = "0"
+            version = "v%s.%s" % (major_version, minor_version)
+
+        print "\t%s (%s)" % (name, version)
+        if verbose:
+            print "\t   About: %s" % about
+            print "\t   Author: %s" % author
+            print "\t   Health: %s" % health
+
+def printInstalledPackages(verbose):
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    c = dtf_db.cursor()
+    sql = ('SELECT name, major_version, minor_version, '
+           'about, author, health '
+           'FROM packages')
+
+    c.execute(sql)
+
+    print "Installed Packages:"
+    while True:
+        item = c.fetchone()
+        if item is None:
+            break
+        name = item[0]
+        major_version = item[1]
+        minor_version = item[2]
+        if verbose:
+            about = item[3]
+            author = item[4]
+            health = item[5]
+
+        if minor_version == None and major_version == None:
+            version = "No Version"
+        else:
+            if major_version == None: major_version = "0"
+            if minor_version == None: minor_version = "0"
+            version = "v%s.%s" % (major_version, minor_version)
+
+        print "\t%s (%s)" % (name, version)
+        if verbose:
+            print "\t   About: %s" % about
+            print "\t   Author: %s" % author
+            print "\t   Health: %s" % health
+
 def itemInstalled(item):
 
     type = item.type
@@ -1339,6 +1484,44 @@ def deleteCmd(in_args):
         log.e(TAG, "There was something wrong checking if the item was installed. Exiting")
         return -4
 
+def listCmd(in_args):
+
+    # Bye list
+    in_args.pop(0)
+    parser = ArgumentParser(prog='pm list',
+                            description='List installed components.')
+    parser.add_argument('-v', dest='verbose', action='store_const',
+                              const=True, default=False, 
+                              help="Force deletion of component.")
+    parser.add_argument('d_filter', type=str, nargs='?', 
+                              help='An optional filter.')
+    args = parser.parse_args(in_args)
+
+    d_filter = args.d_filter
+    verbose = args.verbose
+
+    if d_filter is not None:
+
+        if d_filter == "binaries": printInstalledBinaries(verbose)
+        elif d_filter == "libraries": printInstalledLibraries(verbose)
+        elif d_filter == "modules": printInstalledModules(verbose)
+        elif d_filter == "packages": printInstalledPackages(verbose)
+        else: print "[ERROR] Unknown filter specified!"
+        exit()
+
+    # List Binaries
+    printInstalledBinaries(verbose)
+
+    # List Libraries
+    printInstalledLibraries(verbose)
+
+    # List Modules
+    printInstalledModules(verbose)
+
+    # List Packages
+    printInstalledPackages(verbose)
+
+
 # TODO:  Implement
 def exportCmd(args):
 
@@ -1362,11 +1545,15 @@ def main(argv):
         rtn = installCmd(argv)
     elif sub_cmd == "delete":
         rtn = deleteCmd(argv)
-        pass
     elif sub_cmd == "export":
         rtn = exportCmd(argv)
-        pass
-        
+    elif sub_cmd == "list":
+        rtn = listCmd(argv)
+    else:
+        print "[ERROR] Unknown submodule: \"%s\"" % sub_cmd      
+        usage()
+        rtn = -1
+
     return rtn
 
 if __name__ == '__main__':
