@@ -24,6 +24,7 @@ from shutil import copy, copytree, rmtree
 from sys import argv
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, is_zipfile
+import imp
 import os.path 
 import sqlite3
 import re
@@ -522,7 +523,7 @@ def installSingleModule(item):
 
     # First copy the new file.
     if copyFile(local_name, install_name, DTF_MODULES_DIR) != 0:
-        log.e(TAG, "Error copying module '%s'" % (local_name))
+        log.e(TAG, "Error copying module '%s'" % (name))
         return -1
 
     # Update database
@@ -530,7 +531,7 @@ def installSingleModule(item):
         print "[ERROR] Failed to update module '%s' details in database. Skipping." % (name)
         return -2
 
-    log.i(TAG, "Module '%s' installed successfully!" % name)
+    log.i(TAG, "Module '%s' installed as '%s' successfully!" % (name, install_name))
 
     return 0
 
@@ -1067,6 +1068,27 @@ def autoParseModule(args):
         log.e(TAG, "Local module resource '%s' does not exist! Skipping." % (local_name))
         return None
 
+    # Determine if this is a Python module
+    try:
+        module = imp.load_source('', local_name)
+    except (NameError, SyntaxError):
+        # Thrown if it is unable to parse as python. Do as shell!
+        log.i(TAG, "Unable to parse as Python, defaulting to Bash")
+        return autoParseBash(name, install_name, local_name)
+
+    # To get here, we assume it's a python module.
+    try:
+        assert(module.dtf_module)
+    except AttributeError:
+        # Thrown if "dtf_module" is not defined. panic.
+        log.e(TAG, "Improperly formatted Python module (no 'dtf_module' class). Exiting")
+        return None
+
+    log.i(TAG, "This is a Python module. Auto parsing.")
+    return autoParsePython(name, install_name, local_name, module.dtf_module)
+
+def autoParseBash(name, install_name, local_name):
+
     attributes = dict()
 
     # Parse file for "#@", strings, store in dictionary.
@@ -1111,6 +1133,35 @@ def autoParseModule(args):
     #Return our item.
     return item
 
+def autoParsePython(name, install_name, local_name, mod):
+
+    item = Item()
+    item.type = TYPE_MODULE
+    item.name = name
+    item.local_name = local_name
+    item.install_name = install_name
+    item.author = safeDictAccess(mod, "Author")
+    item.about = safeDictAccess(mod, "About")
+
+    health = safeDictAccess(mod, "Health")
+    if health not in VALID_HEALTH_VALUES:
+        print "[ERROR] Invalid health specified. Exiting."
+        return None
+    item.health = health
+
+    version = safeDictAccess(mod, "Version")
+    if version is not None:
+        try:
+            (item.major_version, item.minor_version) = version.split('.')
+        except ValueError:
+            print "[ERROR] Version string is not valid. Exiting."
+            return None
+    else:
+        item.major_version = None
+        item.minor_version = None
+
+    #Return our item.
+    return item
 
 def parseModule(zip_f, item):
 

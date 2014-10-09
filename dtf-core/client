@@ -28,6 +28,7 @@ usage()
     echo ""
     echo "Subcommands:"
     echo "    install    Install the DTF client."
+    echo "    status     Print the install status of the client."
     echo "    remove     Uninstall the DTF client."
     echo ""
 }
@@ -51,9 +52,21 @@ if [ "$1" = "install" ]; then
     log_i "DTF Client installed."
 
 elif [ "$1" = "remove" ]; then
+
     log_i "Removing DTF Client..."
     adb wait-for-device
     adb uninstall $PACKAGE_NAME
     dtf prop del Info busybox
     log_i "DTF Client removed."
+
+elif [ "$1" = "status" ]; then
+
+    installed=$(adb shell pm list packages ${PACKAGE_NAME})
+    if [ -z "$installed" ]; then
+        echo "dtf Client Status: Not Installed"
+        echo ""
+    else
+        echo "dtf Client Status: Installed"
+        echo ""
+    fi
 fi
