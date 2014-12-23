@@ -1,4 +1,4 @@
-##!/usr/bin/env bash
+#!/usr/bin/env bash
 # Android Device Testing Framework ("dtf")
 # Copyright 2013-2014 Jake Valletta (@jake_valletta)
 #
@@ -16,10 +16,9 @@
 
 # Tails or clears the dtf log file
 
-
 . dtf_log.sh
 
-LOG_TO_STDOUT=0
+cd $TOP
 
 if [ "$1" = "-c" ]; then
     

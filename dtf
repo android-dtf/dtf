@@ -28,8 +28,6 @@ LOG_LEVEL=3
 LOG_TO_STDOUT=1
 LOG_TO_FILE=1
 
-SAFE=0
-
 upsearch () {
     test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
 }
@@ -48,15 +46,16 @@ help () {
     echo "Android Device Testing Framework (dtf) version ${DTF_VERSION}"
     echo "Usage: dtf [command] <command_args>"
     echo "   Core Commmands:"
-    echo "     client      Install/remove the DTF client."
+    echo "     archive     Archive your dtf project files."
+    echo "     client      Install/remove the dtf client."
     echo "     help        Prints this help screen."
     echo "     init        Initializes a project."
     echo "     local       Display all local modules."
-    echo "     logcat      Tail the DTF logfile."
+    echo "     logcat      Tail the dtf logfile."
     echo "     modules     Print all global and local modules."
-    echo "     pm          DTF package manager."
-    echo "     prop        DTF property manager."
-    echo "     reset       Removes the DTF project configuration from the current directory."
+    echo "     pm          The dtf package manager."
+    echo "     prop        The dtf property manager."
+    echo "     reset       Removes the dtf project configuration from the current directory."
     echo "     shell       Creates a shell on your test device."
     echo "     status      Get the status of your test device (connected/disconnected)."
 

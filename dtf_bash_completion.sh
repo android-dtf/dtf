@@ -26,7 +26,7 @@ _dtf()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts=""
 
-    CORE="config delprop getprop help init local modules pm reset setprop shell status"
+    CORE="archive client help init local modules pm prop reset shell status"
     MODULES=$(sqlite3 ${DTF_DIR}/main.db "select name from modules"|tr '\n' ' ')
     opts="${CORE} ${MODULES}"
 

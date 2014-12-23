@@ -17,6 +17,9 @@
 # A class for using getprop, setprop, and delprop
 import ConfigParser
 
+class PropertyError(Exception):
+    pass
+
 def get_prop(section, prop):
 
     config = ConfigParser.ConfigParser()
@@ -27,9 +30,9 @@ def get_prop(section, prop):
     try:
         rtn = config.get(section, prop)
     except ConfigParser.NoSectionError:
-        exit(-2)
+        raise PropertyError("Property section not found: %s" % section)
     except ConfigParser.NoOptionError:
-        exit(-3)
+        raise PropertyError("Property not found: %s\%s" % (section,prop))
 
     return rtn
 
@@ -63,11 +66,11 @@ def del_prop(section, prop):
         rtn = config.remove_option(section, prop)
     except ConfigParser.NoSectionError:
         print "[WARN] Property not removed (the section did not exist)."
-        exit(-2)
+        return -1
 
     if not rtn:
         print "[WARN] Property not removed (did not exist)."
-        exit(-3)
+        return -2
 
     # Let's make sure we don't have an empty section now.
     if len(config.items(section)) == 0:

@@ -16,11 +16,18 @@
 
 # Modules may source this file to use DTF's logging capabilities.
 
+# Global log level.
+
 # Feel free to override these in your module.
 LOG_FILE=.dtflog
 LOG_LEVEL=4
 LOG_TO_STDOUT=1
 LOG_TO_FILE=1
+
+# Don't override the global logging.
+if [ -z $GLOG_LEVEL ]; then
+    GLOG_LEVEL=$LOG_LEVEL
+fi
 
 #########################
 # Format Notes:
@@ -44,7 +51,8 @@ _log()
 # Print an error message
 log_e()
 {
-    if [ "${LOG_LEVEL}" -ge "1" ]; then
+    LOG_LEVEL=$GLOG_LEVEL
+    if [ "${LOG_LEVEL}" -ge 1 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
         _log "${caller}/E" $@
     fi
@@ -53,7 +61,8 @@ log_e()
 # Print a warning message
 log_w()
 {
-    if [ "${LOG_LEVEL}" -ge "2" ]; then
+    LOG_LEVEL=$GLOG_LEVEL
+    if [ "${LOG_LEVEL}" -ge 2 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
         _log "${caller}/W" $@
     fi
@@ -62,7 +71,8 @@ log_w()
 # Print an informational message
 log_i()
 {
-    if [ "${LOG_LEVEL}" -ge "3" ]; then
+    LOG_LEVEL=$GLOG_LEVEL
+    if [ "${LOG_LEVEL}" -ge 3 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
         _log "${caller}/I" $@
     fi
@@ -71,7 +81,8 @@ log_i()
 # Print a verbose message
 log_v()
 {
-    if [ "${LOG_LEVEL}" -ge "4" ]; then
+    LOG_LEVEL=$GLOG_LEVEL
+    if [ "${LOG_LEVEL}" -ge 4 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
         _log "${caller}/V" $@
     fi
@@ -80,7 +91,8 @@ log_v()
 # Print a debugging message
 log_d()
 {
-    if [ "${LOG_LEVEL}" -ge "5" ]; then
+    LOG_LEVEL=$GLOG_LEVEL
+    if [ "${LOG_LEVEL}" -ge 5 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
         _log "${caller}/D" $@
     fi

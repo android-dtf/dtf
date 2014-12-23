@@ -17,7 +17,7 @@
 # Modules that want to take advantage of built-in functionality should source this file.
 
 # Other stuff.
-DTF_VERSION=1.0.4
+DTF_VERSION=1.0.5-dev
 
 # This allows modules to access dtf resources
 DTF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -36,6 +36,7 @@ DTF_PYDTF=${DTF_DIR}/pydtf
 . ${DTF_INCLUDED}/dtf_baksmali.sh
 . ${DTF_INCLUDED}/dtf_dex2jar.sh
 . ${DTF_INCLUDED}/dtf_smali.sh
+. ${DTF_INCLUDED}/dtf_axmlprinter2.sh
 
 # Test if a element is in an array
 # arg1 : element

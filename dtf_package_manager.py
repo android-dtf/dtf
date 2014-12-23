@@ -70,6 +70,7 @@ def usage():
     print "    export      Export entire main database to DTF ZIP."
     print "    install     Install a DTF ZIP or single item."
     print "    list        List all installed items."
+    print "    purge       Purge all installed items, reset DB."
     print ""
 
 
@@ -1381,6 +1382,80 @@ def parseZip(zip_file_name):
 
     return 0
 
+def doPurge():
+
+    log.i(TAG, "Starting purge....")
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    c = dtf_db.cursor()
+
+    # Remove Binaries
+    sql = ('SELECT name, install_name '
+           'FROM binaries')
+
+    for row in c.execute(sql):
+        
+        binary_name = row[0]
+        install_name = row[1]
+        full_path = DTF_BINARIES_DIR + install_name
+        log.d(TAG, "Removing binary '%s'" % binary_name)
+
+        if deleteFile(full_path) != 0:
+            log.e(TAG, "Error removing binary file! Continuing.")
+
+    # Remove Libraries
+    sql = ('SELECT name, install_name '
+           'FROM libraries')
+
+    for row in c.execute(sql):
+
+        library_name = row[0]
+        install_name = row[1]
+        full_path = DTF_LIBRARIES_DIR + install_name
+        log.d(TAG, "Removing library '%s'" % library_name)
+
+        if deleteTree(full_path) != 0:
+            log.e(TAG, "Error removing library! Continuing.")
+
+    # Remove Modules
+    sql = ('SELECT name, install_name '
+           'FROM modules')
+
+    for row in c.execute(sql):
+
+        module_name = row[0]
+        install_name = row[1]
+        full_path = DTF_MODULES_DIR + install_name
+        log.d(TAG, "Removing module '%s'" % module_name)
+
+        if deleteFile(full_path) != 0:
+            log.e(TAG, "Error removing module file! Continuing.")
+
+    # Remove Packages
+    sql = ('SELECT name, install_name '
+           'FROM packages')
+
+    for row in c.execute(sql):
+
+        package_name = row[0]
+        install_name = row[1]
+        full_path = DTF_PACKAGES_DIR + install_name
+        log.d(TAG, "Removing package '%s'" % package_name)
+
+        if deleteTree(full_path) != 0:
+            log.e(TAG, "Error removing package! Continuing.")
+
+    # Drop the DB.
+    c.execute("DROP TABLE IF EXISTS binaries")
+    c.execute("DROP TABLE IF EXISTS libraries")
+    c.execute("DROP TABLE IF EXISTS modules")
+    c.execute("DROP TABLE IF EXISTS packages")
+
+    dtf_db.commit()
+    
+    log.i(TAG, "Purge complete!")
+    return 0
+
 def installCmd(in_args):
 
     global force_mode
@@ -1572,6 +1647,19 @@ def listCmd(in_args):
     # List Packages
     printInstalledPackages(verbose)
 
+def purgeCmd():
+
+    print "!!!! WARNING !!!!"
+    print ""
+    print "This will delete all content, and reset the database!!"
+    print "Are you sure you want to do this? [N/y]",
+
+    res = raw_input()
+
+    if res.lower() == "y":
+        return doPurge()
+    else:
+        return 0
 
 # TODO:  Implement
 def exportCmd(args):
@@ -1600,6 +1688,8 @@ def main(argv):
         rtn = exportCmd(argv)
     elif sub_cmd == "list":
         rtn = listCmd(argv)
+    elif sub_cmd == "purge":
+        rtn = purgeCmd()
     else:
         print "[ERROR] Unknown submodule: \"%s\"" % sub_cmd      
         usage()

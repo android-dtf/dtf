@@ -16,6 +16,8 @@
 
 # DTF project reset script
 
+cd $TOP
+
 if [ ! -f .dtfini ]; then
     echo "[ERROR] No configuration file found. Are you sure a project exists here?"
     exit -1

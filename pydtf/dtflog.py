@@ -90,4 +90,50 @@ def d(tag, message):
     date = __getDate()
     if LOG_LEVEL_STDOUT >= 5: __log_to_stdout(date, tag+"/D", message)
     if LOG_LEVEL_FILE >= 5: __log_to_file(date, tag+"/D", message)
+
+# Multi-line Logging
+def e_ml(tag, messages):
+
+    if type(messages) != type(list()):
+        raise TypeError
+
+    for message in messages:
+        if message == "": continue
+        e(tag, message)
+
+def w_ml(tag, messages):
+
+    if type(messages) != type(list()):
+        raise TypeError
+
+    for message in messages:
+        if message == "": continue
+        w(tag, message)
+
+def i_ml(tag, messages):
+
+    if type(messages) != type(list()):
+        raise TypeError
+
+    for message in messages:
+        if message == "": continue
+        i(tag, message)
+
+def v_ml(tag, messages):
+
+    if type(messages) != type(list()):
+        raise TypeError
+
+    for message in messages:
+        if message == "": continue
+        v(tag, message)
+
+def d_ml(tag, messages):
+
+    if type(messages) != type(list()):
+        raise TypeError
+
+    for message in messages:
+        if message == "": continue
+        d(tag, message)
 #########################################################################

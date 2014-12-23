@@ -79,3 +79,13 @@ contributors
   - Panxiaobo <pxb1988@gmail.com>
   - yyjdelete <yyjdelete@gmail.com>
 *******************************************************************************
+
+Various portions of the compile code are taken from the Android4ME project, 
+written and copyrighted by Dmitry Skiba, released under the following Apache 
+License, Version 2.0:
+
+*******************************************************************************
+axmlprinter2 - Prints XML document from binary XML file (with correct namespace
+handing & attribute formatting).
+Copyright 2008 Android4ME
+*******************************************************************************

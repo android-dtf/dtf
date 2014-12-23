@@ -65,6 +65,8 @@ fi
 
 touch .dtfini
 
+ANDROID_SERIAL=$serial
+
 dtf prop set Info serial "${serial}"
 
 # Get the kernel
@@ -84,6 +86,38 @@ dtf prop set Info path "${path}"
 # Set bootclasspath
 bcp=$(adb shell set |grep -E "^BOOTCLASSPATH" | sed 's/^BOOTCLASSPATH\=//g')
 dtf prop set Info bootclasspath-jars "${bcp}"
+
+# Get versioning info.
+brand=$(adb shell getprop ro.product.brand|sed 's/\r//')
+name=$(adb shell getprop ro.product.name|sed 's/\r//')
+version=$(adb shell getprop ro.build.id|sed 's/\r//')
+version_string=${brand}-${name}_${version}
+
+echo "dtf would like to use following version string:"
+echo ""
+echo $version_string
+echo ""
+echo -n "Would you like to change it? [N/y] "
+
+read res
+
+if [ "$res" != "n" -o "$res" != "N" ]; then
+    echo -n "Please enter a custom version string: "
+    read version
+    echo "Using version string '${version}'..."
+    dtf prop set Info version-string "${version}"
+else
+   dtf prop set Info version-string "${version_string}"
+fi
+
+# Get the VM type
+vm_type=$(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|sort -r|head -n1|awk '{print $2}')
+
+if [ "$vm_type" = "[libart.so]" ]; then
+    dtf prop set Info vmtype "ART"
+else
+    dtf prop set Info vmtype "Dalvik"
+fi
 
 # Set the "Local variables"
 mkdir reports 2>/dev/null

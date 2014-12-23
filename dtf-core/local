@@ -15,6 +15,9 @@
 # limitations under the License.
 
 # Prints local modules.
+
+cd $TOP
+
 IFS=$'\n'
 
 pad=$(printf '%0.1s' " "{1..60})

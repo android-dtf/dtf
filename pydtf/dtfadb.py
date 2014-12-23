@@ -17,21 +17,26 @@
 # Python helper for using "adb"
 from subprocess import Popen, PIPE
 from pydtf import dtfconfig
+from pydtf.dtfcore import DTF_CLIENT
 
 ADB_BINARY="adb"
-SERIAL = dtfconfig.get_prop("Info", "serial")
 
 class DtfAdb():
 
+    serial = ''
     stdout = None
     stderr = None
-    returncode = ""
+    returncode = ''
+
+    def __init__(self):
+        self.serial = dtfconfig.get_prop("Info", "serial")
 
     def __run_command(self, in_cmd):
 
-        cmd = ("%s -s %s %s" %(ADB_BINARY, SERIAL, in_cmd)).split(' ')
+        cmd = ("%s -s %s %s" %(ADB_BINARY, self.serial, in_cmd)).split(' ')
 
         p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
+
         self.stdout = p.stdout.read().split("\r\n")
         self.stderr = p.stderr.read().split("\r\n")
 
@@ -48,3 +53,18 @@ class DtfAdb():
 
     def wait_for_device(self):
         self.__run_command("wait-for-device")
+
+    def pull(self, file_name, local="./"):
+        self.__run_command("pull %s %s" % (file_name, local))
+
+    def busybox(self, cmd):
+        busybox = dtfconfig.get_prop("Info", "busybox")
+        self.shell_command("run-as %s %s %s" % (DTF_CLIENT, busybox, cmd))
+
+    def is_file(self, file_name):
+        self.shell_command("ls %s" % file_name)
+
+        if self.stdout[0] == file_name:
+            return True
+        else:
+            return False
