@@ -27,7 +27,7 @@ _dtf()
     opts=""
 
     CORE="archive client help init local modules pm prop reset shell status"
-    MODULES=$(sqlite3 ${DTF_DIR}/main.db "select name from modules"|tr '\n' ' ')
+    MODULES=$(sqlite3 ${DTF_DIR}/main.db "select name from modules" 2>/dev/null|tr '\n' ' ')
     opts="${CORE} ${MODULES}"
 
     if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then

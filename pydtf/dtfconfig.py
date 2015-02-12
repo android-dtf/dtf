@@ -17,6 +17,8 @@
 # A class for using getprop, setprop, and delprop
 import ConfigParser
 
+CONFIG_FILE_NAME = '.dtfini'
+
 class PropertyError(Exception):
     pass
 
@@ -24,7 +26,7 @@ def get_prop(section, prop):
 
     config = ConfigParser.ConfigParser()
 
-    config.read(".dtfini")
+    config.read(CONFIG_FILE_NAME)
 
     # Caller needs to check return if he/she cares what the issue was.
     try:
@@ -39,7 +41,7 @@ def get_prop(section, prop):
 def set_prop(section, prop, value):
 
     config = ConfigParser.ConfigParser()
-    config.read(".dtfini")
+    config.read(CONFIG_FILE_NAME)
 
     # Add section if it doesnt exist
     if not config.has_section(section):
@@ -48,7 +50,7 @@ def set_prop(section, prop, value):
     # Set the new parameter
     config.set(section, prop, value)
 
-    f = open('.dtfini', 'w')
+    f = open(CONFIG_FILE_NAME, 'w')
     config.write(f)
     f.close()
 
@@ -57,7 +59,7 @@ def set_prop(section, prop, value):
 def del_prop(section, prop):
 
     config = ConfigParser.ConfigParser()
-    config.read(".dtfini")
+    config.read(CONFIG_FILE_NAME)
 
     rtn = None
 
@@ -76,8 +78,24 @@ def del_prop(section, prop):
     if len(config.items(section)) == 0:
         config.remove_section(section)
 
-    f = open('.dtfini', 'w')
+    f = open(CONFIG_FILE_NAME, 'w')
     config.write(f)
     f.close()
 
+    return 0
+
+def test_prop(section, prop):
+
+    config = ConfigParser.ConfigParser()
+    config.read(CONFIG_FILE_NAME)
+
+    try:
+        config.get(section, prop)
+        return 1
+    except ConfigParser.NoSectionError:
+        return 0
+    except ConfigParser.NoOptionError:
+        return 0
+
+    # Some other error?
     return 0

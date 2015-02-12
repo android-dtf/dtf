@@ -169,7 +169,8 @@ def printInstalledBinaries(verbose):
     c = dtf_db.cursor()
     sql = ('SELECT name, major_version, minor_version, '
            'about, author, health '
-           'FROM binaries')
+           'FROM binaries '
+           'ORDER BY name')
 
     c.execute(sql)
 
@@ -205,7 +206,8 @@ def printInstalledLibraries(verbose):
     c = dtf_db.cursor()
     sql = ('SELECT name, major_version, minor_version, '
            'about, author, health '
-           'FROM libraries')
+           'FROM libraries '
+           'ORDER BY name')
 
     c.execute(sql)
 
@@ -241,7 +243,8 @@ def printInstalledModules(verbose):
     c = dtf_db.cursor()
     sql = ('SELECT name, major_version, minor_version, '
            'about, author, health '
-           'FROM modules')
+           'FROM modules '
+           'ORDER BY name')
 
     c.execute(sql)
 
@@ -277,7 +280,8 @@ def printInstalledPackages(verbose):
     c = dtf_db.cursor()
     sql = ('SELECT name, major_version, minor_version, '
            'about, author, health '
-           'FROM packages')
+           'FROM packages '
+           'ORDER BY name')
 
     c.execute(sql)
 
@@ -753,12 +757,12 @@ def copyFile(local_name, install_name, install_dir):
     
     install_path = install_dir + install_name
 
-    log.i(TAG, "Copying \"%s\" to \"%s\"..." % (local_name, install_path))
+    log.d(TAG, "Copying \"%s\" to \"%s\"..." % (local_name, install_path))
     copy(local_name, install_path)
 
     chmod(install_path, 0755)
 
-    log.i(TAG, "Copy complete!")
+    log.d(TAG, "Copy complete!")
 
     return 0
 
@@ -767,7 +771,7 @@ def copyZipFile(zip_f, local_name, install_name, install_dir):
 
     install_path = install_dir + install_name
 
-    log.i(TAG, "Copying \"%s\" to \"%s\"..." % (local_name, install_path))
+    log.d(TAG, "Copying \"%s\" to \"%s\"..." % (local_name, install_path))
     temp_f = NamedTemporaryFile(mode='w', delete=False)
 
     temp_f.write(zip_f.read(local_name))
@@ -781,7 +785,7 @@ def copyZipFile(zip_f, local_name, install_name, install_dir):
    
     remove(temp_f.name)
 
-    log.i(TAG, "Copy complete!")
+    log.d(TAG, "Copy complete!")
 
     return 0
 
@@ -810,12 +814,12 @@ def copyTree(local_name, install_name, install_dir):
         if len(dirs) != 0:
             for local_dir in [os.path.join(root, name) for name in dirs]:
                 new_dir = local_dir.replace(local_name+'/', '', 1)
-                log.i(TAG, "Making dir  %s" % (install_path + new_dir))
+                log.d(TAG, "Making dir  %s" % (install_path + new_dir))
                 makedirs(install_path + new_dir)
         if len(files) != 0:
             for local_file in [os.path.join(root, name) for name in files]:
                 new_file = local_file.replace(local_name+'/', '', 1)
-                log.i(TAG, "Copying file '%s' to '%s'" % (local_file, install_path + new_file))
+                log.d(TAG, "Copying file '%s' to '%s'" % (local_file, install_path + new_file))
                 copy(local_file, install_path + new_file)
 
     return 0
@@ -840,16 +844,16 @@ def copyZipTree(zip_f, local_name, install_name, install_dir):
             
             # If it's a directory, make it.
             if f.endswith('/'):
-                log.i(TAG, "Making dir %s" % install_path + new_f)
+                log.d(TAG, "Making dir %s" % install_path + new_f)
                 makedirs(install_path + new_f)
 
             # Otherwise, we need to unzip to that new path.
             else:
                 head, tail = os.path.split(new_f)
-                log.i(TAG, "extracting %s to %s" % (f, install_path+head))
+                log.d(TAG, "extracting %s to %s" % (f, install_path+head))
                 copyZipFile(zip_f, f, tail, install_path+head+'/')
 
-    log.i(TAG, "Copy complete!")
+    log.d(TAG, "Copy complete!")
 
     return 0
 
@@ -867,7 +871,7 @@ def promptDelete(inst_item):
     global force_mode
 
     if force_mode:
-        log.i(TAG, "Forcing component removal.")
+        log.d(TAG, "Forcing component removal.")
         return True
 
     print "Installed Item Details:"
@@ -886,7 +890,7 @@ def promptInstall(local_item, inst_item):
     global force_mode
 
     if force_mode:
-        log.i(TAG, "Forcing component installation.")
+        log.d(TAG, "Forcing component installation.")
         return True
 
     print "Installed Item Details:"
@@ -1012,7 +1016,7 @@ def parseBinary(zip_f, item):
             else:
                 log.i(TAG, "Binary installed skipped.")
         else:
-            log.i(TAG, "This is a new binary, installing.")
+            log.d(TAG, "This is a new binary, installing.")
             rtn = installZipBinary(zip_f, item)
 
     except KeyError:
@@ -1042,7 +1046,7 @@ def parseLibrary(zip_f, item):
             else:
                 log.i(TAG, "Library installed skipped.")
         else:
-            log.i(TAG, "This is a new library, installing.")
+            log.d(TAG, "This is a new library, installing.")
             rtn = installZipLibrary(zip_f, item)
 
     except IOError:
@@ -1177,15 +1181,15 @@ def parseModule(zip_f, item):
         # First check if we know about this module.
         if itemInstalled(item):
 
-	    print "[WARNING] An item with this name is already installed. See details below."
-	    inst_item = loadItem(item)
+	        print "[WARNING] An item with this name is already installed. See details below."
+	        inst_item = loadItem(item)
 
-	    if promptInstall(item, inst_item):
-		rtn = installZipModule(zip_f, item)
-	    else:
-		log.i(TAG, "Module installed skipped.")
-	else:
-            log.i(TAG, "This is a new module, installing.")
+	        if promptInstall(item, inst_item):
+		        rtn = installZipModule(zip_f, item)
+	        else:
+		        log.i(TAG, "Module installed skipped.")
+        else:
+            log.d(TAG, "This is a new module, installing.")
             rtn = installZipModule(zip_f, item)
 
     except KeyError:
@@ -1215,7 +1219,7 @@ def parsePackage(zip_f, item):
             else:
                 log.i(TAG, "Package installed skipped.")
         else:
-            log.i(TAG, "This is a new package, installing.")
+            log.d(TAG, "This is a new package, installing.")
             rtn = installZipPackage(zip_f, item)
 
     except IOError:
@@ -1306,7 +1310,7 @@ def parseZip(zip_file_name):
 
     zip_f = ZipFile(zip_file_name, 'r')
 
-    log.i(TAG, "Parsing manifest file...")
+    log.d(TAG, "Parsing manifest file...")
 
     # Get Manifest
     if not localZipExists(zip_f, MANIFEST_NAME):

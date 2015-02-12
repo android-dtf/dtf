@@ -56,16 +56,19 @@ def md5_local(file_path):
 # Use apktool
 def apktool(cmd):
 
-    apktool_path = "%s/apktool/apktool_2.0.0-ad7008-SNAPSHOT.jar" % DTF_INCLUDED
-    java_args = "java -Xmx256M -jar"
+    #apktool_path = "%s/apktool/apktool_2.0.0-ad7008-SNAPSHOT.jar" % DTF_INCLUDED
+    apktool_path = "%s/apktool/apktool_2.0.0-259052-SNAPSHOT.jar" % DTF_INCLUDED
+    java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" %(java_args, apktool_path, cmd)).split(' ')
 
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
-    stdout = p.stdout.read().split("\n")
-    stderr = p.stderr.read().split("\n")
 
-    rtn = p.wait()
+    (out, err) = p.communicate()
+
+    stdout = out.split("\n")
+    stderr = out.split("\n")
+    rtn = p.returncode
 
     return stdout, stderr, rtn
 
@@ -77,7 +80,7 @@ def apksign(cmd):
 def smali(cmd):
 
     smali_path = "%s/smali/smali-2.0.3-686cf35c-dirty.jar" % DTF_INCLUDED
-    java_args = "java -Xmx256M -jar"
+    java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" %(java_args, smali_path, cmd)).split(' ')
 
@@ -93,7 +96,7 @@ def smali(cmd):
 def baksmali(cmd):
 
     baksmali_path = "%s/smali/baksmali-2.0.3-686cf35c-dirty.jar" % DTF_INCLUDED
-    java_args = "java -Xmx256M -jar"
+    java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" %(java_args, baksmali_path, cmd)).split(' ')
 

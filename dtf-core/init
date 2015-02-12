@@ -75,7 +75,7 @@ kernel=$(adb shell "cat /proc/version")
 dtf prop set Info kernel "${kernel}"
 
 # Get the SDK version
-sdk=$(adb shell getprop ro.build.version.sdk)
+sdk=$(adb shell getprop ro.build.version.sdk|sed 's/\r//')
 
 dtf prop set Info SDK "${sdk}"
 
@@ -101,7 +101,7 @@ echo -n "Would you like to change it? [N/y] "
 
 read res
 
-if [ "$res" != "n" -o "$res" != "N" ]; then
+if [ "$res" == "y" -o "$res" == "Y" ]; then
     echo -n "Please enter a custom version string: "
     read version
     echo "Using version string '${version}'..."
@@ -110,14 +110,33 @@ else
    dtf prop set Info version-string "${version_string}"
 fi
 
-# Get the VM type
-vm_type=$(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|sort -r|head -n1|awk '{print $2}')
 
-if [ "$vm_type" = "[libart.so]" ]; then
-    dtf prop set Info vmtype "ART"
+# Getting the VM type doesn't seem consistent.
+
+# ART was introduced in KitKat, so if we're less than that, Dalvik.
+if [ $sdk -lt 20 ]; then
+    vmtype="Dalvik"
+
+# If there is a single "persist.sys.dalvik.vm.lib", use it!
+elif [ $(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|wc -l) = 1 ]; then
+
+    if [ "$(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|awk '{print $2}')" = "[libart.so]" ]; then
+        vmtype="ART"
+    else
+        vmtype="Dalvik"
+    fi
+
+# There are two values.  Check for the "arm" directory in frameworks. [HACK]
 else
-    dtf prop set Info vmtype "Dalvik"
+    if [[ "$(adb shell ls /system/framework/arm|sed 's/\r//')" =~ "No such file or directory" ]]; then
+        vmtype="Dalvik"
+    else
+        vmtype="ART"
+    fi
 fi
+
+echo "Using VM Type of '${vmtype}'"
+dtf prop set Info vmtype "${vmtype}"
 
 # Set the "Local variables"
 mkdir reports 2>/dev/null
