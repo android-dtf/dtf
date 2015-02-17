@@ -28,7 +28,9 @@ _dtf()
 
     CORE="archive client help init local modules pm prop reset shell status"
     MODULES=$(sqlite3 ${DTF_DIR}/main.db "select name from modules" 2>/dev/null|tr '\n' ' ')
-    opts="${CORE} ${MODULES}"
+    LOCAL_MODULES=$(ls local_modules 2>/dev/null)
+
+    opts="${CORE} ${MODULES} ${LOCAL_MODULES}"
 
     if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
