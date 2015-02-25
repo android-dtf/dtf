@@ -26,9 +26,11 @@ _dtf()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts=""
 
+    TOP=$(getroot)
+
     CORE="archive client help init local modules pm prop reset shell status"
     MODULES=$(sqlite3 ${DTF_DIR}/main.db "select name from modules" 2>/dev/null|tr '\n' ' ')
-    LOCAL_MODULES=$(ls local_modules 2>/dev/null)
+    LOCAL_MODULES=$(ls ${TOP}/local_modules 2>/dev/null)
 
     opts="${CORE} ${MODULES} ${LOCAL_MODULES}"
 

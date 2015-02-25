@@ -61,6 +61,22 @@ KITKAT=19
 WEAR=20
 LOLLIPOP=21
 
+
+# In the case of $TOP not being set, you can use this to obtain the project
+# path. Chances are that you won't ever need to call this.
+getroot () {
+
+    if [ -f .dtfini ]; then echo "$PWD" && return; fi
+
+    test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch ".dtfini"
+}
+
+# Helper for obtaining project root. Not meant to be called (unless you wanted
+# to?)
+upsearch () {
+    test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
+}
+
 # Test if a element is in an array
 # arg1 : element
 # arg2 : array

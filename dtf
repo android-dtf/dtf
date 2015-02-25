@@ -142,7 +142,7 @@ generate_libs() {
 
 }
 
-# This is the module launcher.  It parses the #@ markers.
+# This is the module launcher.
 launchmodule() {
 
     # All Systems Go
@@ -223,11 +223,10 @@ if [ ! -z "${result}" ]; then
     exit $?
 fi
 
-# Look for the arg locally first
-search=$(find ./local_modules -name ${module} 2>/dev/null|head -n 1)
+# Look for a local version
+search=$(find ${TOP}/local_modules -name ${module} 2>/dev/null|head -n 1)
 
 if [ -n "${search}" ]; then
-
     launchmodule ${search}  $@
     exit $?
 fi
