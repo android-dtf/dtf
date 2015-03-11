@@ -24,6 +24,7 @@ abort()
 {
     echo "Exiting DTF initialization!!" 1>&2
     rm .dtfini 2> /dev/null
+    rm .dtflog 2> /dev/null
     exit -4
 }
 
@@ -44,7 +45,7 @@ unset ANDROID_SERIAL
 # Sometimes there are errors, and we need to bail.  We'll remove the (protentially) incomplete .dtfini.
 trap abort 1 2 15
 
-echo -n "Please connect the test device, and only the test device (press any key to continue) "
+echo -n "Please connect the test device, and only the test device (press Enter to continue) "
 read _
 
 echo "Restarting ADB..."
@@ -110,6 +111,25 @@ else
    dtf prop set Info version-string "${version_string}"
 fi
 
+# Determine if ARM or ARM64
+arch=$(adb shell getprop ro.product.cpu.abi|sed 's/\r//')
+
+if [ -z $arch ]; then
+    echo "[ERROR] Unable to determine processor architecture. Exiting."
+    abort
+fi
+
+# 32-bits
+if [[ "$arch" == "armeabi-"* ]]; then
+    dtf prop set Info cpu-bits "32"
+# 64-bits
+elif [[ "$arch" == "arm"*"64"* ]]; then
+    dtf prop set Info cpu-bits "64"
+# Not sure.
+else
+    echo "[ERROR] Unsupported CPU architecture: ${arch}"
+    abort
+fi
 
 # Getting the VM type doesn't seem consistent.
 
