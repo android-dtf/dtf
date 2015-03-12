@@ -148,7 +148,15 @@ elif [ $(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|wc -l) =
 
 # There are two values.  Check for the "arm" directory in frameworks. [HACK]
 else
-    if [[ "$(adb shell ls /system/framework/arm|sed 's/\r//')" =~ "No such file or directory" ]]; then
+
+    cpu_bits=$(dtf prop get Info cpu-bits)
+    if [ "$cpu_bits" = "64" ]; then
+        arm_dir=/system/framework/arm
+    else
+        arm_dir=/system/framework/arm64
+    fi
+
+    if [[ "$(adb shell ls ${arm_dir}|sed 's/\r//')" =~ "No such file or directory" ]]; then
         vmtype="Dalvik"
     else
         vmtype="ART"
