@@ -68,3 +68,15 @@ class DtfAdb():
             return True
         else:
             return False
+
+    def is_dir(self, dir_name):
+        self.shell_command("ls -ld %s" % dir_name)
+
+        line = self.stdout[0]
+
+        if line[-26:] == " No such file or directory":
+            return False
+        elif line[0] == 'd':
+            return True
+        else:
+            return False

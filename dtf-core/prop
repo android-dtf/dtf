@@ -18,7 +18,6 @@
 
 . dtf_core.sh
 
-
 cd $TOP
 
 ${DTF_DIR}/dtf_property_manager.py $@

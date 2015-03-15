@@ -16,8 +16,19 @@
 #
 # A class for using getprop, setprop, and delprop
 import ConfigParser
+from os import getcwd, pardir, chdir
+from os.path import abspath, join, isfile
 
 CONFIG_FILE_NAME = '.dtfini'
+
+def __upsearch(file_name, dir):
+        if isfile("%s/%s" % (dir,file_name)):
+            return dir
+        else:
+            new_dir = abspath(join(dir, pardir))
+            if dir == new_dir:
+                return None
+            return __upsearch(file_name, new_dir)
 
 class PropertyError(Exception):
     pass

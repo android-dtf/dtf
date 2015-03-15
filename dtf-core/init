@@ -163,7 +163,7 @@ else
     fi
 fi
 
-echo "Using VM Type of '${vmtype}'"
+log_d "Using VM Type of '${vmtype}'"
 dtf prop set Info vmtype "${vmtype}"
 
 # Set the "Local variables"
