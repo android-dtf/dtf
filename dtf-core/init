@@ -45,53 +45,90 @@ unset ANDROID_SERIAL
 # Sometimes there are errors, and we need to bail.  We'll remove the (protentially) incomplete .dtfini.
 trap abort 1 2 15
 
-echo -n "Please connect the test device, and only the test device (press Enter to continue) "
+echo -n "Please connect the test device (press Enter to continue) "
 read _
 
 echo "Restarting ADB..."
-adb kill-server && adb start-server > /dev/null
+adb kill-server && adb start-server -a > /dev/null
 
 echo "Waiting for a device to be connected..."
-adb wait-for-device
+# We can't use `adb wait-for-device`, so just sleep for a second.
+sleep 1
 
-serial=$(adb devices | grep -E "device$" |awk '{print $1}')
+IFS=$'\r\n' GLOBIGNORE='*' :; devices=($(adb devices | grep -E "device$" |awk '{print $1}'))
 
-echo -n "Got serial ${serial}, is this correct? [Y/n] "
-read res
+if [ ${#devices[@]} = "0" ]; then
+    echo "[ERROR] No devices found, exiting!"
+    exit -2
 
-if [ "$res" = "n" ]; then
-   echo "Bailing!"
-   exit -4
+elif [ ${#devices[@]} = "1" ]; then
+    echo -n "Got serial ${devices}, is this correct? [Y/n] "
+    read res
+
+    if [ "$res" = "n" ]; then
+        echo "Bailing!"
+        exit -3
+    fi
+
+    serial=${devices}
+
+elif [[ ${#devices[@]} -gt 1 ]]; then
+
+    echo "Found many devices. Please select from the following list:"
+    i=0
+    for device in "${devices[@]}"; do
+        echo "#${i}. ${device}"
+        i=$((i+1))
+    done
+
+    echo ""
+    echo -n "Which device #? "
+    read val
+
+    # Is it valid input?
+    i=0
+    for _ in  "${devices[@]}"; do
+        if [ "$val" = $i ]; then
+            serial=${devices[$i]}
+        fi
+        i=$((i+1))
+    done
+
+    if [ -z $serial ]; then
+        echo "[ERROR] In valid input: '${val}'"
+        exit -4
+    fi
 fi
+
+echo "Preparing device: ${serial}"
 
 touch .dtfini
 
-ANDROID_SERIAL=$serial
-
+# Start setting properties
 dtf prop set Info serial "${serial}"
 
 # Get the kernel
-kernel=$(adb shell "cat /proc/version")
+kernel=$(dtf shell "cat /proc/version")
 
 dtf prop set Info kernel "${kernel}"
 
 # Get the SDK version
-sdk=$(adb shell getprop ro.build.version.sdk|sed 's/\r//')
+sdk=$(dtf shell getprop ro.build.version.sdk|sed 's/\r//')
 
 dtf prop set Info SDK "${sdk}"
 
 # Set path
-path=$(adb shell set |grep -E "^PATH" | sed 's/^PATH\=//g')
+path=$(dtf shell set |grep -E "^PATH" | sed 's/^PATH\=//g')
 dtf prop set Info path "${path}"
 
 # Set bootclasspath
-bcp=$(adb shell set |grep -E "^BOOTCLASSPATH" | sed 's/^BOOTCLASSPATH\=//g')
+bcp=$(dtf shell set |grep -E "^BOOTCLASSPATH" | sed 's/^BOOTCLASSPATH\=//g')
 dtf prop set Info bootclasspath-jars "${bcp}"
 
 # Get versioning info.
-brand=$(adb shell getprop ro.product.brand|sed 's/\r//')
-name=$(adb shell getprop ro.product.name|sed 's/\r//')
-version=$(adb shell getprop ro.build.id|sed 's/\r//')
+brand=$(dtf shell getprop ro.product.brand|sed 's/\r//')
+name=$(dtf shell getprop ro.product.name|sed 's/\r//')
+version=$(dtf shell getprop ro.build.id|sed 's/\r//')
 version_string=${brand}-${name}_${version}
 
 echo "dtf would like to use following version string:"
@@ -112,7 +149,7 @@ else
 fi
 
 # Determine if ARM or ARM64
-arch=$(adb shell getprop ro.product.cpu.abi|sed 's/\r//')
+arch=$(dtf shell getprop ro.product.cpu.abi|sed 's/\r//')
 
 if [ -z $arch ]; then
     echo "[ERROR] Unable to determine processor architecture. Exiting."
@@ -138,9 +175,9 @@ if [ $sdk -lt 20 ]; then
     vmtype="Dalvik"
 
 # If there is a single "persist.sys.dalvik.vm.lib", use it!
-elif [ $(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|wc -l) = 1 ]; then
+elif [ $(dtf shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|wc -l) = 1 ]; then
 
-    if [ "$(adb shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|awk '{print $2}')" = "[libart.so]" ]; then
+    if [ "$(dtf shell getprop |grep persist.sys.dalvik.vm.lib|sed 's/\r//'|awk '{print $2}')" = "[libart.so]" ]; then
         vmtype="ART"
     else
         vmtype="Dalvik"
@@ -156,7 +193,7 @@ else
         arm_dir=/system/framework/arm64
     fi
 
-    if [[ "$(adb shell ls ${arm_dir}|sed 's/\r//')" =~ "No such file or directory" ]]; then
+    if [[ "$(dtf shell ls ${arm_dir}|sed 's/\r//')" =~ "No such file or directory" ]]; then
         vmtype="Dalvik"
     else
         vmtype="ART"
