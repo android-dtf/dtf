@@ -157,7 +157,7 @@ if [ -z $arch ]; then
 fi
 
 # 32-bits
-if [[ "$arch" == "armeabi-"* ]]; then
+if [[ "$arch" == "armeabi"* ]]; then
     dtf prop set Info cpu-bits "32"
 # 64-bits
 elif [[ "$arch" == "arm"*"64"* ]]; then
