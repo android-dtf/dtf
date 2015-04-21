@@ -40,12 +40,10 @@ if [ "$1" = "create" ]; then
     cd $TOP
 
     if [ -z "$2" ]; then 
-        brand=$(adb shell getprop ro.product.brand|sed 's/\r//')
-        name=$(adb shell getprop ro.product.name|sed 's/\r//')
-        version=$(adb shell getprop ro.build.id|sed 's/\r//')
-        archive_name=${brand}-${name}_${version}.zip
+        version_string=$(dtf prop get Info version-string)
+        archive_name=${version_string}.zip
     else
-        archive_name="$2.zip"
+        archive_name=${2}.zip
     fi
     log_i "Archiving to '${archive_name}'..."
     zip -r ${archive_name} .
