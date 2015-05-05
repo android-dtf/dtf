@@ -21,6 +21,7 @@
 
 VERSION=1.0
 PACKAGE_NAME=com.dtf.client
+DEFAULT_PATH=/mnt/sdcard
 
 usage()
 {
@@ -30,6 +31,7 @@ usage()
     echo "    install    Install the dtf client."
     echo "    status     Print the install status of the client."
     echo "    remove     Uninstall the dtf client."
+    echo "    upload     Upload a file to client directory."
     echo ""
 }
 
@@ -68,5 +70,42 @@ elif [ "$1" = "status" ]; then
     else
         echo "dtf client Status: Installed"
         echo ""
+    fi
+
+elif [ "$1"  = "upload" ]; then
+
+    if [ -z "$2" ]; then
+        echo "[ERROR] upload requires an filename."
+        exit -2
+
+    elif [ "$2" = "--path" ]; then
+
+        if [ -z "$3" -a -z "$4" ]; then
+            echo "[ERROR] upload path and file name required!"
+            exit -3
+        fi
+
+        upload_path=$3
+        file_name=$4
+
+        if [ ! -f $file_name ]; then
+            echo "[ERROR] File does not exist: $file_name"
+            exit -4
+        fi
+
+        adb push ${file_name} "${upload_path}/" > /dev/null
+        adb shell run-as ${PACKAGE_NAME} cp "${upload_path}/${file_name}" "/data/data/${PACKAGE_NAME}/"
+
+    else
+        upload_path=$DEFAULT_PATH
+        file_name=$2
+
+        if [ ! -f $file_name ]; then
+            echo "[ERROR] File does not exist: $file_name"
+            exit -4
+        fi
+
+        adb push ${file_name} "${upload_path}/" > /dev/null
+        adb shell run-as ${PACKAGE_NAME} cp "${upload_path}/${file_name}" "/data/data/${PACKAGE_NAME}/"
     fi
 fi

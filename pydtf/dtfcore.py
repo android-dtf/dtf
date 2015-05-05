@@ -23,7 +23,7 @@ from pydtf.dtfglobals import DTF_INCLUDED, DTF_DIR
 from subprocess import Popen, PIPE
 
 # Core Globals
-DTF_VERSION='1.0.5-dev'
+DTF_VERSION='1.1.0-dev'
 
 # Client stuff
 DTF_CLIENT="com.dtf.client"
@@ -56,8 +56,7 @@ def md5_local(file_path):
 # Use apktool
 def apktool(cmd):
 
-    #apktool_path = "%s/apktool/apktool_2.0.0-ad7008-SNAPSHOT.jar" % DTF_INCLUDED
-    apktool_path = "%s/apktool/apktool_2.0.0-259052-SNAPSHOT.jar" % DTF_INCLUDED
+    apktool_path = "%s/apktool/apktool_2.0.1-548137-SNAPSHOT.jar" % DTF_INCLUDED
     java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" %(java_args, apktool_path, cmd)).split(' ')

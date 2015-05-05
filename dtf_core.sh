@@ -17,7 +17,7 @@
 # Modules that want to take advantage of built-in functionality should source this file.
 
 # Other stuff.
-DTF_VERSION=1.1.0
+DTF_VERSION=1.1.0-dev
 
 # This allows modules to access dtf resources
 DTF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -60,6 +60,7 @@ JELLY_BEAN_R2=18
 KITKAT=19
 WEAR=20
 LOLLIPOP=21
+LOLLIPOP_R1=22
 
 
 # In the case of $TOP not being set, you can use this to obtain the project
