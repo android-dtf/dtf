@@ -14,34 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This this is a wraper script for "axmlprinter2".
+# This this is a wraper script for "aapt".
 
-name=dtf_axmlprinter2
+name=dtf_aapt
 
-dtf_axmlprinter2()
+dtf_aapt()
 {
-    jarfile=${DTF_INCLUDED}/axmlprinter2/axmlprinter2.jar
-
-    if [ ! -r "$jarfile" ]; then
-        echo "${name}: can't find $jarfile"
-        return 1
+    aapt_file=${DTF_INCLUDED}/aapt/aapt-22.0.1
+    if [ ! -r "$aapt_file" ]; then
+	    echo "${name}: can't find $aapt_file"
+	    return 1
     fi
 
-    javaOpts="-Xmx256M"
-
-    while expr "x$1" : 'x-J' >/dev/null; do
-	    opt=`expr "$1" : '-J\(.*\)'`
-	    javaOpts="${javaOpts} -${opt}"
-	    shift
-    done
-
-    if [ "$OSTYPE" = "cygwin" ] ; then
-        jarpath=`cygpath -w  "$jarfile"`
-    else
-        jarpath="$jarfile"
-    fi
-
-    java $javaOpts -jar "$jarpath" "$@"
-
+    $aapt_file "$@"
     return $?
 }

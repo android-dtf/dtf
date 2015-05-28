@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Android Device Testing Framework ("dtf")
-# Copyright 2013-2014 Jake Valletta (@jake_valletta)
+# Copyright 2013-2015 Jake Valletta (@jake_valletta)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,6 +52,21 @@ def md5_local(file_path):
         m.update(data)
     return m.hexdigest()
 
+# Use aapt
+def aapt(cmd):
+
+    aapt_path = "%s/aapt/aapt-22.0.1" % DTF_INCLUDED
+    cmd = ("%s %s" % (aapt_path, cmd)).split(' ')
+
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
+
+    (out, err) = p.communicate()
+
+    stdout = out.split("\n")
+    stderr = out.split("\n")
+    rtn = p.returncode
+
+    return stdout, stderr, rtn
 
 # Use apktool
 def apktool(cmd):
@@ -59,7 +74,7 @@ def apktool(cmd):
     apktool_path = "%s/apktool/apktool_2.0.1-548137-SNAPSHOT.jar" % DTF_INCLUDED
     java_args = "java -Xmx512M -jar"
 
-    cmd = ("%s %s %s" %(java_args, apktool_path, cmd)).split(' ')
+    cmd = ("%s %s %s" % (java_args, apktool_path, cmd)).split(' ')
 
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 
@@ -81,7 +96,7 @@ def smali(cmd):
     smali_path = "%s/smali/smali-2.0.3-686cf35c-dirty.jar" % DTF_INCLUDED
     java_args = "java -Xmx512M -jar"
 
-    cmd = ("%s %s %s" %(java_args, smali_path, cmd)).split(' ')
+    cmd = ("%s %s %s" % (java_args, smali_path, cmd)).split(' ')
 
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
     stdout = p.stdout.read().split("\n")
@@ -97,7 +112,7 @@ def baksmali(cmd):
     baksmali_path = "%s/smali/baksmali-2.0.3-686cf35c-dirty.jar" % DTF_INCLUDED
     java_args = "java -Xmx512M -jar"
 
-    cmd = ("%s %s %s" %(java_args, baksmali_path, cmd)).split(' ')
+    cmd = ("%s %s %s" % (java_args, baksmali_path, cmd)).split(' ')
 
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
     stdout = p.stdout.read().split("\n")
@@ -117,7 +132,7 @@ def axmlprinter2(manifest_file_name, out_file_name):
     axmlprinter2_path = "%s/axmlprinter2/axmlprinter2.jar" % DTF_INCLUDED
     java_args = "java -Xmx256M -jar"
 
-    cmd = ("%s %s %s" %(java_args, axmlprinter2_path, manifest_file_name)).split(' ')
+    cmd = ("%s %s %s" % (java_args, axmlprinter2_path, manifest_file_name)).split(' ')
 
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
     stdout = p.stdout.read()
@@ -141,7 +156,7 @@ def axmlprinter2(manifest_file_name, out_file_name):
 # Launch a module
 def launch_module(module, args):
 
-    cmd = ("dtf %s %s" %(module, args)).split(' ')
+    cmd = ("dtf %s %s" % (module, args)).split(' ')
 
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
     stdout = p.stdout.read().split("\n")

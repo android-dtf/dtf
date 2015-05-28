@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Android Device Testing Framework ("dtf")
-# Copyright 2013-2014 Jake Valletta (@jake_valletta)
+# Copyright 2013-2015 Jake Valletta (@jake_valletta)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ DTF_PACKAGES=${DTF_DIR}/packages
 DTF_PYDTF=${DTF_DIR}/pydtf
 
 # Additional sourcing. Move this eventually?
+. ${DTF_INCLUDED}/dtf_aapt.sh
 . ${DTF_INCLUDED}/dtf_apksign.sh
 . ${DTF_INCLUDED}/dtf_apktool.sh
 . ${DTF_INCLUDED}/dtf_baksmali.sh
