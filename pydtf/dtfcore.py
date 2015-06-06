@@ -71,7 +71,7 @@ def aapt(cmd):
 # Use apktool
 def apktool(cmd):
 
-    apktool_path = "%s/apktool/apktool_2.0.1-548137-SNAPSHOT.jar" % DTF_INCLUDED
+    apktool_path = "%s/apktool/apktool_2.0.1-037041-SNAPSHOT.jar" % DTF_INCLUDED
     java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" % (java_args, apktool_path, cmd)).split(' ')

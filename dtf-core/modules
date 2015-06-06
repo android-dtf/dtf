@@ -23,7 +23,7 @@ DTF_DB=${DTF_DIR}/main.db
 IFS=$'\n'
 
 pad=$(printf '%0.1s' " "{1..60})
-padlength=30
+padlength=20
 
 do_normal()
 {
