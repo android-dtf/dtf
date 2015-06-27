@@ -23,7 +23,7 @@ from pydtf.dtfglobals import DTF_INCLUDED, DTF_DIR
 from subprocess import Popen, PIPE
 
 # Core Globals
-DTF_VERSION='1.1.0-dev'
+DTF_VERSION='1.2.0'
 
 # Client stuff
 DTF_CLIENT="com.dtf.client"
