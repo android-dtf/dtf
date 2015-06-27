@@ -55,9 +55,9 @@ help () {
     echo "     modules     Print all global and local modules."
     echo "     pm          The dtf package manager."
     echo "     prop        The dtf property manager."
-    echo "     reset       Removes the dtf project configuration from the current directory."
+    echo "     reset       Removes the dtf config from current directory."
     echo "     shell       Creates a shell on your test device."
-    echo "     status      Get the status of your test device (connected/disconnected)."
+    echo "     status      Determine if project device is attached."
 
     exit $1
 }
