@@ -17,10 +17,10 @@
 # DTF's package manager.
 
 from argparse import ArgumentParser
-from os import chmod, remove, makedirs, listdir
+from os import chmod, remove, makedirs
 from pydtf import dtflog as log
 from pydtf import dtfglobals
-from shutil import copy, copytree, rmtree
+from shutil import copy, rmtree
 from sys import argv
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, is_zipfile
@@ -98,18 +98,21 @@ class Item(object):
         self.health = None
 
     def makeVersion(self):
+        if self.major_version == None and self.minor_version == None:
+            return None
+        else:
+            if self.major_version == None:
+                mjr = "0"
+            else:
+                mjr = self.major_version
 
-	if self.major_version == None and self.minor_version == None:
-	   return None
-	else:
-	   if self.major_version == None: mjr = "0"
-	   else: mjr = self.major_version
+            if self.minor_version == None:
+                mnr = "0"
+            else:
+                mnr = self.minor_version
 
-	   if self.minor_version == None: mnr = "0"
-	   else: mnr = self.minor_version
-     
-	   return "%s.%s" % (mjr, mnr)      
-    
+            return "%s.%s" % (mjr, mnr)
+
     def __repr__(self):
         temp = "Name: %s (%s)\n" % (self.name, self.type)
         if self.type == TYPE_MODULE: temp += "  About: %s\n" % self.about
@@ -1383,6 +1386,8 @@ def parseZip(zip_file_name):
             rtn = parsePackage(zip_f, local_item)       
             log.d(TAG, "parsePackage() result : %d" % rtn)
 
+    log.i(TAG, "ZIP content '%s' installed successfully!"
+                                            % zip_file_name)
 
     return 0
 
@@ -1666,7 +1671,7 @@ def purgeCmd():
         return 0
 
 # TODO:  Implement
-def exportCmd(args):
+def exportCmd():
 
     print "Not implemented Yet. :("
     return 0
@@ -1689,7 +1694,7 @@ def main(argv):
     elif sub_cmd == "delete":
         rtn = deleteCmd(argv)
     elif sub_cmd == "export":
-        rtn = exportCmd(argv)
+        rtn = exportCmd()
     elif sub_cmd == "list":
         rtn = listCmd(argv)
     elif sub_cmd == "purge":
