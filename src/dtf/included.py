@@ -23,7 +23,7 @@ def aapt(cmd):
 
     """aapt wrapper"""
 
-    aapt_path = "%s/aapt/aapt-22.0.1" % DTF_INCLUDED_DIR
+    aapt_path = "%s/aapt/aapt-23.0.1" % DTF_INCLUDED_DIR
     cmd = ("%s %s" % (aapt_path, cmd)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
@@ -39,7 +39,7 @@ def apktool(cmd):
 
     """apktool wrapper"""
 
-    apktool_path = ("%s/apktool/apktool_2.0.1-037041-SNAPSHOT.jar"
+    apktool_path = ("%s/apktool/apktool_2.0.3-83f327-SNAPSHOT.jar"
                         % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx512M -jar"
@@ -59,7 +59,7 @@ def smali(cmd):
 
     """smali wrapper"""
 
-    smali_path = ("%s/smali/smali-2.0.3-686cf35c-dirty.jar"
+    smali_path = ("%s/smali/smali-2.1.0-3e265038.jar"
                         % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx512M -jar"
@@ -78,7 +78,7 @@ def baksmali(cmd):
 
     """baksmali wrapper"""
 
-    baksmali_path = ("%s/smali/baksmali-2.0.3-686cf35c-dirty.jar"
+    baksmali_path = ("%s/smali/baksmali-2.1.0-3e265038.jar"
                         % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx512M -jar"
