@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
+#  -*- mode: python; -*-
+#
 # Android Device Testing Framework ("dtf")
 # Copyright 2013-2015 Jake Valletta (@jake_valletta)
 #
@@ -14,223 +16,167 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# dtf Launcher
+""" dtf Main Launcher """
+#pylint: disable-msg=E0611
+import sys
 
-# Source all the good stuff
-. dtf_core.sh
-. dtf_log.sh
+# Check for version before anything
+if sys.version_info < (2, 6, 0):
+    sys.stderr.write("dtf requires python version 2.6 or higher!")
+    sys.exit(1)
 
-# Globals.
-DTF_DB=${DTF_DIR}/main.db
+import subprocess
+import os
+import os.path
 
-# Only log errors and warnings to screen, and please log debugging
-LOG_LEVEL=3
-LOG_TO_STDOUT=1
-LOG_TO_FILE=1
+import dtf.constants as constants
+import dtf.core.utils as utils
+import dtf.packages as pkg
+import dtf.logging as log
 
-upsearch () {
-    test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
-}
+TAG = "dtf"
 
-usage () {
-    echo "Android Device Testing Framework (dtf) version ${DTF_VERSION}"
-    echo "Usage: dtf [command] <command_args>"
-    echo ""
-    echo "Run with \"-h\" or \"help\" for additional information."
+BUILT_IN_LIST = ['archive', 'client', 'local', 'prop', 'reset',
+                 'source', 'status']
 
-    exit $1
-}
+def usage():
 
-help () {
+    """Print dtf usage brief"""
 
-    echo "Android Device Testing Framework (dtf) version ${DTF_VERSION}"
-    echo "Usage: dtf [command] <command_args>"
-    echo "   Core Commmands:"
-    echo "     archive     Archive your dtf project files."
-    echo "     client      Install/remove the dtf client."
-    echo "     help        Prints this help screen."
-    echo "     init        Initializes a project."
-    echo "     local       Display all local modules."
-    echo "     logcat      Tail the dtf logfile."
-    echo "     modules     Print all global and local modules."
-    echo "     pm          The dtf package manager."
-    echo "     prop        The dtf property manager."
-    echo "     reset       Removes the dtf config from current directory."
-    echo "     shell       Creates a shell on your test device."
-    echo "     status      Determine if project device is attached."
+    print ("Android Device Testing Framework (dtf) v%s"
+                                        % constants.VERSION)
+    print 'Usage: dtf [module|command] <arguments>'
+    print ''
+    print "Run with '-h' or 'help' for additional information."
 
-    exit $1
-}
+    return -1
 
-test_adb () {
-    if [[ `adb version 2>/dev/null|grep "Android Debug Bridge"` ]]; then
-        return 0
-    else
-        echo "[ERROR] DTF requires knowledge of the Android Debug Bridge (adb). Can you confirm you have it?"
-        exit -5
-    fi
-}
+def usage_full():
 
-test_bash () {
-    if [[ $(readlink -f $(which sh)) =~ "bash" ]]; then
-        return 0
-    else
-        echo "[ERROR] This version of DTF requires a true BASH shell. Can you confirm you use BASH?"
-        exit -5
-    fi
-}
+    """Print full dtf usage"""
 
-test_sqlite3 () {
-    if [[ `sqlite3 --version 2>/dev/null` ]]; then 
-        return 0
-    else
-        echo "[ERROR] Using DTF requires the \"sqlite3\" utility. Can you confirm it's installed?"
-        exit -5
-    fi
-}
+    print ("Android Device Testing Framework (dtf) v%s"
+                                        % constants.VERSION)
+    print 'Usage: dtf [module|command] <arguments>'
+    print '   Built-in Commands:'
+    print '    archive     Archive your dtf project files.'
+    print '    client      Install/remove the dtf client.'
+    print '    help        Prints this help screen.'
+    print '    init        Initializes a project.'
+    print '    local       Display all local modules.'
+    print '    pm          The dtf package manager.'
+    print '    prop        The dtf property manager.'
+    print '    reset       Removes the dtf config from current directory.'
+    print '    source      Used for sourcing additional commands.'
+    print '    status      Determine if project device is attached.'
 
-test_java () {
-    if [[ `java -version 2>&1|head -n1| grep -E "\"1\.7\.[0-9]*_[0-9]*\""` ]]; then
-        return 0
-    else
-        echo "[ERROR] Using DTF requires the JRE 1.7. Can you confirm it's installed?"
-        exit -5
-    fi
-}
+    return -1
 
-test_python () {
-    if [[ `python --version  2>&1|head -n1| grep -E "Python 2\.[6-9]\.[0-9]*$"` ]]; then
-        return 0
-    else
-        echo "[ERROR] Using DTF requires Python 2.6 or higher. Can you confirm it's installed?"
-        exit -5
-    fi
-}
+def find_built_in_module(cmd):
 
+    """Determine if the command is a built in module"""
 
-generate_libs() {
-    lib_path=""
+    if cmd in BUILT_IN_LIST:
+        return True
+    else:
+        return False
 
-    sql="SELECT l.install_name 
-         FROM libraries l"
+def check_dependencies():
 
-    ORIG_IFS=$IFS        # Save the original IFS
-    LINE_IFS=$'\n'$'\r'  # For splitting input into lines
-    FIELD_IFS=\|         # For splitting lines into fields
+    """Determine if all dependencies are accounted for"""
 
-    results=$(sqlite3 "${DTF_DB}" "${sql}" 2>/dev/null)
+    # Check for adb
+    if utils.which("adb") == "":
+        log.e(TAG, "dtf requires `adb` (part of Android SDK)!")
+        return -5
 
-    if [ -z "$results" ]; then
-        echo ""
-        return 0
-    fi
+    # Check for Bash
+    if os.readlink(utils.which('sh')) != 'bash':
+        log.e(TAG, "dtf requires a true bash shell; no dash!!")
+        return -5
 
-    IFS=$LINE_IFS
-    for LINE in $results; do
-        IFS=$FIELD_IFS
-        FIELDS=($LINE)
-        IFS=$LINE_IFS
+    # Check for sqlite3
+    if utils.which("sqlite3") == "":
+        log.e(TAG, "dtf requires `sqlite3`!")
+        return -5
 
-        if [ -z "$lib_path" ]; then
-            lib_path=${DTF_LIBS}/${FIELDS[0]}
-        else
-            lib_path=${lib_path}:${DTF_LIBS}/${FIELDS[0]}
-        fi
-    done
+    # Check for Java
+    if utils.which("java") != "":
 
-    echo ${lib_path}
+        out = subprocess.check_output(["java", "-version"],
+                                     stderr=subprocess.STDOUT)
 
-}
+        java_ver = out.split('\n')[0]
 
-# This is the module launcher.
-launchmodule() {
+        if java_ver.find("1.7") == -1:
+            log.e(TAG, "dtf requires Java 1.7!")
+            return -5
+    else:
+        log.e(TAG, "dtf requires Java 1.7!")
+        return -5
 
-    # All Systems Go
-    log_d "Calling module: $1"
+    return 0
 
-    # No module should need to specify a serial when using ADB.  This is a turbo hack.
-    if [ "$ANDROID_SERIAL" == "" ]  && [ "$1" != "${DTF_CORE}/prop" ]; then
-        export ANDROID_SERIAL=$(dtf prop get Info serial)
-    fi
+def main():
 
-    # We need to use the main.db to construct our python dependences.
-    included_libs=$(generate_libs)
+    """Main loop"""
 
-    #hack=${DTF_DIR}/lib/AppDb
-    tmp_PYTHONPATH=$DTF_DIR:$PYTHONPATH:$included_libs
+    rtn = 0
 
-    # Launch our module, passing the PYTHONPATH for extra fun
-    PYTHONPATH=$tmp_PYTHONPATH $@
-    ret=$?
+    # First, lets make sure dtf has the dependencies we want.
+    if check_dependencies() != 0:
+        return -2
 
-    log_d "Module \"$1\" completed (${ret})"
-    return ${ret}
+    # Next, check args.
+    if len(sys.argv) < 2:
+        sys.exit(usage())
 
+    # Remove the execute path
+    sys.argv.pop(0)
+    # Remove and store cmd_name
+    command_name = sys.argv.pop(0)
+    
+    # Help menu
+    if command_name in ['-h', '--help', 'help']:
+        sys.exit(usage_full())
 
-}
- 
-# Main
+    # Almost all commands with dtf require you to be in a project directory,
+    # but some don't. Check for those next.
+    elif command_name == 'pm':
+        return pkg.launch_builtin_module('pm', sys.argv)
 
-# Dependency Testing
-test_adb
-test_bash
-test_java
-test_python
-test_sqlite3
+    elif command_name == 'init':
+        return pkg.launch_builtin_module('init', sys.argv)
 
-if [ -z "$1" ]; then
-    usage -1
-fi
+    elif command_name == 'source':
+        return pkg.launch_builtin_module('source', sys.argv)
 
-if [ "$1" == "help" -o "$1" == "-h" -o "$1" == "--help" ]; then
-    help 0
-fi
+    # Ok, now we need to get to the top of the project directory.
+    project_root = utils.get_project_root()
 
-module=$1
+    if project_root == None:
+        log.e(TAG, "Unable to find a project root! Is this a dtf project?")
+        return -3
 
-# Determine where we are, so we can set the TOP
-TOP=$(upsearch .dtfini)
+    # Next, we check the following:
+    # 1. Is it a built-in command?
+    # 2. Is it a local module?
+    # 3. Is it a module we know about?
+    if find_built_in_module(command_name):
+        rtn = pkg.launch_builtin_module(command_name, sys.argv)
 
-if [ -z "$TOP" ] && [ "$module" != "init" ] && [ "$module" != "pm" ] && [ "$module" != "modules" ]; then
+    elif pkg.find_local_module(project_root, command_name):
+        rtn = pkg.launch_local_module(project_root, command_name, sys.argv)
 
-    echo "[ERROR] Unable to find a .dtfini file recursively, are you sure you meant to run this?"
-    exit -4
+    elif pkg.is_module_installed(command_name):
+        rtn = pkg.launch_module(command_name, sys.argv)
 
-fi 
+    else:
+        log.e(TAG, "Module or command '%s' not found!" % command_name)
+        rtn = -4
 
-export TOP
+    return rtn
 
-shift 
+if __name__ == "__main__":
 
-# Look for the arg in the core command directory
-search=$(find ${DTF_DIR}/dtf-core -name ${module} 2>/dev/null|head -n 1)
-
-if [ -n "${search}" ]; then
-    launchmodule ${search} $@
-    exit $?
-fi
-
-# Look up module using main database.
-sql="SELECT m.install_name 
-     FROM modules m 
-     WHERE m.name='${module}'
-     LIMIT 1"
-
-result=$(sqlite3 "${DTF_DB}" "${sql}" 2>/dev/null) 
-
-if [ ! -z "${result}" ]; then
-    launchmodule ${DTF_MODULES}/${result}  $@
-    exit $?
-fi
-
-# Look for a local version
-search=$(find ${TOP}/local_modules -name ${module} 2>/dev/null|head -n 1)
-
-if [ -n "${search}" ]; then
-    launchmodule ${search}  $@
-    exit $?
-fi
-
-echo "[ERROR] Module or command \"${module}\" not found."
-echo ""
-help -1
+    sys.exit(main())
