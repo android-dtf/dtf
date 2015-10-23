@@ -25,7 +25,7 @@ class status(Module):
 
     adb = DtfAdb.DtfAdb()
 
-    def execute(self):
+    def execute(self, args):
 
         """Main module executor"""
 

@@ -77,6 +77,9 @@ upsearch () {
     test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
 }
 
+# Top of the project.
+TOP=$(upsearch .dtfini)
+
 # Test if a element is in an array
 # arg1 : element
 # arg2 : array
@@ -110,8 +113,9 @@ dtf_device_connected ()
 dtf_busybox ()
 {
     busybox=$(dtf prop get Info busybox)
+    serial=$(dtf prop get Info serial)
 
-    adb shell run-as com.dtf.client ${busybox} $@
+    adb -s ${serial} shell run-as com.dtf.client ${busybox} $@
 }
 
 # Check if a module is installed.

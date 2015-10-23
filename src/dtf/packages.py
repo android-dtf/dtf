@@ -18,6 +18,7 @@
 import dtf.core.packagemanager as pm
 import dtf.core.utils as utils
 import dtf.logging as log
+import dtf.properties as prop
 from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
                          DTF_MODULES_DIR, DTF_DB, DTF_INCLUDED_DIR)
 
@@ -89,8 +90,13 @@ def __launch_bash_module(module_path, args):
     # Update the environment
     new_env = os.environ
 
+    # These are used for sourcing
     new_env['DTF_LOG'] = DTF_INCLUDED_DIR + "/dtf_log.sh"
     new_env['DTF_CORE'] = DTF_INCLUDED_DIR + "/dtf_core.sh"
+
+    # We want the serial to be already set
+    serial = prop.get_prop('Info', 'serial')
+    new_env['ANDROID_SERIAL'] = serial
 
     try:
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=new_env)
