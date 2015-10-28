@@ -16,6 +16,9 @@
 """dtf property support"""
 
 import ConfigParser
+from os.path import abspath, join, isfile
+from os import getcwd, pardir
+
 
 import dtf.core.utils as utils
 import dtf.logging as log
@@ -27,8 +30,21 @@ TAG = "dtf-properties"
 class PropertyError(Exception):
 
     """General exception for properties"""
-
     pass
+
+def __upsearch(file_name, dir_name):
+
+    """Search upward for file"""
+
+    if isfile("%s/%s" % (dir_name, file_name)):
+        return dir_name
+    else:
+        new_dir = abspath(join(dir_name, pardir))
+        if dir_name == new_dir:
+            return None
+        return __upsearch(file_name, new_dir)
+
+TOP = __upsearch(CONFIG_FILE_NAME, getcwd())
 
 def get_prop(section, prop):
 
@@ -42,9 +58,11 @@ def get_prop(section, prop):
     try:
         rtn = config.get(section, prop)
     except ConfigParser.NoSectionError:
-        raise PropertyError("Property section not found: %s" % section)
+        err = "Property section not found: %s" % section
+        raise PropertyError(err)
     except ConfigParser.NoOptionError:
-        raise PropertyError("Property not found: %s\\%s" % (section, prop))
+        err = "Property not found: %s\%s" % (section, prop)
+        raise PropertyError(err)
 
     return rtn
 
