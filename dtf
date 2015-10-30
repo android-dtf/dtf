@@ -39,6 +39,9 @@ TAG = "dtf"
 BUILT_IN_LIST = ['archive', 'client', 'local', 'prop', 'reset',
                  'source', 'status']
 
+# No file logging
+#log.LOG_LEVEL_FILE = 0
+
 def usage():
 
     """Print dtf usage brief"""

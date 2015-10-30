@@ -14,13 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This this is a wraper script for spawning a adb shell.
+# This this is a wraper script for "drozer".
 
-name=dtf_shell
+name=dtf_drozer
 
-dtf_shell()
+
+dtf_drozer()
 {
-    ANDROID_SERIAL=$(dtf prop get Info serial) adb shell "$@"
+
+    # Make sure we can get to our device.
+    echo "Waiting for device..."
+    adb wait-for-device
+
+    # Set up the port forward rules
+    adb forward tcp:31415 tcp:31415
+
+    drozer console connect
 
     return 0
 }

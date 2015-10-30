@@ -27,6 +27,9 @@ import os
 
 TAG = "dtf-setup"
 
+# No file logging yet please
+log.LOG_LEVEL_FILE = 0
+
 def get_pydtf_dir():
 
     """Return the location of the dtf dist-packages directory."""

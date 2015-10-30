@@ -18,6 +18,8 @@ from colored import fg, attr
 from time import localtime, strftime
 from sys import stdout
 
+import dtf.core.utils as utils
+
 #pylint: disable-msg=C0103
 
 # Can override just like the shell
@@ -26,6 +28,7 @@ LOG_LEVEL_STDOUT = 4 # By default, log E-V
 
 # Internals ###########################################################
 LOG_FILE_NAME = '.dtflog'
+LOG_FILE = None
 
 # Terminal Coloring
 COLOR_ERR = fg('#d70000')
@@ -35,7 +38,9 @@ COLOR_VERB = fg('#00d7ff')
 COLOR_DEB = fg('#d700af')
 
 # Open file on module import
-LOG_FILE = open(LOG_FILE_NAME, 'a')
+TOP = utils.get_project_root()
+if TOP is not None:
+    LOG_FILE = open(LOG_FILE_NAME, 'a')
 
 def __get_date():
 
@@ -46,7 +51,7 @@ def __get_date():
 # Low level printing function
 def __log(buf, entry):
 
-    """Write entry to buffer"""
+
 
     buf.write(entry)
 
@@ -62,6 +67,9 @@ def __log_to_stdout(color, date, tag, message):
 def __log_to_file(date, tag, message):
 
     """Write entry to stderr"""
+
+    if LOG_FILE is None:
+        return
 
     entry = "[%s] %s - %s\n" % (date, tag, message)
     __log(LOG_FILE, entry)

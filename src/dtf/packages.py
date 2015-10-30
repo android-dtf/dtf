@@ -102,7 +102,7 @@ def __launch_bash_module(module_path, args):
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=new_env)
     except OSError:
         log.e(TAG, "Unable to execute '%s'. Are the permission flags correct?"
-            % mod_name)
+            % module_path)
         return -5
 
     lines_iterator = iter(popen.stdout.readline, b"")

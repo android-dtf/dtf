@@ -61,7 +61,7 @@ def get_prop(section, prop):
         err = "Property section not found: %s" % section
         raise PropertyError(err)
     except ConfigParser.NoOptionError:
-        err = "Property not found: %s\%s" % (section, prop)
+        err = r"Property not found: %s\%s" % (section, prop)
         raise PropertyError(err)
 
     return rtn
