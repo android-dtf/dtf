@@ -23,7 +23,7 @@ def aapt(cmd):
 
     """aapt wrapper"""
 
-    aapt_path = "%s/aapt/aapt-23.0.1" % DTF_INCLUDED_DIR
+    aapt_path = "%s/aapt/aapt-22.0.1" % DTF_INCLUDED_DIR
     cmd = ("%s %s" % (aapt_path, cmd)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
