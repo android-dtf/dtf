@@ -90,7 +90,10 @@ class DtfAdb(object):
 
         device_list = list()
 
-        output = self.get_output()[0].split('\n')
+        try:
+            output = self.get_output()[0].split('\n')
+        except ValueError:
+            return device_list()
 
         # Remove the "List of devices..."
         output.pop(0)
@@ -104,7 +107,10 @@ class DtfAdb(object):
 
         for device in output:
 
-            serial, device_type = device.split('\t')
+            try:
+                serial, device_type = device.split('\t')
+            except ValueError:
+                continue
 
             device_list.append({'serial' : serial, 'type' : device_type})
 

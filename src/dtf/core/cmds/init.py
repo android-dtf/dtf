@@ -125,7 +125,7 @@ class init(Module):
         """Determine if we are Dalvik/ART"""
 
         # ART was introduced in KitKat, so if we are less, its Dalvik.
-        if sdk < 20:
+        if int(sdk) < 20:
             log.d(TAG, "Using Dalvik based on SDK")
             return TYPE_DALVIK
 
