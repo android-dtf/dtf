@@ -20,7 +20,8 @@ import dtf.logging as log
 
 from dtf.module import Module
 
-import subprocess
+import os
+from subprocess import Popen
 
 class archive(Module):
 
@@ -44,12 +45,15 @@ class archive(Module):
 
         """Make a ZIP file"""
 
-        cmd = "zip -r %s ./*" % zip_name
+        null_f = open(os.devnull, 'w')
+        cmd = ['zip', '-r', zip_name, '.']
 
-        proc = subprocess.Popen(cmd, shell=True,
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = Popen(cmd, stdout=null_f, stderr=null_f, shell=False)
 
-        return proc.wait()
+        proc.wait()
+        null_f.close()
+
+        return proc.returncode
 
     def do_create(self, args):
 
