@@ -336,6 +336,9 @@ def is_python_module(module_path, name):
         imp.load_source(name, module_path)
     except (NameError, SyntaxError):
         return False
+    except ImportError:
+        log.w(TAG, "This is a python module, but has non-existent imports!")
+        return False
 
     return True
 

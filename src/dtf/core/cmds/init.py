@@ -192,6 +192,9 @@ class init(Module):
 
         set_prop('Info', 'serial', device_serial)
 
+        # Since we have a serial now, lets create a new DtfAdb instance
+        self.adb = DtfAdb.DtfAdb()
+
         # Kernel
         self.adb.shell_command('cat /proc/version')
         kernel = self.adb.get_output()[0]
