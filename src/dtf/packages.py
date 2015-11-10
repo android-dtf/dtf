@@ -23,14 +23,28 @@ from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
                          DTF_MODULES_DIR, DTF_DB, DTF_INCLUDED_DIR)
 
 import imp
+import cStringIO
 import os
 import os.path
 import sys
 import subprocess
+from contextlib import contextmanager
 
 TAG = "dtf-packages"
 
 # Internal
+@contextmanager
+def stdout_redirector(stream):
+
+    """Redirect stdout to string object"""
+
+    old_stdout = sys.stdout
+    sys.stdout = stream
+    try:
+        yield
+    finally:
+        sys.stdout = old_stdout
+
 def __update_path():
 
     """Update path with dtf libraries"""
@@ -138,18 +152,33 @@ def launch_local_module(root, cmd, args):
 
     return __launch_python_module(module_path, cmd, args)
 
-def launch_module(cmd, args):
+def launch_module(cmd, args, redirect=False):
 
     """Launch a global (non-local module)"""
 
     module_path = "%s/%s" % (DTF_MODULES_DIR, cmd)
 
-    # If we are dealing with a bash script, just run and exit.
-    if pm.is_bash_module(module_path):
-        log.d(TAG, "This is a bash module!")
+    # If the caller explicitly asked to save stdout, lets do it.
+    if redirect:
+        captured_f = cStringIO.StringIO()
 
-        return __launch_bash_module(module_path, args)
-    return __launch_python_module(module_path, cmd, args)
+        with stdout_redirector(captured_f):
+
+            if pm.is_bash_module(module_path):
+                rtn = __launch_bash_module(module_path, args)
+            else:
+                rtn = __launch_python_module(module_path, cmd, args)
+
+        out = captured_f.getvalue()
+        captured_f.close()
+
+        return out, rtn
+
+    else:
+        # If we are dealing with a bash script, just run and exit.
+        if pm.is_bash_module(module_path):
+            return __launch_bash_module(module_path, args)
+        return __launch_python_module(module_path, cmd, args)
 
 def launch_binary(binary, args, launcher=None):
 
