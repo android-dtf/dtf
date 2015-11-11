@@ -93,7 +93,7 @@ class DtfAdb(object):
         try:
             output = self.get_output()[0].split('\n')
         except ValueError:
-            return device_list()
+            return device_list
 
         # Remove the "List of devices..."
         output.pop(0)
@@ -127,6 +127,12 @@ class DtfAdb(object):
         """Push a file to a device"""
 
         self.__run_command("push %s %s" % (local_file_name, upload_path))
+
+    def run_as(self, user, cmd):
+
+        """Run as a user"""
+
+        self.shell_command("run-as %s %s" % (user, cmd))
 
     def busybox(self, cmd):
 
