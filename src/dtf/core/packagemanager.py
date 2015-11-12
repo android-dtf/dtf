@@ -88,15 +88,15 @@ class Item(object):
 
         """Create version string"""
 
-        if self.major_version == None and self.minor_version == None:
+        if self.major_version is None and self.minor_version is None:
             return None
         else:
-            if self.major_version == None:
+            if self.major_version is None:
                 mjr = "0"
             else:
                 mjr = self.major_version
 
-            if self.minor_version == None:
+            if self.minor_version is None:
                 mnr = "0"
             else:
                 mnr = self.minor_version
@@ -348,7 +348,7 @@ def parse_python_module(module_path, name):
 
     module = imp.load_source(name, module_path)
 
-    if module == None:
+    if module is None:
         log.e(TAG, "Error launching module '%s'." % name)
         return None
 
@@ -397,7 +397,7 @@ def parse_bash_module(module_path, name):
     # Parse file for "#@", strings, store in dictionary.
     for line in open(module_path).read().split("\n"):
         match = re.match("#@[a-zA-Z ]+:.*", line)
-        if match == None:
+        if match is None:
             continue
 
         try:

@@ -48,10 +48,9 @@ def __get_date():
 
     return strftime("%a %b %d %H:%M:%S %Z %Y", localtime())
 
-# Low level printing function
 def __log(buf, entry):
 
-
+    """Low level print function"""
 
     buf.write(entry)
 

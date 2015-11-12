@@ -79,7 +79,7 @@ _log()
     fi
 
     if [ "${LOG_TO_STDOUT}" -eq "1" ]; then
-        echo -e "${color}${date} ${app} - ${message}";
+        echo -e "${color}${date} ${app} - ${message}${Rst}";
     fi
 }
 
@@ -89,7 +89,7 @@ log_e()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 1 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
-        _log ${COLOR_ERROR} "${caller}/E" $@${Rst}
+        _log ${COLOR_ERROR} "${caller}/E" $@
     fi
 }
 
@@ -99,7 +99,7 @@ log_w()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 2 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
-        _log ${COLOR_WARN} "${caller}/W" $@${Rst}
+        _log ${COLOR_WARN} "${caller}/W" $@
     fi
 }
 
@@ -109,7 +109,7 @@ log_i()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 3 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
-        _log ${COLOR_INFO} "${caller}/I" $@${Rst}
+        _log ${COLOR_INFO} "${caller}/I" $@
     fi
 }
 
@@ -119,7 +119,7 @@ log_v()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 4 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
-        _log ${COLOR_VERB} "${caller}/V" $@${Rst}
+        _log ${COLOR_VERB} "${caller}/V" $@
     fi
 }
 
@@ -129,6 +129,6 @@ log_d()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 5 ]; then
         caller=$(basename ${BASH_SOURCE[1]})
-        _log ${COLOR_DEB} "${caller}/D" $@${Rst}
+        _log ${COLOR_DEB} "${caller}/D" $@
     fi
 }

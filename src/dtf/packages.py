@@ -78,7 +78,7 @@ def __launch_python_module(path, cmd, args):
     # If we got here, we try to load as a python module.
     module = imp.load_source(cmd, path)
 
-    if module == None:
+    if module is None:
         log.e(TAG, "Error launching module '%s'." % cmd)
         return -5
 
@@ -184,7 +184,7 @@ def launch_binary(binary, args, launcher=None):
 
     """Launch a binary"""
 
-    if launcher == None:
+    if launcher is None:
         cmd = ("%s/%s %s" % (DTF_BINARIES_DIR, binary, args)).split(' ')
     else:
         cmd = ("%s %s/%s %s"

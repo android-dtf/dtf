@@ -106,16 +106,16 @@ class pm(Module):
         single_type = parsed_args.single_type
         force_mode = parsed_args.force
 
-        if zip_file_name != None and single_type != None:
+        if zip_file_name is not None and single_type is not None:
             log.e(TAG, "Cannot install both DTF ZIP and single item. Exiting.")
             return -1
 
-        if zip_file_name == None and single_type == None:
+        if zip_file_name is None and single_type is None:
             log.e(TAG, "ZIP mode or single item mode not detected. Exiting.")
             return -2
 
         # Install zip.
-        if zip_file_name != None:
+        if zip_file_name is not None:
             if zipfile.is_zipfile(zip_file_name):
                 return packagemanager.install_zip(zip_file_name,
                                                   force=force_mode)
@@ -134,7 +134,7 @@ class pm(Module):
                     log.i(TAG, "Attempting to auto parse...")
 
                     item = self.auto_parse_module(parsed_args)
-                    if item == None:
+                    if item is None:
                         log.e(TAG, "Error autoparsing module!")
                         return -9
                 else:
@@ -143,7 +143,7 @@ class pm(Module):
             # Not auto
             else:
                 item = self.parse_single_item(parsed_args)
-                if item == None:
+                if item is None:
                     log.e(TAG, "Error parsing single item!")
                     return -5
 
@@ -180,7 +180,7 @@ class pm(Module):
         force_mode = parsed_args.force
 
         name = parsed_args.item_name
-        if name == None:
+        if name is None:
             log.e(TAG, "'--name' is required for delete mode. Exiting.")
             return -1
 
@@ -318,16 +318,16 @@ class pm(Module):
 
         """Format version of item"""
 
-        if minor == None and major == None:
+        if minor is None and major is None:
             return "No Version"
 
         else:
             major_version = major
             minor_version = minor
 
-            if major == None:
+            if major is None:
                 major_version = "0"
-            if minor == None:
+            if minor is None:
                 minor_version = "0"
 
             return "v%s.%s" % (major_version, minor_version)
@@ -589,7 +589,7 @@ class pm(Module):
 
             item = packagemanager.parse_python_module(local_name,
                                                       install_name)
-            if item == None:
+            if item is None:
                 log.e(TAG, "Error parsing Python module!")
                 return None
 
@@ -598,7 +598,7 @@ class pm(Module):
 
             item = packagemanager.parse_bash_module(local_name,
                                                     install_name)
-            if item == None:
+            if item is None:
                 log.e(TAG, "Error parsing Bash module!")
                 return None
 
@@ -615,7 +615,7 @@ class pm(Module):
         item = packagemanager.Item()
 
         name = args.single_name
-        if name == None:
+        if name is None:
             log.e(TAG, "No '--name' specified in single item mode. Exiting.")
             return None
 

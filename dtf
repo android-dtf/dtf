@@ -157,7 +157,7 @@ def main():
     # Ok, now we need to get to the top of the project directory.
     project_root = utils.get_project_root()
 
-    if project_root == None:
+    if project_root is None:
         log.e(TAG, "Unable to find a project root! Is this a dtf project?")
         return -3
 
