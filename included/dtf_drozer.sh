@@ -18,16 +18,21 @@
 
 name=dtf_drozer
 
-
 dtf_drozer()
 {
 
+    # Source to get project dir.
+    . `dtf source`
+    cd $TOP
+
+    serial=$(dtf prop get Info serial)
+
     # Make sure we can get to our device.
     echo "Waiting for device..."
-    adb wait-for-device
+    adb -s ${serial} wait-for-device
 
     # Set up the port forward rules
-    adb forward tcp:31415 tcp:31415
+    adb -s ${serial} forward tcp:31415 tcp:31415
 
     drozer console connect
 

@@ -70,6 +70,9 @@ def __launch_python_module(path, cmd, args):
     mod_class = None
     mod_inst = None
 
+    # We should always be in TOP
+    os.chdir(prop.TOP)
+
     # Next, get the path setup.
     if __update_path() != 0:
         log.e(TAG, "Unable to update library path!")
@@ -107,6 +110,9 @@ def __launch_bash_module(module_path, args):
     # These are used for sourcing
     new_env['DTF_LOG'] = DTF_INCLUDED_DIR + "/dtf_log.sh"
     new_env['DTF_CORE'] = DTF_INCLUDED_DIR + "/dtf_core.sh"
+
+    # We need to be in TOP to get the serial.
+    os.chdir(prop.TOP)
 
     # We want the serial to be already set
     serial = prop.get_prop('Info', 'serial')
