@@ -71,7 +71,8 @@ def __launch_python_module(path, cmd, args):
     mod_inst = None
 
     # We should always be in TOP
-    os.chdir(prop.TOP)
+    if prop.TOP is not None:
+        os.chdir(prop.TOP)
 
     # Next, get the path setup.
     if __update_path() != 0:
