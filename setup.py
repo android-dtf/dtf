@@ -21,14 +21,8 @@ from os.path import expanduser, isfile
 from site import getsitepackages
 
 import src.dtf.constants as constants
-import src.dtf.logging as log
 
 import os
-
-TAG = "dtf-setup"
-
-# No file logging yet please
-log.LOG_LEVEL_FILE = 0
 
 def get_pydtf_dir():
 
@@ -82,14 +76,14 @@ def create_bash_completion():
     completion_output = 'gen/dtf_bash_completion.sh'
 
     if isfile(completion_output):
-        log.d(TAG, "Completion output is already generated.")
+        print "Completion output is already generated, skipping"
         return 0
 
     replacements = [('__REPLACE__', db_file_path)]
 
     if do_replace(completion_template, completion_output, replacements) != 0:
 
-        log.e(TAG, "Unable to perform updates to bash completion file!")
+        print "Unable to perform updates to bash completion file!"
         return -1
 
     return 0
@@ -104,7 +98,7 @@ def create_dtf_core():
     core_output = 'included/dtf_core.sh'
 
     if isfile(core_output):
-        log.d(TAG, "dtf_core.sh output is already generated.")
+        print "dtf_core.sh output is already generated, skipping"
         return 0
 
     replacements.append(('__VERSION__', constants.VERSION))
@@ -112,12 +106,12 @@ def create_dtf_core():
 
     if do_replace(core_template, core_output, replacements) != 0:
 
-        log.e(TAG, "Unable to perform updates to dtf_core.sh file!")
+        print "Unable to perform updates to dtf_core.sh file!"
         return -1
 
     return 0
 
-log.i(TAG, "dtf installation started...")
+print "dtf installation started..."
 
 # First, we need to populate the bash completion
 try:
@@ -126,12 +120,12 @@ except OSError:
     pass
 
 if create_bash_completion() != 0:
-    log.e(TAG, "Unable to generate bash completion file. Exiting!")
+    print "Unable to generate bash completion file. Exiting!"
     exit(-3)
 
 # Next, we also want to generate a dtf_core.sh
 if create_dtf_core() != 0:
-    log.e(TAG, "Unable to generate dtf_core. Exiting!")
+    print "Unable to generate dtf_core. Exiting!"
 
 opts = {}
 
@@ -154,4 +148,4 @@ opts['data_files'] = [
 
 distrib = setup(**opts)
 
-log.i(TAG, "dtf installation completed!")
+print "dtf installation completed!"
