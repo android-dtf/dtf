@@ -1621,8 +1621,8 @@ def install_zip(zip_file_name, force=False):
     try:
         manifest_root = etree.XML(manifest_data)
     except etree.XMLSyntaxError as err:
-        log.e(TAG, "Error parsing XML file '%s' : '%s' (%i). Exiting."
-                % (MANIFEST_NAME, err.strerror, err.errno))
+        log.e(TAG, "Error parsing XML file '%s'! Exiting."
+                                                % MANIFEST_NAME)
         return -4
 
     # Processing Stuff
