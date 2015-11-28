@@ -20,7 +20,7 @@ name=dtf_smali
 
 dtf_smali()
 {
-    jarfile=${DTF_INCLUDED}/smali/smali-2.0.3-686cf35c-dirty.jar
+    jarfile=${DTF_INCLUDED}/smali/smali-2.1.0-3e265038.jar
 
     if [ ! -r "$jarfile" ]; then
         echo "${name}: can't find $jarfile"
