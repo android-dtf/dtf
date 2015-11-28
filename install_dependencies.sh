@@ -78,8 +78,13 @@ echo "[+] Installing general purpose tools..."
 apt-get -qqy install gdebi-core xz-utils sqlite3 build-essential || exit 3
 
 # Android stuff
-echo "[+] Installing required Android tools..."
-apt-get -qqy install android-tools-adb || exit 4
+if [ `which adb` ]; then
+    echo "[+] Skipping adb install..."
+else
+    echo "[+] Installing required Android tools..."
+    apt-get -qqy install android-tools-adb || exit 4
+fi
+
 apt-get -qqy install libncurses5:i386 libstdc++6:i386 zlib1g:i386 || exit 7
 
 echo "[+] Checking for valid python (2.6+)..."
