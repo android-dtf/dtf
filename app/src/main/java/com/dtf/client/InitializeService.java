@@ -26,10 +26,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class InitializeService extends IntentService {
 
-	private final String TAG = "DtfInitializeService";
+    private final String TAG = "DtfInitializeService";
 
     public InitializeService() {
         super("InitializeService");
@@ -56,7 +58,7 @@ public class InitializeService extends IntentService {
     }
 
     private int copyAssets() {
-    	
+
         AssetManager assetManager = getAssets();
         String[] files = null;
         
@@ -66,10 +68,14 @@ public class InitializeService extends IntentService {
             Log.e("tag", "Failed to get asset file list.", e);
             return -1;
         }
-        
+
+        List<String> copy_assets = Arrays.asList("busybox", "makeuserdb-arm-ics", "makeuserdb-arm-jb");
+
         for(String filename : files) {
-        	if (filename.equals("busybox")) {
-        		        		
+            if (copy_assets.contains(filename)) {
+
+                Log.d(TAG, "Copying asset: "+filename);
+
                 InputStream in = null;
                 OutputStream out = null;
                 
@@ -91,17 +97,17 @@ public class InitializeService extends IntentService {
                 } catch(IOException e) {
                     Log.e("tag", "Failed to copy asset file: " + filename, e);
                     return -2;
-                }             		
-        	}
+                }
+            }
         }
         return 0; 
     }
-    
+
     private void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
         while((read = in.read(buffer)) != -1){
           out.write(buffer, 0, read);
         }
-    }	
+    }
 }
