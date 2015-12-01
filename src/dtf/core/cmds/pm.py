@@ -160,8 +160,8 @@ class pm(Module):
             elif single_type == TYPE_PACKAGE:
                 return packagemanager.install_single_package(item,
                                                             force=force_mode)
-
-    def do_delete(self, args):
+    @classmethod
+    def do_delete(cls, args):
 
         """Attempt to remove content"""
 
@@ -297,7 +297,8 @@ class pm(Module):
 
         return rtn
 
-    def do_purge(self):
+    @classmethod
+    def do_purge(cls):
 
         """Purge dtf DB"""
 
@@ -332,7 +333,8 @@ class pm(Module):
 
             return "v%s.%s" % (major_version, minor_version)
 
-    def add_export_content(self, export_items, export_zip):
+    @classmethod
+    def add_export_content(cls, export_items, export_zip):
 
         """Add content to our ZIP file"""
 
@@ -371,7 +373,8 @@ class pm(Module):
 
         return 0
 
-    def generate_export_xml(self, export_items, manifest_f):
+    @classmethod
+    def generate_export_xml(cls, export_items, manifest_f):
 
         """Create and populate manifest"""
 
@@ -387,10 +390,23 @@ class pm(Module):
             item_xml = etree.SubElement(root, 'Item')
             item_xml.attrib['type'] = TYPE_BINARY
             item_xml.attrib['name'] = item.name
-            item_xml.attrib['majorVersion'] = item.major_version
-            item_xml.attrib['minorVersion'] = item.minor_version
-            item_xml.attrib['health'] = item.health
-            item_xml.attrib['author'] = item.author
+
+            if item.major_version is None or item.minor_version is None:
+                log.w(TAG, "Skipping version for %s" % item.name)
+            else:
+                item_xml.attrib['majorVersion'] = item.major_version
+                item_xml.attrib['minorVersion'] = item.minor_version
+
+            if item.health is None:
+                log.w(TAG, "Skipping health for %s" % item.name)
+            else:
+                item_xml.attrib['health'] = item.health
+
+            if item.author is None:
+                log.w(TAG, "Skipping author for %s" % item.name)
+            else:
+                item_xml.attrib['author'] = item.author
+
             item_xml.attrib['localName'] = item.local_name
 
         # Add libraries
@@ -402,10 +418,23 @@ class pm(Module):
             item_xml = etree.SubElement(root, 'Item')
             item_xml.attrib['type'] = TYPE_LIBRARY
             item_xml.attrib['name'] = item.name
-            item_xml.attrib['majorVersion'] = item.major_version
-            item_xml.attrib['minorVersion'] = item.minor_version
-            item_xml.attrib['health'] = item.health
-            item_xml.attrib['author'] = item.author
+
+            if item.major_version is None or item.minor_version is None:
+                log.w(TAG, "Skipping version for %s" % item.name)
+            else:
+                item_xml.attrib['majorVersion'] = item.major_version
+                item_xml.attrib['minorVersion'] = item.minor_version
+
+            if item.health is None:
+                log.w(TAG, "Skipping health for %s" % item.name)
+            else:
+                item_xml.attrib['health'] = item.health
+
+            if item.author is None:
+                log.w(TAG, "Skipping author for %s" % item.name)
+            else:
+                item_xml.attrib['author'] = item.author
+
             item_xml.attrib['localName'] = item.local_name
 
         # Add modules
@@ -417,11 +446,28 @@ class pm(Module):
             item_xml = etree.SubElement(root, 'Item')
             item_xml.attrib['type'] = TYPE_MODULE
             item_xml.attrib['name'] = item.name
-            item_xml.attrib['majorVersion'] = item.major_version
-            item_xml.attrib['minorVersion'] = item.minor_version
-            item_xml.attrib['health'] = item.health
-            item_xml.attrib['about'] = item.about
-            item_xml.attrib['author'] = item.author
+
+            if item.major_version is None or item.minor_version is None:
+                log.w(TAG, "Skipping version for %s" % item.name)
+            else:
+                item_xml.attrib['majorVersion'] = item.major_version
+                item_xml.attrib['minorVersion'] = item.minor_version
+
+            if item.health is None:
+                log.w(TAG, "Skipping health for %s" % item.name)
+            else:
+                item_xml.attrib['health'] = item.health
+
+            if item.about is None:
+                log.w(TAG, "Skipping about for %s" % item.name)
+            else:
+                item_xml.attrib['about'] = item.about
+
+            if item.author is None:
+                log.w(TAG, "Skipping author for %s" % item.name)
+            else:
+                item_xml.attrib['author'] = item.author
+
             item_xml.attrib['localName'] = item.local_name
 
         # Add packages
@@ -433,10 +479,23 @@ class pm(Module):
             item_xml = etree.SubElement(root, 'Item')
             item_xml.attrib['type'] = TYPE_PACKAGE
             item_xml.attrib['name'] = item.name
-            item_xml.attrib['majorVersion'] = item.major_version
-            item_xml.attrib['minorVersion'] = item.minor_version
-            item_xml.attrib['health'] = item.health
-            item_xml.attrib['author'] = item.author
+
+            if item.major_version is None or item.minor_version is None:
+                log.w(TAG, "Skipping version for %s" % item.name)
+            else:
+                item_xml.attrib['majorVersion'] = item.major_version
+                item_xml.attrib['minorVersion'] = item.minor_version
+
+            if item.health is None:
+                log.w(TAG, "Skipping health for %s" % item.name)
+            else:
+                item_xml.attrib['health'] = item.health
+
+            if item.author is None:
+                log.w(TAG, "Skipping author for %s" % item.name)
+            else:
+                item_xml.attrib['author'] = item.author
+
             item_xml.attrib['localName'] = item.local_name
 
         # Write it all out
@@ -446,7 +505,8 @@ class pm(Module):
 
         return rtn
 
-    def generate_export_items(self):
+    @classmethod
+    def generate_export_items(cls):
 
         """Create a list of items"""
 
@@ -562,7 +622,8 @@ class pm(Module):
 
         return 0
 
-    def auto_parse_module(self, args):
+    @classmethod
+    def auto_parse_module(cls, args):
 
         """Automatically parse module and return Item"""
 
@@ -608,7 +669,8 @@ class pm(Module):
 
         return item
 
-    def parse_single_item(self, args):
+    @classmethod
+    def parse_single_item(cls, args):
 
         """Parse args, return Item"""
 
