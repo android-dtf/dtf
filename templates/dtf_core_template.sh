@@ -17,11 +17,7 @@
 # Modules that want to take advantage of built-in functionality should source this file.
 
 # Other stuff.
-<<<<<<< HEAD:dtf_core.sh
-DTF_VERSION=1.2.0
-=======
 DTF_VERSION=__VERSION__
->>>>>>> origin/dev:templates/dtf_core_template.sh
 
 # This allows modules to access dtf resources
 DTF_DIR=~/.dtf
