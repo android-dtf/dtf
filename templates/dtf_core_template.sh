@@ -81,6 +81,12 @@ upsearch () {
 # Top of the project.
 TOP=$(upsearch .dtfini)
 
+# Change back to the launch directory
+dtf_reset_dir() {
+
+    cd "$LAUNCH_DIR"
+}
+
 # Test if a element is in an array
 # arg1 : element
 # arg2 : array

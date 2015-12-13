@@ -111,8 +111,11 @@ def __launch_bash_module(module_path, args):
     # These are used for sourcing
     new_env['DTF_LOG'] = DTF_INCLUDED_DIR + "/dtf_log.sh"
     new_env['DTF_CORE'] = DTF_INCLUDED_DIR + "/dtf_core.sh"
+  
 
     # We need to be in TOP to get the serial.
+    # First, store the current dir.
+    new_env['LAUNCH_DIR'] = os.getcwd() 
     os.chdir(prop.TOP)
 
     # We want the serial to be already set

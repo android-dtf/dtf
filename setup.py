@@ -24,6 +24,15 @@ import src.dtf.constants as constants
 
 import os
 
+def is_root():
+
+    """Determine if the calling user is root"""
+
+    if os.geteuid() != 0:
+        return False
+    else:
+        return True
+
 def get_pydtf_dir():
 
     """Return the location of the dtf dist-packages directory."""
@@ -110,6 +119,10 @@ def create_dtf_core():
         return -1
 
     return 0
+
+if not is_root():
+    print "You must run this script as root!"
+    exit(-1)
 
 print "dtf installation started..."
 
