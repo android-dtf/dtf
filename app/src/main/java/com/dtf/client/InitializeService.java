@@ -40,20 +40,13 @@ public class InitializeService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Process p = null;
-        try {
-            p = Runtime.getRuntime().exec("chmod 777 /data/data/com.dtf.client/files");
-            p.waitFor();
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Unable to open permissions on files directory!");
-        }
-        catch (IOException e) {
-            Log.e(TAG, "Unable to open permissions on files directory!");
-        }
-
         Log.d(TAG, "Copying assets...");
         int resp = copyAssets();
         Log.d(TAG, "Copy completed: " + resp);
+
+        Log.d(TAG, "Setting file directory as executable...");
+        resp = setExecutable();
+        Log.d(TAG, "Set complete: " + resp);
 
     }
 
@@ -101,6 +94,23 @@ public class InitializeService extends IntentService {
             }
         }
         return 0; 
+    }
+
+    private int setExecutable() {
+
+        Process p = null;
+        try {
+            p = Runtime.getRuntime().exec("chmod 777 /data/data/com.dtf.client/files");
+            p.waitFor();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Unable to open permissions on files directory!");
+            return -1;
+        } catch (IOException e) {
+            Log.e(TAG, "Unable to open permissions on files directory!");
+            return -2;
+        }
+
+        return 0;
     }
 
     private void copyFile(InputStream in, OutputStream out) throws IOException {
