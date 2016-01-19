@@ -146,7 +146,7 @@ def main():
     # Almost all commands with dtf require you to be in a project directory,
     # but some don't. Check for those next.
     elif command_name == 'pm':
-        return pkg.launch_builtin_module('pm', sys.argv)
+        return pkg.launch_builtin_module('pm', sys.argv, chdir=False)
 
     elif command_name == 'init':
         return pkg.launch_builtin_module('init', sys.argv)

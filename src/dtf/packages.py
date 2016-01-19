@@ -63,15 +63,15 @@ def __update_path():
 
     return 0
 
-def __launch_python_module(path, cmd, args):
+def __launch_python_module(path, cmd, args, chdir=True):
 
     """Launch a python module by path"""
 
     mod_class = None
     mod_inst = None
 
-    # We should always be in TOP
-    if prop.TOP is not None:
+    # We should always be in TOP (unless we are `pm`)
+    if chdir and prop.TOP is not None:
         os.chdir(prop.TOP)
 
     # Next, get the path setup.
@@ -139,13 +139,13 @@ def __launch_bash_module(module_path, args):
 # End Internal
 
 # Launching stuff
-def launch_builtin_module(cmd, args):
+def launch_builtin_module(cmd, args, chdir=True):
 
     """Launch a dtf built-in python command"""
 
     launch_path = "%s/core/cmds/%s.py" % (utils.get_pydtf_dir(), cmd)
 
-    return __launch_python_module(launch_path, cmd, args)
+    return __launch_python_module(launch_path, cmd, args, chdir=chdir)
 
 
 def launch_local_module(root, cmd, args):
