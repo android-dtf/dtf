@@ -1,21 +1,48 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.dtf.client"
-android:versionCode="1" android:versionName="1.2">
-<uses-sdk android:minSdkVersion="10" />
-<uses-permission android:name="android.permission.READ_LOGS" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<application android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme"
-    android:allowBackup="false">
-    <service android:name="com.dtf.client.InitializeService" android:exported="true">
-        <intent-filter>
-            <action android:name="com.dtf.action.name.INITIALIZE" />
-        </intent-filter>
-    </service>
-    <service android:name="com.dtf.client.HelperService" android:exported="true">
-        <intent-filter>
-            <action android:name="com.dtf.action.name.COPY_TO_SDCARD" />
-        </intent-filter>
-    </service>
-</application>
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dtf.client"
+    android:versionCode="2"
+    android:versionName="1.2">
+
+    <uses-sdk android:minSdkVersion="10" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <service
+            android:name=".InitializeService"
+            android:exported="true"
+            android:permission="android.permission.SET_DEBUG_APP">
+            <intent-filter>
+                <action android:name="com.dtf.action.name.INITIALIZE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".HelperService"
+            android:exported="true"
+            android:permission="android.permission.SET_DEBUG_APP">
+            <intent-filter>
+                <action android:name="com.dtf.action.name.COPY_TO_SDCARD" />
+            </intent-filter>
+        </service>
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".NotificationService"
+            android:exported="false">
+        </service>
+    </application>
 </manifest>

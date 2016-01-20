@@ -48,6 +48,8 @@ public class InitializeService extends IntentService {
         resp = setExecutable();
         Log.d(TAG, "Set complete: " + resp);
 
+        startService(new Intent(this, NotificationService.class));
+
     }
 
     private int copyAssets() {
