@@ -386,6 +386,11 @@ def parse_python_module(module_path, name):
         item.major_version = None
         item.minor_version = None
 
+    # Remove the compiled file name
+    compiled_python_file = "%sc" % module_path
+    if os.path.isfile(compiled_python_file):
+        remove(compiled_python_file)
+
     return item
 
 def parse_bash_module(module_path, name):
