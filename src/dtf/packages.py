@@ -26,6 +26,7 @@ import imp
 import cStringIO
 import os
 import os.path
+import shlex
 import sys
 import subprocess
 from contextlib import contextmanager
@@ -111,11 +112,10 @@ def __launch_bash_module(module_path, args):
     # These are used for sourcing
     new_env['DTF_LOG'] = DTF_INCLUDED_DIR + "/dtf_log.sh"
     new_env['DTF_CORE'] = DTF_INCLUDED_DIR + "/dtf_core.sh"
-  
 
     # We need to be in TOP to get the serial.
     # First, store the current dir.
-    new_env['LAUNCH_DIR'] = os.getcwd() 
+    new_env['LAUNCH_DIR'] = os.getcwd()
     os.chdir(prop.TOP)
 
     # We want the serial to be already set
@@ -194,11 +194,19 @@ def launch_binary(binary, args, launcher=None):
 
     """Launch a binary"""
 
-    if launcher is None:
-        cmd = ("%s/%s %s" % (DTF_BINARIES_DIR, binary, args)).split(' ')
+    path_to_binary = "%s/%s" % (DTF_BINARIES_DIR, binary)
+
+    if args is None:
+        lex_args = []
     else:
-        cmd = ("%s %s/%s %s"
-                % (launcher, DTF_BINARIES_DIR, binary, args)).split(' ')
+        lex_args = shlex.split(args)
+
+    if launcher is None:
+        cmd = [path_to_binary] + lex_args
+
+    else:
+        lex_launcher = shlex.split(launcher)
+        cmd = lex_launcher + [path_to_binary] + lex_args
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=False)

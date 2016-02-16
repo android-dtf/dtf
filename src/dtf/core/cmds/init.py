@@ -177,7 +177,7 @@ class init(Module):
 
         res = raw_input("Would you like to change it? [N/y] ").lower()
 
-        if res in ['y', 'n']:
+        if res == 'y':
             return raw_input("Please enter a custom version string: ")
         else:
             return version_string
