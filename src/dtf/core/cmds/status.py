@@ -37,8 +37,7 @@ class status(Module):
         for device in devices:
             if device['serial'] == serial:
                 found = True
-
-            break
+                break
 
         print "Status:",
 

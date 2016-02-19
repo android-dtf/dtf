@@ -22,6 +22,10 @@ from dtf.constants import DTF_CLIENT
 
 ADB_BINARY = "adb"
 
+STATUS_DEVICE = 'device'
+STATUS_OFFLINE = 'offline'
+STATUS_BOOTLOADER = 'bootloader'
+
 class DtfAdb(object):
 
     """Python wrapper class for `adb`"""
@@ -108,11 +112,11 @@ class DtfAdb(object):
         for device in output:
 
             try:
-                serial, device_type = device.split('\t')
+                serial, status = device.split('\t')
             except ValueError:
                 continue
 
-            device_list.append({'serial' : serial, 'type' : device_type})
+            device_list.append({'serial' : serial, 'status' : status})
 
         return device_list
 

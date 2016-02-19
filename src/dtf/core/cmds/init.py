@@ -182,9 +182,20 @@ class init(Module):
         else:
             return version_string
 
-    def initialize_device(self, device_serial):
+    def initialize_device(self, init_device):
 
         """Perform the actual initialization"""
+
+        # Is this device offline?
+        device_status = init_device['status']
+        if device_status != DtfAdb.STATUS_DEVICE:
+            log.e(TAG, "Cannot initialize offline/bootloader device!")
+            log.e(TAG, "Try either: ")
+            log.e(TAG, "    1. Run: adb kill-server && dtf init")
+            log.e(TAG, "    2. Reboot the device.")
+            return -2
+
+        device_serial = init_device['serial']
 
         log.d(TAG, "Preparing device: %s" % device_serial)
 
@@ -262,11 +273,6 @@ class init(Module):
 
         return 0
 
-    def get_devices(self):
-
-        """Get all connected devices"""
-        return [device['serial'] for device in self.adb.get_devices()]
-
     def do_init(self):
 
         """Perform the initialization"""
@@ -297,14 +303,17 @@ class init(Module):
 
         time.sleep(1)
 
-        devices = self.get_devices()
+        devices = self.adb.get_devices()
 
         if len(devices) == 0:
             log.e(TAG, "No devices found, exiting.")
             return -2
 
         elif len(devices) == 1:
-            serial = devices[0]
+
+            init_device = devices[0]
+            serial = init_device['serial']
+
             res = raw_input("Got serial '%s', is this correct? [Y/n] "
                                 % serial)
             if res.lower() == 'n':
@@ -314,20 +323,20 @@ class init(Module):
             print "Found many devices. Please select from the following list:"
 
             i = 1
-            for device in devices:
-                print "#%d. %s" % (i, device)
+            for serial, status in devices:
+                print "#%d. %s (%s)" % (i, serial, status)
                 i += 1
 
             res = raw_input("\nWhich device #? ")
 
             try:
                 int_res = int(res)
-                serial = devices[int_res - 1]
+                init_device = devices[int_res - 1]
             except (ValueError, IndexError):
                 log.e(TAG, "Invalid input!")
                 return -4
 
-        if self.initialize_device(serial) != 0:
+        if self.initialize_device(init_device) != 0:
             log.e(TAG, "Error initializing device!")
             return -5
         else:
