@@ -26,7 +26,7 @@ from dtf.constants import DTF_CLIENT
 from argparse import ArgumentParser
 from os.path import isfile
 
-DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.2-2.apk" %
+DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.2-3.apk" %
                                                 utils.get_pydtf_dir())
 
 DEFAULT_PATH = '/mnt/sdcard'
