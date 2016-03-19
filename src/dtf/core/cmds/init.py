@@ -37,6 +37,11 @@ LOCAL_MODULES_DIRECTORY = 'local_modules'
 TYPE_DALVIK = 'Dalvik'
 TYPE_ART = 'ART'
 
+SEANDROID_UNKNOWN = "Unknown"
+SEANDROID_PERMISSIVE = "Permissive"
+SEANDROID_ENFORCING = "Enforcing"
+SEANDROID_OFF = "Off"
+
 # http://stackoverflow.com/questions/1158076/implement-touch-using-python
 def touch(file_name, times=None):
 
@@ -163,6 +168,24 @@ class init(Module):
                 log.d(TAG, "Using Dalvik based on prop.")
                 return TYPE_DALVIK
 
+    def determine_seandroid_state(self):
+
+        """Determine if SEAndroid is used"""
+
+        self.adb.shell_command("getenforce")
+
+        response = self.adb.get_output()[0].lower()
+
+        if response.find("not found") != -1:
+            return SEANDROID_OFF
+        elif response == "permissive":
+            return SEANDROID_PERMISSIVE
+        elif response == "enforcing":
+            return SEANDROID_ENFORCING
+        else:
+            log.w(TAG, "Unable to determine SEAndroid state!")
+            return SEANDROID_UNKNOWN
+
     def generate_version_string(self):
 
         """Generate the version string to use"""
@@ -257,6 +280,12 @@ class init(Module):
 
         log.d(TAG, "Determined runtime: %s" % vm_type)
         set_prop('Info', 'vmtype', vm_type)
+
+        # Determine SEAndroid
+        se_state = self.determine_seandroid_state()
+
+        log.d(TAG, "Determine SEAndroid state: %s" % se_state)
+        set_prop('Info', 'seandroid-state', se_state)
 
         # Make project directories
         mkdir(REPORTS_DIRECTORY)
