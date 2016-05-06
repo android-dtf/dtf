@@ -16,6 +16,8 @@ import java.io.OutputStream;
 public class HelperService extends IntentService {
 
     private static final String ACTION_COPY_TO_SDCARD = "com.dtf.action.name.COPY_TO_SDCARD";
+    private static final String ACTION_RESTART_SOCKET = "com.dtf.action.name.RESTART_SOCKET";
+
     private static final String COPY_FILENAME = "filename";
     private static final String TAG = "DtfHelperService";
 
@@ -32,6 +34,9 @@ public class HelperService extends IntentService {
                 final String file_name = intent.getStringExtra(COPY_FILENAME);
                 handleActionCopyToSdCard(file_name);
             }
+            if (ACTION_RESTART_SOCKET.equals(action)) {
+                handleActionRestartSocket();
+            }
         }
     }
 
@@ -44,6 +49,31 @@ public class HelperService extends IntentService {
 
         Log.d(TAG, "Copying file '"+file_name+"' to SDCard...");
         copyToSdCard(file_name);
+    }
+
+    private void handleActionRestartSocket() {
+
+        if (SocketService.isRunning) {
+
+            // First stop the socket service.
+            Log.d(TAG, "Stopping the socket service...");
+
+            this.stopService(new Intent(this, SocketService.class));
+
+        } else {
+            Log.d(TAG, "Socket service is not running, skipping...");
+        }
+
+        // Give it 2 seconds to cool down
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Now start it!
+        Log.d(TAG, "Starting socket service!");
+        this.startService(new Intent(this, SocketService.class));
     }
 
     private void copyToSdCard(String file_name) {

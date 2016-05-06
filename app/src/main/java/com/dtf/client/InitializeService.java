@@ -26,12 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
 
 public class InitializeService extends IntentService {
 
     private final String TAG = "DtfInitializeService";
+    private final String BUSYBOX_BINARY = "busybox";
 
     public InitializeService() {
         super("InitializeService");
@@ -48,7 +47,11 @@ public class InitializeService extends IntentService {
         resp = setExecutable();
         Log.d(TAG, "Set complete: " + resp);
 
-        startService(new Intent(this, NotificationService.class));
+        /* Start the notification banner */
+        this.startService(new Intent(this, NotificationService.class));
+
+        /* Start the LocalSocketServer */
+        this.startService(new Intent(this, SocketService.class));
 
     }
 
@@ -64,16 +67,14 @@ public class InitializeService extends IntentService {
             return -1;
         }
 
-        List<String> copy_assets = Arrays.asList("busybox", "makeuserdb-arm-ics", "makeuserdb-arm-jb");
-
         for(String filename : files) {
-            if (copy_assets.contains(filename)) {
+            if (filename.equals(BUSYBOX_BINARY)) {
 
                 Log.d(TAG, "Copying asset: "+filename);
 
                 InputStream in = null;
                 OutputStream out = null;
-                
+
                 try {
                   in = assetManager.open(filename);
                   File outFile = new File(this.getFilesDir()+"/", filename);
@@ -85,10 +86,10 @@ public class InitializeService extends IntentService {
                   out.flush();
                   out.close();
                   out = null;
-                  
+
                   // Make it world executable.
                   outFile.setExecutable(true, false);
- 
+
                 } catch(IOException e) {
                     Log.e("tag", "Failed to copy asset file: " + filename, e);
                     return -2;
