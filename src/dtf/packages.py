@@ -129,9 +129,7 @@ def __launch_bash_module(module_path, args):
             % module_path)
         return -5
 
-    lines_iterator = iter(popen.stdout.readline, b"")
-
-    for line in lines_iterator:
+    for line in iter(popen.stdout.readline, ''):
         sys.stdout.write(line)
 
     return popen.returncode

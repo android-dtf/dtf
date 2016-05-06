@@ -17,25 +17,30 @@
 
 from dtf.module import Module
 
-import dtf.adb as DtfAdb
+from dtf.adb import DtfAdb
+from dtf.client import (DtfClient, RESP_OK, RESP_NO_READ, RESP_ERROR,
+                        RESP_NO_WRITE, RESP_EXISTS, RESP_NO_EXIST)
+
 import dtf.logging as log
 import dtf.properties as prop
 import dtf.core.utils as utils
 
 from dtf.constants import DTF_CLIENT
 from argparse import ArgumentParser
-from os.path import isfile
 
-DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.2-3.apk" %
+import os.path
+
+DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.3-1.apk" %
                                                 utils.get_pydtf_dir())
 
-DEFAULT_PATH = '/mnt/sdcard'
+DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 
 class client(Module):
 
     """Module class for dtf client"""
 
-    adb = DtfAdb.DtfAdb()
+    adb = DtfAdb()
+    client = DtfClient()
 
     @classmethod
     def usage(cls):
@@ -44,10 +49,12 @@ class client(Module):
 
         print "dtf Client Manager"
         print "Subcommands:"
+        print "    download   Download a file using dtfClient."
         print "    install    Install the dtf client on device."
         print "    status     Print the install status of the client."
         print "    remove     Uninstall the dtf client."
-        print "    upload     Upload file to dtf client directory."
+        print "    restart    Restart dtfClient's socket service."
+        print "    upload     Upload file using dtfClient."
         print ""
 
         return 0
@@ -109,40 +116,142 @@ class client(Module):
         """Upload file to dtf client directory"""
 
         parser = ArgumentParser(prog='client upload',
-                        description='Upload file to device.')
-        parser.add_argument('--path', metavar="val", dest='upload_path',
-                        default=DEFAULT_PATH, help="Specify a upload point.")
+                        description='Upload file to device with dtfClient.')
+        parser.add_argument('--path', dest='upload_path',
+                        default=None, help="Specify a upload point.")
         parser.add_argument('file_name', type=str,
                          help='The file to upload.')
 
         args = parser.parse_args(args)
 
         file_name = args.file_name
-        upload_path = args.upload_path
 
-        if not isfile(file_name):
+        if args.upload_path is None:
+            upload_file_name = os.path.basename(file_name)
+            upload_path = "%s/%s" % (DEFAULT_UPLOAD_PATH, upload_file_name)
+        else:
+            upload_path = args.upload_path
+
+        if not os.path.isfile(file_name):
             log.e(self.name, "File does not exist: %s" % file_name)
             return -1
 
         log.i(self.name, "Waiting for device to be connected...")
         self.adb.wait_for_device()
+        log.i(self.name, "Device connected!")
 
         # Is client installed?
         if not self.adb.is_installed(DTF_CLIENT):
             log.e(self.name, "dtf Client is not installed!")
             return -1
 
-        self.adb.push(file_name, upload_path)
+        resp = self.client.upload_file(file_name, upload_path)
 
-        upload_file_name = "%s/%s" % (upload_path, file_name)
-        dtf_upload_path = "/data/data/%s/" % DTF_CLIENT
+        if resp == RESP_OK:
+            log.i(self.name, "File upload success!")
+            return 0
+        elif resp == RESP_ERROR:
+            log.e(self.name, "General error!")
+            return -1
+        elif resp == RESP_EXISTS:
+            log.e(self.name, "Remote file exist!s")
+            return -1
+        elif resp == RESP_NO_WRITE:
+            log.e(self.name, "No write permissions!")
+            return -1
 
-        cmd = ("run-as %s cp %s %s" %
-                (DTF_CLIENT, upload_file_name, dtf_upload_path))
+        return 0
 
+    def do_download(self, args):
+
+        """Download a file using the dtfClient API"""
+
+        parser = ArgumentParser(prog='client download',
+                        description='Download file from device with dtfClient.')
+        parser.add_argument('--path', dest='download_path',
+                        default=None, help="Specify local path.")
+        parser.add_argument('file_name', type=str,
+                         help='The file to download.')
+
+        args = parser.parse_args(args)
+        file_name = args.file_name
+
+        if args.download_path is None:
+            local_path = os.path.basename(file_name)
+        else:
+            local_path = args.download_path
+
+        if os.path.isfile(local_path):
+            log.e(self.name, "Local file '%s' already exists!" % local_path)
+            return -1
+
+        log.i(self.name, "Waiting for connected device...")
+        self.adb.wait_for_device()
+        log.i(self.name, "Device connected!")
+
+        # Is client installed?
+        if not self.adb.is_installed(DTF_CLIENT):
+            log.e(self.name, "dtf Client is not installed!")
+            return -1
+
+        resp = self.client.download_file(file_name, local_path)
+
+        if resp == RESP_OK:
+            log.i(self.name, "File download success!")
+            return 0
+        elif resp == RESP_ERROR:
+            log.e(self.name, "General error!")
+            return -1
+        elif resp == RESP_NO_EXIST:
+            log.e(self.name, "Remote file doesnt exist!")
+            return -1
+        elif resp == RESP_NO_READ:
+            log.e(self.name, "No read permissions!")
+            return -1
+
+    def do_restart(self):
+
+        """Restart the socket service on the dtfClient"""
+
+        log.i(self.name, "Waiting for device to be connected...")
+        self.adb.wait_for_device()
+        log.i(self.name, "Connected!")
+
+        cmd = "am startservice -a com.dtf.action.name.RESTART_SOCKET"
         self.adb.shell_command(cmd)
 
         return 0
+
+    def do_execute(self, args):
+
+        """Execute a command using the dtfClient"""
+
+        if len(args) != 1:
+            print "Usage:"
+            print "dtf client execute [command]"
+            return -1
+
+        command_string = args.pop()
+
+        log.i(self.name, "Waiting for connected device...")
+        self.adb.wait_for_device()
+        log.i(self.name, "Device connected!")
+
+        # Is client installed?
+        if not self.adb.is_installed(DTF_CLIENT):
+            log.e(self.name, "dtf Client is not installed!")
+            return -1
+
+        response, resp_code = self.client.execute_command(command_string)
+
+        if resp_code == RESP_OK:
+            print response
+            return 0
+
+        else:
+            log.e(self.name, "Something went wrong with running the command: %d"
+                                                                % resp_code)
+            return -1
 
     def execute(self, args):
 
@@ -168,6 +277,15 @@ class client(Module):
 
         elif sub_cmd == 'upload':
             rtn = self.do_upload(args)
+
+        elif sub_cmd == 'download':
+            rtn = self.do_download(args)
+
+        elif sub_cmd == 'restart':
+            rtn = self.do_restart()
+
+        elif sub_cmd == 'execute':
+            rtn = self.do_execute(args)
 
         else:
             print "Sub-command '%s' not found!" % sub_cmd

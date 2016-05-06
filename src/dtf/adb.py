@@ -194,6 +194,22 @@ class DtfAdb(object):
         else:
             return 1
 
+    def add_forward(self, local, remote):
+
+        """Add an adb forward rule"""
+
+        forward_string = "forward %s %s" % (local, remote)
+
+        self.__run_command(forward_string)
+
+    def remove_forward(self, local):
+
+        """Remove a adb forward rule"""
+
+        remove_string = "forward --remove %s" % local
+
+        self.__run_command(remove_string)
+
     def kill_server(self):
 
         """Kill the adb daemon"""

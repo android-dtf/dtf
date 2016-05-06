@@ -197,6 +197,7 @@ class init(Module):
 
         print "dtf would like to use the following version string:"
         print "\n%s\n" % version_string
+        print "The version string is only used to identify this project.\n"
 
         res = raw_input("Would you like to change it? [N/y] ").lower()
 

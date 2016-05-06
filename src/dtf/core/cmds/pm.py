@@ -304,7 +304,8 @@ class pm(Module):
 
         print "!!!! WARNING !!!!"
         print ""
-        print "This will delete all content, and reset the database!!"
+        print "This will delete all installed content and reset the database!!"
+        print "Note: This will not delete any project data."
         print "Are you sure you want to do this? [N/y]",
 
         res = raw_input()
