@@ -230,9 +230,11 @@ public class SocketService
                     if (bytesLeft <= READ_SIZE_TRANSFER) {
 
                         byte[] chunk = new byte[(int)bytesLeft];
-                        fis.read(chunk);
 
+                        fis.read(chunk);
                         output.write(chunk);
+
+                        fis.close();
                         break;
                     }
 
@@ -270,6 +272,7 @@ public class SocketService
                         byte[] chunk = readRawChunk((int) bytesLeft, input);
 
                         fos.write(chunk);
+                        fos.close();
                         break;
                     }
 
