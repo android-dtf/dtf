@@ -28,10 +28,11 @@ def aapt(cmd):
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 
-    stdout = proc.stdout.read().split("\n")
-    stderr = proc.stderr.read().split("\n")
+    stdout, stderr = proc.communicate()
 
-    rtn = proc.wait()
+    stdout = stdout.split("\n")
+    stderr = stderr.split("\n")
+    rtn = proc.returncode
 
     return stdout, stderr, rtn
 
@@ -48,10 +49,11 @@ def apktool(cmd):
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 
-    stdout = proc.stdout.read().split("\n")
-    stderr = proc.stderr.read().split("\n")
+    stdout, stderr = proc.communicate()
 
-    rtn = proc.wait()
+    stdout = stdout.split("\n")
+    stderr = stderr.split("\n")
+    rtn = proc.returncode
 
     return stdout, stderr, rtn
 
@@ -67,10 +69,12 @@ def smali(cmd):
     cmd = ("%s %s %s" % (java_args, smali_path, cmd)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
-    stdout = proc.stdout.read().split("\n")
-    stderr = proc.stderr.read().split("\n")
 
-    rtn = proc.wait()
+    stdout, stderr = proc.communicate()
+
+    stdout = stdout.split("\n")
+    stderr = stderr.split("\n")
+    rtn = proc.returncode
 
     return stdout, stderr, rtn
 
@@ -86,10 +90,12 @@ def baksmali(cmd):
     cmd = ("%s %s %s" % (java_args, baksmali_path, cmd)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
-    stdout = proc.stdout.read().split("\n")
-    stderr = proc.stderr.read().split("\n")
 
-    rtn = proc.wait()
+    stdout, stderr = proc.communicate()
+
+    stdout = stdout.split("\n")
+    stderr = stderr.split("\n")
+    rtn = proc.returncode
 
     return stdout, stderr, rtn
 
@@ -112,10 +118,10 @@ def axmlprinter2(manifest_file_name, out_file_name):
         % (java_args, axmlprinter2_path, manifest_file_name)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
-    stdout = proc.stdout.read()
 
-    rtn = proc.wait()
+    stdout = proc.communicate()[0]
 
+    rtn = proc.returncode
 
     if len(stdout) == 0:
         return -1
