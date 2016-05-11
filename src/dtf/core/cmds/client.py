@@ -19,7 +19,8 @@ from dtf.module import Module
 
 from dtf.adb import DtfAdb
 from dtf.client import (DtfClient, RESP_OK, RESP_NO_READ, RESP_ERROR,
-                        RESP_NO_WRITE, RESP_EXISTS, RESP_NO_EXIST)
+                        RESP_NO_WRITE, RESP_EXISTS, RESP_NO_EXIST,
+                        ERR_SOCK)
 
 import dtf.logging as log
 import dtf.properties as prop
@@ -31,7 +32,7 @@ from argparse import ArgumentParser
 import os.path
 
 DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.3-1.apk" %
-                                                utils.get_pydtf_dir())
+                   utils.get_pydtf_dir())
 
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 
@@ -116,11 +117,11 @@ class client(Module):
         """Upload file to dtf client directory"""
 
         parser = ArgumentParser(prog='client upload',
-                        description='Upload file to device with dtfClient.')
+                                description='Upload file to device with dtfClient.')
         parser.add_argument('--path', dest='upload_path',
-                        default=None, help="Specify a upload point.")
+                            default=None, help="Specify a upload point.")
         parser.add_argument('file_name', type=str,
-                         help='The file to upload.')
+                            help='The file to upload.')
 
         args = parser.parse_args(args)
 
@@ -154,10 +155,16 @@ class client(Module):
             log.e(self.name, "General error!")
             return -1
         elif resp == RESP_EXISTS:
-            log.e(self.name, "Remote file exist!s")
+            log.e(self.name, "Remote file exist!")
             return -1
         elif resp == RESP_NO_WRITE:
             log.e(self.name, "No write permissions!")
+            return -1
+        elif resp == ERR_SOCK:
+            log.e(self.name, "Socket error!")
+            return -1
+        else:
+            log.e(self.name, "Unknown response, cannot proceed.")
             return -1
 
         return 0
@@ -167,11 +174,11 @@ class client(Module):
         """Download a file using the dtfClient API"""
 
         parser = ArgumentParser(prog='client download',
-                        description='Download file from device with dtfClient.')
+                                description='Download file from device with dtfClient.')
         parser.add_argument('--path', dest='download_path',
-                        default=None, help="Specify local path.")
+                            default=None, help="Specify local path.")
         parser.add_argument('file_name', type=str,
-                         help='The file to download.')
+                            help='The file to download.')
 
         args = parser.parse_args(args)
         file_name = args.file_name
@@ -207,6 +214,12 @@ class client(Module):
             return -1
         elif resp == RESP_NO_READ:
             log.e(self.name, "No read permissions!")
+            return -1
+        elif resp == ERR_SOCK:
+            log.e(self.name, "Socket error!")
+            return -1
+        else:
+            log.e(self.name, "Unknown response, cannot proceed.")
             return -1
 
     def do_restart(self):
@@ -247,10 +260,12 @@ class client(Module):
         if resp_code == RESP_OK:
             print response
             return 0
-
+        elif resp_code == ERR_SOCK:
+            log.e(self.name, "Socket error!")
+            return -1
         else:
             log.e(self.name, "Something went wrong with running the command: %d"
-                                                                % resp_code)
+                  % resp_code)
             return -1
 
     def execute(self, args):

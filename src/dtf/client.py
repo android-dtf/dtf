@@ -34,6 +34,8 @@ RESP_NO_READ = chr(-2 % 256)
 RESP_EXISTS = chr(-3 % 256)
 RESP_NO_WRITE = chr(-4 % 256)
 
+ERR_SOCK = -1
+
 SIZE_LONG = 8
 SIZE_INTEGER = 4
 
@@ -43,9 +45,9 @@ SIZE_TRANSFER = 1024
 
 TAG = "dtfClient"
 
-DTF_SOCKET = "\0dtf_socket"
+DTF_SOCKET = "dtf_socket"
 
-FORWARD_SOCKET = "localabstract:dtf_socket"
+FORWARD_SOCKET = "localabstract:" + DTF_SOCKET
 
 def bytes_to_int(byte_stream):
 
@@ -94,16 +96,54 @@ class DtfClient(object):
         self.adb.remove_forward(FORWARD_SOCKET)
 
     @classmethod
-    def __do_download(cls, remote_file_name, local_file_name):
+    def __sock_connect(cls, socket_name,
+                       socket_family=socket.AF_UNIX,
+                       socket_type=socket.SOCK_STREAM):
+
+        """ Connect to socket_name.
+            First try abstract and fall back to filesystem
+        """
+
+        # Create an unbound and not-connected socket.
+        try:
+            sock = socket.socket(socket_family, socket_type)
+        except socket.error as msg:
+            log.e(TAG, "Socket creation failed: " + msg)
+            return None
+
+        try:
+            log.d(TAG, "Connecting to abstract socket...")
+
+            # \0 denotes an abstract socket
+            sock.connect('\0' + socket_name)
+        except socket.error:
+            # abstract socket connection failed - it probably doesn't exist
+            # see jakev/dtf GitHub Issue #35
+            log.d(TAG, "Connecting to abstract socket failed. Does it exist?")
+
+            try:
+                log.d(TAG, "Connecting to filesystem socket...")
+                sock.connect('/tmp/' + socket_name)
+            except socket.error as msg:
+                log.d(TAG, "Connecting to filesystem socket failed: " + msg)
+                log.e(TAG, "Connecting to socket failed, giving up.")
+                return None
+            else:
+                log.d(TAG, "Connected to filesystem socket!")
+        else:
+            log.d(TAG, "Connected to abstract socket!")
+
+        return sock
+
+    def __do_download(self, remote_file_name, local_file_name):
 
         """Download a file using the dtfClient"""
 
-        # Create an unbound and not-connected socket.
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-        log.d(TAG, "Connecting to socket...")
-        sock.connect(DTF_SOCKET)
-        log.d(TAG, "Connected!")
+        # Get a connected socket
+        sock = self.__sock_connect(DTF_SOCKET)
+        if sock is None:
+            log.e(TAG, "Cannot __do_download, socket failure.")
+            return ERR_SOCK
 
         sock.send(CMD_DOWNLOAD)
 
@@ -153,22 +193,20 @@ class DtfClient(object):
 
         return 0
 
-    @classmethod
-    def __do_upload(cls, local_file_name, remote_file_name):
+    def __do_upload(self, local_file_name, remote_file_name):
 
         """Do file upload"""
 
-        # Create an unbound and not-connected socket.
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        # Get a connected socket
+        sock = self.__sock_connect(DTF_SOCKET)
+        if sock is None:
+            log.e(TAG, "Cannot __do_upload, socket failure.")
+            return ERR_SOCK
 
         statinfo = os.stat(local_file_name)
         file_size = statinfo.st_size
 
         local_f = open(local_file_name, 'rb')
-
-        log.d(TAG, "Connecting to socket...")
-        sock.connect(DTF_SOCKET)
-        log.d(TAG, "Connected!")
 
         sock.send(CMD_UPLOAD)
 
@@ -215,18 +253,17 @@ class DtfClient(object):
 
         return RESP_OK
 
-    @classmethod
-    def __do_execute(cls, command_string):
+    def __do_execute(self, command_string):
 
         """Do file execute"""
 
         response = None
 
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-        log.d(TAG, "Connecting to socket...")
-        sock.connect(DTF_SOCKET)
-        log.d(TAG, "Connected!")
+        # Get a connected socket
+        sock = self.__sock_connect(DTF_SOCKET)
+        if sock is None:
+            log.e(TAG, "Cannot __do_execute, socket failure.")
+            return ERR_SOCK
 
         sock.send(CMD_EXECUTE)
 
