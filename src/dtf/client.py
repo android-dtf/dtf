@@ -34,6 +34,8 @@ RESP_NO_READ = chr(-2 % 256)
 RESP_EXISTS = chr(-3 % 256)
 RESP_NO_WRITE = chr(-4 % 256)
 
+ERR_SOCK = -1
+
 SIZE_LONG = 8
 SIZE_INTEGER = 4
 
@@ -141,7 +143,7 @@ class DtfClient(object):
         sock = self.__sock_connect(DTF_SOCKET)
         if sock is None:
             log.e(TAG, "Cannot __do_download, socket failure.")
-            return -1
+            return ERR_SOCK
 
         sock.send(CMD_DOWNLOAD)
 
@@ -199,7 +201,7 @@ class DtfClient(object):
         sock = self.__sock_connect(DTF_SOCKET)
         if sock is None:
             log.e(TAG, "Cannot __do_upload, socket failure.")
-            return -1
+            return ERR_SOCK
 
         statinfo = os.stat(local_file_name)
         file_size = statinfo.st_size
@@ -261,7 +263,7 @@ class DtfClient(object):
         sock = self.__sock_connect(DTF_SOCKET)
         if sock is None:
             log.e(TAG, "Cannot __do_execute, socket failure.")
-            return -1
+            return ERR_SOCK
 
         sock.send(CMD_EXECUTE)
 
