@@ -23,7 +23,7 @@ dtf_drozer()
 
     # Source to get project dir.
     . `dtf source`
-    cd $TOP
+    cd "$TOP"
 
     serial=$(dtf prop get Info serial)
 
