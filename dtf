@@ -111,8 +111,8 @@ def check_dependencies():
 
         java_ver = out.split('\n')[0]
 
-        if java_ver.find("1.7") == -1:
-            log.e(TAG, "dtf requires Java 1.7!")
+        if java_ver.find("1.7") == -1 and java_ver.find("1.8") == -1:
+            log.e(TAG, "dtf requires Java 1.7 or 1.8!")
             return -5
     else:
         log.e(TAG, "dtf requires Java 1.7!")
