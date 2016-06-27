@@ -29,6 +29,7 @@ DTF_INCLUDED=__INCLUDED__
 
 # Additional sourcing. Move this eventually?
 . ${DTF_INCLUDED}/dtf_aapt.sh
+. ${DTF_INCLUDED}/dtf_abe.sh
 . ${DTF_INCLUDED}/dtf_apksign.sh
 . ${DTF_INCLUDED}/dtf_apktool.sh
 . ${DTF_INCLUDED}/dtf_baksmali.sh
