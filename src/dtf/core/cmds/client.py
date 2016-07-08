@@ -51,7 +51,7 @@ class client(Module):
         print "dtf Client Manager"
         print "Subcommands:"
         print "    download   Download a file using dtfClient."
-        print "    execute    Execute a command using dtfClient"
+        print "    execute    Execute a command using dtfClient."
         print "    install    Install the dtf client on device."
         print "    status     Print the install status of the client."
         print "    remove     Uninstall the dtf client."
