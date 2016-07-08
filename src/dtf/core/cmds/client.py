@@ -264,7 +264,7 @@ class client(Module):
             log.e(self.name, "Socket error!")
             return -1
         else:
-            log.e(self.name, "Something went wrong with running the command: %d"
+            log.e(self.name, "Something went wrong with running the command: %s"
                   % resp_code)
             return -1
 
