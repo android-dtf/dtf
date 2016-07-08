@@ -25,6 +25,7 @@ public class SocketService
     private static final String SOCKET_ADDRESS = "dtf_socket";
     private static final String TAG = "SocketService";
 
+    private static final int UID_ROOT = 0;
     private static final int UID_SHELL = 2000;
     private static final int GID_SHELL = 2000;
 
@@ -103,8 +104,7 @@ public class SocketService
                         OutputStream output = receiver.getOutputStream();
                         Credentials peerCredentials = receiver.getPeerCredentials();
 
-                        if ((peerCredentials.getUid() != UID_SHELL)
-                                || (peerCredentials.getGid() != GID_SHELL)) {
+                        if (!checkPermissions(peerCredentials)) {
 
                             Log.w(TAG, "Unauthenticated attempt to access dtfClient socket!");
                             receiver.close();
@@ -150,6 +150,25 @@ public class SocketService
             }
 
             Log.d(TAG, "Socket thread is exiting");
+        }
+
+        private boolean checkPermissions(Credentials peerCredentials) {
+
+            int uid = peerCredentials.getUid();
+            int gid = peerCredentials.getGid();
+
+            // Explicitly trust root
+            if (uid == UID_ROOT) {
+                return true;
+            }
+            // Shell user is trusted
+            else if ((uid == UID_SHELL) && (gid == GID_SHELL)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+
         }
 
         private String readChunk(int chunk_size, InputStream input)
