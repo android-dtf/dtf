@@ -15,13 +15,11 @@
 
 # This this is a wraper script for "abe".
 
-name=dtf_abe
-
 dtf_abe()
 {
     jarfile=${DTF_INCLUDED}/abe/abe-all-b61ce1.jar
     if [ ! -r "$jarfile" ]; then
-        echo "${name}: can't find $jarfile"
+        echo "dtf_abe: can't find $jarfile"
         return 1
     fi
 

@@ -16,14 +16,12 @@
 
 # This this is a wraper script for "axmlprinter2".
 
-name=dtf_axmlprinter2
-
 dtf_axmlprinter2()
 {
     jarfile=${DTF_INCLUDED}/axmlprinter2/axmlprinter2.jar
 
     if [ ! -r "$jarfile" ]; then
-        echo "${name}: can't find $jarfile"
+        echo "dtf_axmlprinter2: can't find $jarfile"
         return 1
     fi
 

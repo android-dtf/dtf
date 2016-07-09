@@ -16,8 +16,6 @@
 
 # This this is a wraper script for "dex2jar".
 
-name=dtf_dex2jar
-
 function dtf_dex2jar()
 {
 

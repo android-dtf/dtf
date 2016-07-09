@@ -16,8 +16,6 @@
 
 # This script is a DTF wrapper for Dex2Jar's "apksign".
 
-name=dtf_apksign
-
 dtf_apksign()
 {
     _classpath="."

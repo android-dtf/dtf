@@ -16,8 +16,6 @@
 
 # This this is a wraper script for spawning a adb shell.
 
-name=dtf_shell
-
 dtf_shell()
 {
     ANDROID_SERIAL=$(dtf prop get Info serial) adb shell "$@"

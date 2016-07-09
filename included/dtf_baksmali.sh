@@ -16,14 +16,12 @@
 
 # This this is a wraper script for "baksmali".
 
-name=dtf_baksmali
-
 dtf_baksmali()
 {
     jarfile=${DTF_INCLUDED}/smali/baksmali-2.1.0-3e265038.jar
 
     if [ ! -r "$jarfile" ]; then 
-        echo "${name}: can't find $jarfile"
+        echo "dtf_baksmali: can't find $jarfile"
         return 1
     fi
 

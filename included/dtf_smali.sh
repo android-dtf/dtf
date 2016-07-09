@@ -16,14 +16,12 @@
 
 # This this is a wraper script for "smali".
 
-name=dtf_smali
-
 dtf_smali()
 {
     jarfile=${DTF_INCLUDED}/smali/smali-2.1.0-3e265038.jar
 
     if [ ! -r "$jarfile" ]; then
-        echo "${name}: can't find $jarfile"
+        echo "dtf_smali: can't find $jarfile"
         return 1
     fi
 

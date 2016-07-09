@@ -16,13 +16,11 @@
 
 # This this is a wraper script for "apktool".
 
-name=dtf_apktool
-
 dtf_apktool()
 {
     jarfile=${DTF_INCLUDED}/apktool/apktool_2.0.3-83f327-SNAPSHOT.jar
     if [ ! -r "$jarfile" ]; then
-	    echo "${name}: can't find $jarfile"
+	    echo "dtf_apktool: can't find $jarfile"
 	    return 1
     fi
 

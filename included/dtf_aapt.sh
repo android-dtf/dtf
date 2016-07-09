@@ -16,13 +16,11 @@
 
 # This this is a wraper script for "aapt".
 
-name=dtf_aapt
-
 dtf_aapt()
 {
     aapt_file=${DTF_INCLUDED}/aapt/aapt-22.0.1
     if [ ! -r "$aapt_file" ]; then
-	    echo "${name}: can't find $aapt_file"
+	    echo "dtf_aapt: can't find $aapt_file"
 	    return 1
     fi
 

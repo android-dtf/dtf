@@ -16,8 +16,6 @@
 
 # This this is a wraper script for "drozer".
 
-name=dtf_drozer
-
 dtf_drozer()
 {
 
