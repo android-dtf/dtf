@@ -14,6 +14,7 @@ env/
 build/
 develop-eggs/
 dist/
+docs/
 downloads/
 eggs/
 .eggs/
@@ -25,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.gradle
 
 # OS generated files #
 ######################
