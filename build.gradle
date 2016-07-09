@@ -1,0 +1,63 @@
+// Build egg + pydocs with documentation
+task buildFull() {
+
+}
+
+// Build just Python egg
+task buildEgg(type:Exec) {
+
+    commandLine 'python', 'setup.py', "bdist_egg"
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+
+// Task to generate documentation
+task genDocs(type:Exec) {
+
+    mkdir('docs')
+
+    workingDir = './docs/'
+
+    commandLine 'pydoc', '-w', "../dtf/*.py"
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+// Flake8 the Code
+task doLint(type:Exec) {
+
+    commandLine 'flake8', './dtf'
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+// Create ZIP bundle of included
+task bundleIncluded(type:Exec) {
+
+    commandLine 'ls', './dtf'
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+buildEgg.dependsOn bundleIncluded
+buildEgg.dependsOn doLint
+
+buildFull.dependsOn buildEgg
+buildFull.dependsOn genDocs

@@ -25,4 +25,3 @@ DTF_PACKAGES_DIR = DTF_DATA_DIR + "/packages/"
 DTF_DB = DTF_DATA_DIR + "/main.db"
 
 DTF_INCLUDED_DIR = utils.get_pydtf_dir() + "/included"
-

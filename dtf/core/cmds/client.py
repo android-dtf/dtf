@@ -36,6 +36,7 @@ DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.0-4.apk" %
 
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 
+
 class client(Module):
 
     """Module class for dtf client"""
@@ -117,8 +118,9 @@ class client(Module):
 
         """Upload file to dtf client directory"""
 
-        parser = ArgumentParser(prog='client upload',
-                                description='Upload file to device with dtfClient.')
+        parser = ArgumentParser(
+            prog='client upload',
+            description='Upload file to device with dtfClient.')
         parser.add_argument('--path', dest='upload_path',
                             default=None, help="Specify a upload point.")
         parser.add_argument('file_name', type=str,
@@ -174,8 +176,9 @@ class client(Module):
 
         """Download a file using the dtfClient API"""
 
-        parser = ArgumentParser(prog='client download',
-                                description='Download file from device with dtfClient.')
+        parser = ArgumentParser(
+            prog='client download',
+            description='Download file from device with dtfClient.')
         parser.add_argument('--path', dest='download_path',
                             default=None, help="Specify local path.")
         parser.add_argument('file_name', type=str,
@@ -265,7 +268,7 @@ class client(Module):
             log.e(self.name, "Socket error!")
             return -1
         else:
-            log.e(self.name, "Something went wrong with running the command: %s"
+            log.e(self.name, "Something went wrong with the command: %s"
                   % resp_code)
             return -1
 

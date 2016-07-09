@@ -45,6 +45,7 @@ TYPE_PACKAGE = packagemanager.TYPE_PACKAGE
 # No log to file.
 log.LOG_LEVEL_FILE = 0
 
+
 class pm(Module):
 
     """Module class for dtf pm"""
@@ -68,8 +69,9 @@ class pm(Module):
 
         """Attempt to install new content"""
 
-        parser = ArgumentParser(prog='pm install',
-                            description='Install a item or DTF ZIP of items.')
+        parser = ArgumentParser(
+            prog='pm install',
+            description='Install a item or DTF ZIP of items.')
         parser.add_argument('--zip', dest='zipfile', default=None,
                             help='Install a DTF ZIP file containing items.')
         parser.add_argument('--single', metavar="ITEM", dest='single_type',
@@ -122,7 +124,7 @@ class pm(Module):
 
             else:
                 log.e(TAG, "'%s' is not a valid ZIP file or does not exist."
-                        % (zip_file_name))
+                      % (zip_file_name))
                 return -3
 
         # Install single.
@@ -153,20 +155,22 @@ class pm(Module):
                                                             force=force_mode)
             elif single_type == TYPE_LIBRARY:
                 return packagemanager.install_single_library(item,
-                                                            force=force_mode)
+                                                             force=force_mode)
             elif single_type == TYPE_MODULE:
                 return packagemanager.install_single_module(item,
                                                             force=force_mode)
             elif single_type == TYPE_PACKAGE:
                 return packagemanager.install_single_package(item,
-                                                            force=force_mode)
+                                                             force=force_mode)
+
     @classmethod
     def do_delete(cls, args):
 
         """Attempt to remove content"""
 
-        parser = ArgumentParser(prog='pm delete',
-                            description='Remove a item from disk and database.')
+        parser = ArgumentParser(
+            prog='pm delete',
+            description='Remove a item from disk and database.')
         parser.add_argument('--type', metavar="val", dest='item_type',
                             default=None, help='The type of the item')
         parser.add_argument('--name', metavar="val", dest='item_name',
@@ -209,7 +213,7 @@ class pm(Module):
         parser = ArgumentParser(prog='pm export',
                                 description='Export installed content.')
         parser.add_argument('output_name', type=str,
-                                help='The output file name.')
+                            help='The output file name.')
 
         parsed_args = parser.parse_args(args)
 
@@ -263,12 +267,12 @@ class pm(Module):
         rtn = 0
 
         parser = ArgumentParser(prog='pm list',
-                                  description='List installed components.')
+                                description='List installed components.')
         parser.add_argument('-v', dest='verbose', action='store_const',
-                                  const=True, default=False,
-                                  help="Force deletion of component.")
+                            const=True, default=False,
+                            help="Force deletion of component.")
         parser.add_argument('d_filter', type=str, nargs='?',
-                                  help='An optional filter.')
+                            help='An optional filter.')
 
         parsed_args = parser.parse_args(args)
 
@@ -346,12 +350,13 @@ class pm(Module):
 
                     for dir_name in dirs:
                         file_path = os.path.join(root, dir_name)
-                        rel_path = os.path.relpath(os.path.join(root, dir_name),
-                                                   item.install_name)
+                        rel_path = os.path.relpath(
+                            os.path.join(root, dir_name),
+                            item.install_name)
                         zip_path = os.path.join(item.local_name, rel_path)
 
                         log.d(TAG, "Adding dir '%s' as '%s'"
-                                % (file_path, zip_path))
+                              % (file_path, zip_path))
 
                         export_zip.write(file_path, zip_path)
 
@@ -363,12 +368,12 @@ class pm(Module):
                         zip_path = os.path.join(item.local_name, rel_path)
 
                         log.d(TAG, "Adding '%s' as '%s'"
-                                % (file_path, zip_path))
+                              % (file_path, zip_path))
 
                         export_zip.write(file_path, zip_path)
             else:
                 log.d(TAG, "Adding '%s' as '%s'"
-                        % (item.install_name, item.local_name))
+                      % (item.install_name, item.local_name))
 
                 export_zip.write(item.install_name, item.local_name)
 
@@ -384,7 +389,7 @@ class pm(Module):
 
         # Add binaries
         bin_items = [item for item in export_items
-                        if item.type == TYPE_BINARY]
+                     if item.type == TYPE_BINARY]
 
         for item in bin_items:
 
@@ -412,7 +417,7 @@ class pm(Module):
 
         # Add libraries
         lib_items = [item for item in export_items
-                        if item.type == TYPE_LIBRARY]
+                     if item.type == TYPE_LIBRARY]
 
         for item in lib_items:
 
@@ -440,7 +445,7 @@ class pm(Module):
 
         # Add modules
         mod_items = [item for item in export_items
-                        if item.type == TYPE_MODULE]
+                     if item.type == TYPE_MODULE]
 
         for item in mod_items:
 
@@ -473,7 +478,7 @@ class pm(Module):
 
         # Add packages
         pkg_items = [item for item in export_items
-                        if item.type == TYPE_PACKAGE]
+                     if item.type == TYPE_PACKAGE]
 
         for item in pkg_items:
 
@@ -643,7 +648,7 @@ class pm(Module):
         # Does the resource even exist?
         if not os.path.isfile(local_name):
             log.e(TAG, "Local module resource '%s' does not exist!"
-                    % (local_name))
+                  % (local_name))
             return None
 
         if packagemanager.is_python_module(local_name, install_name):
@@ -735,22 +740,22 @@ class pm(Module):
         if item.type == TYPE_BINARY:
             if not os.path.isfile(item.local_name):
                 log.e(TAG, "Local item '%s' does not exist. Exiting."
-                        % (item.local_name))
+                      % (item.local_name))
                 return None
         elif item.type == TYPE_LIBRARY:
             if not os.path.isdir(item.local_name):
                 log.e(TAG, "Local directory '%s' does not exist. Exiting."
-                        % (item.local_name))
+                      % (item.local_name))
                 return None
         elif item.type == TYPE_MODULE:
             if not os.path.isfile(item.local_name):
                 log.e(TAG, "Local item '%s' does not exist. Exiting."
-                        % (item.local_name))
+                      % (item.local_name))
                 return None
         elif item.type == TYPE_PACKAGE:
             if not os.path.isdir(item.local_name):
                 log.e(TAG, "Local directory '%s' does not exist. Exiting."
-                        % (item.local_name))
+                      % (item.local_name))
                 return None
 
         return item

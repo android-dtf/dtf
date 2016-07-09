@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 """ dtf Main Launcher """
-# pylint: disable-msg=E0611
 import sys
 import subprocess
 import os
@@ -44,7 +43,7 @@ def usage():
     """Print dtf usage brief"""
 
     print ("Android Device Testing Framework (dtf) v%s"
-                                        % constants.VERSION)
+           % constants.VERSION)
     print 'Usage: dtf [module|command] <arguments>'
     print ''
     print "Run with '-h' or 'help' for additional information."
@@ -57,7 +56,7 @@ def usage_full():
     """Print full dtf usage"""
 
     print ("Android Device Testing Framework (dtf) v%s"
-                                        % constants.VERSION)
+           % constants.VERSION)
     print 'Usage: dtf [module|command] <arguments>'
     print '   Built-in Commands:'
     print '    archive     Archive your dtf project files.'
@@ -107,7 +106,7 @@ def check_dependencies():
     if utils.which("java") != "":
 
         out = subprocess.check_output(["java", "-version"],
-                                     stderr=subprocess.STDOUT)
+                                      stderr=subprocess.STDOUT)
 
         java_ver = out.split('\n')[0]
 

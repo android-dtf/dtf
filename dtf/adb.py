@@ -54,7 +54,7 @@ class DtfAdb(object):
             cmd = ("%s %s" % (ADB_BINARY, in_cmd)).split(' ')
         else:
             cmd = ("%s -s %s %s"
-                    % (ADB_BINARY, self.serial, in_cmd)).split(' ')
+                   % (ADB_BINARY, self.serial, in_cmd)).split(' ')
 
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 
@@ -117,7 +117,7 @@ class DtfAdb(object):
             except ValueError:
                 continue
 
-            device_list.append({'serial' : serial, 'status' : status})
+            device_list.append({'serial': serial, 'status': status})
 
         return device_list
 

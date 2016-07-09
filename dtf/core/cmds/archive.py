@@ -23,6 +23,7 @@ from dtf.module import Module
 import os
 from subprocess import Popen
 
+
 class archive(Module):
 
     """Module class for archiving a project"""
@@ -66,7 +67,6 @@ class archive(Module):
 
         else:
             zip_name = args.pop()
-
 
         log.i(self.name, "Archiving to '%s'..." % zip_name)
 

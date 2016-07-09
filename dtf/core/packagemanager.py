@@ -30,8 +30,6 @@ import sqlite3
 
 from lxml import etree
 
-#log.LOG_LEVEL_STDOUT = 5
-
 TAG = "dtf_package_manager"
 
 MANIFEST_NAME = "manifest.xml"
@@ -55,6 +53,7 @@ DTF_LIBRARIES_DIR = dtf.globals.DTF_LIBRARIES_DIR
 DTF_MODULES_DIR = dtf.globals.DTF_MODULES_DIR
 DTF_PACKAGES_DIR = dtf.globals.DTF_PACKAGES_DIR
 DTF_DB = dtf.globals.DTF_DB
+
 
 class Item(object):
 
@@ -116,6 +115,7 @@ class Item(object):
         temp += "  Health: %s" % self.health
         return temp
 
+
 # Helpers ###################################################
 def file_in_zip(zip_f, file_name):
 
@@ -127,12 +127,14 @@ def file_in_zip(zip_f, file_name):
     except KeyError:
         return False
 
+
 def directory_in_zip(zip_f, directory_name):
 
     """Determine if a directory exists in a ZIP"""
 
     return any(x.startswith("%s/" % directory_name.rstrip("/"))
-                for x in zip_f.namelist())
+               for x in zip_f.namelist())
+
 
 def copy_zip_file(zip_f, local_name, install_name, install_dir):
 
@@ -157,6 +159,7 @@ def copy_zip_file(zip_f, local_name, install_name, install_dir):
     log.d(TAG, "Copy complete!")
 
     return 0
+
 
 def copy_zip_tree(zip_f, local_name, install_name, install_dir):
 
@@ -186,12 +189,13 @@ def copy_zip_tree(zip_f, local_name, install_name, install_dir):
             else:
                 head, tail = os.path.split(new_f)
                 log.d(TAG, "extracting %s to %s"
-                        %(file_f, install_path + head))
+                      % (file_f, install_path + head))
                 copy_zip_file(zip_f, file_f, tail, install_path + head + '/')
 
     log.d(TAG, "Copy complete!")
 
     return 0
+
 
 def copy_file(local_name, install_name, install_dir):
 
@@ -207,6 +211,7 @@ def copy_file(local_name, install_name, install_dir):
     log.d(TAG, "Copy complete!")
 
     return 0
+
 
 def copy_tree(local_name, install_name, install_dir):
 
@@ -232,10 +237,11 @@ def copy_tree(local_name, install_name, install_dir):
             for local_file in [os.path.join(root, name) for name in files]:
                 new_file = local_file.replace(local_name+'/', '', 1)
                 log.d(TAG, "Copying file '%s' to '%s'"
-                        % (local_file, install_path + new_file))
+                      % (local_file, install_path + new_file))
                 copy(local_file, install_path + new_file)
 
     return 0
+
 
 def delete_file(file_path):
 
@@ -246,8 +252,9 @@ def delete_file(file_path):
         return 0
     except OSError:
         log.w(TAG, "There was an OSError when removing the file '%s'"
-                % file_path)
+              % file_path)
         return 0
+
 
 def delete_tree(directory_path):
 
@@ -260,6 +267,7 @@ def delete_tree(directory_path):
         log.w(TAG, "OSError when removing the tree at '%s'" % directory_path)
         return 0
 
+
 def get_xml_attrib(element, attrib, default=None):
 
     """Attempt to retrieve XML attribute"""
@@ -269,6 +277,7 @@ def get_xml_attrib(element, attrib, default=None):
     except KeyError:
         return default
 
+
 def get_dict_attrib(in_dict, key, default=None):
 
     """Attempt to retrieve attribute from dictionary"""
@@ -277,6 +286,7 @@ def get_dict_attrib(in_dict, key, default=None):
         return in_dict[key]
     except KeyError:
         return default
+
 
 def get_item_attrib(item, attrib):
 
@@ -294,7 +304,7 @@ def get_item_attrib(item, attrib):
         table = "packages"
     else:
         log.e(TAG, "Unknown type '%s' in getItem Attribute. Returning"
-                % item_type)
+              % item_type)
         return None
 
     dtf_db = sqlite3.connect(DTF_DB)
@@ -315,6 +325,7 @@ def get_item_attrib(item, attrib):
 
 # End helpers ###############################################
 
+
 def is_bash_module(module_path):
 
     """Check shebang to determine bash"""
@@ -327,6 +338,7 @@ def is_bash_module(module_path):
             return 0
         else:
             return 1
+
 
 def is_python_module(module_path, name):
 
@@ -341,6 +353,7 @@ def is_python_module(module_path, name):
         return False
 
     return True
+
 
 def parse_python_module(module_path, name):
 
@@ -393,6 +406,7 @@ def parse_python_module(module_path, name):
 
     return item
 
+
 def parse_bash_module(module_path, name):
 
     """Parse as a bash module"""
@@ -440,8 +454,9 @@ def parse_bash_module(module_path, name):
         item.major_version = None
         item.minor_version = None
 
-    #Return our item.
+    # Return our item.
     return item
+
 
 # Getting Installed Data
 def get_binaries(name_only=False):
@@ -491,6 +506,7 @@ def get_binaries(name_only=False):
 
     return bins
 
+
 def get_libraries(name_only=False):
 
     """Return a list of libraries"""
@@ -537,6 +553,7 @@ def get_libraries(name_only=False):
             libs.append(item)
 
     return libs
+
 
 def get_modules(name_only=False):
 
@@ -585,6 +602,7 @@ def get_modules(name_only=False):
 
     return mods
 
+
 def get_packages(name_only=False):
 
     """Return a list of packages"""
@@ -632,11 +650,13 @@ def get_packages(name_only=False):
 
     return packages
 
+
 def is_binary_installed(name):
 
     """Determine if a binary is installed"""
 
     return __item_installed(name, TYPE_BINARY)
+
 
 def is_library_installed(name):
 
@@ -644,17 +664,20 @@ def is_library_installed(name):
 
     return __item_installed(name, TYPE_LIBRARY)
 
+
 def is_module_installed(name):
 
     """Determine if a module is installed"""
 
     return __item_installed(name, TYPE_MODULE)
 
+
 def is_package_installed(name):
 
     """Determine if a package is installed"""
 
     return __item_installed(name, TYPE_PACKAGE)
+
 
 def find_local_module(root, name):
 
@@ -668,6 +691,7 @@ def find_local_module(root, name):
         return 0
 
 # Installing content
+
 
 # INTERNAL ONLY #######################################################
 def __prompt_install(local_item, installed_item):
@@ -691,6 +715,7 @@ def __prompt_install(local_item, installed_item):
     else:
         return False
 
+
 def __prompt_delete(installed_item):
 
     """Prompt user to item deletion"""
@@ -699,12 +724,13 @@ def __prompt_delete(installed_item):
     print str(installed_item)
 
     print ""
-    print "Are you sure you want to delete this item (CANNOT BE UNDONE)? [y/N]",
+    print "Are you sure you want to delete this item (NO UNDO)? [y/N]",
     resp = raw_input()
     if resp.lower() == "y":
         return True
     else:
         return False
+
 
 def __load_item(item):
 
@@ -724,6 +750,7 @@ def __load_item(item):
     itm.health = get_item_attrib(item, "health")
 
     return itm
+
 
 def __item_installed(name, item_type):
 
@@ -755,6 +782,7 @@ def __item_installed(name, item_type):
         return True
     else:
         return False
+
 
 def __process_zip_items(zip_file, items, force):
 
@@ -811,6 +839,7 @@ def __process_zip_items(zip_file, items, force):
 
     return rtn
 
+
 def __do_single_binary_install(item):
 
     """Perform single binary installation"""
@@ -827,11 +856,12 @@ def __do_single_binary_install(item):
     # Update database
     if __update_binary(item) == 0:
         log.e(TAG, "Failed to update binary '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     log.i(TAG, "Binary '%s' installed successfully!" % name)
     return 0
+
 
 def __do_single_library_install(item):
 
@@ -849,11 +879,12 @@ def __do_single_library_install(item):
     # Update database
     if __update_library(item) == 0:
         log.e(TAG, "Failed to update library '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     log.i(TAG, "Library '%s' installed successfully!" % name)
     return 0
+
 
 def __do_single_module_install(item):
 
@@ -871,11 +902,12 @@ def __do_single_module_install(item):
     # Update database
     if __update_module(item) == 0:
         log.e(TAG, "Failed to update module '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     log.i(TAG, "Module '%s' installed successfully!" % name)
     return 0
+
 
 def __do_single_package_install(item):
 
@@ -893,11 +925,12 @@ def __do_single_package_install(item):
     # Update database
     if __update_package(item) == 0:
         log.e(TAG, "Failed to update package '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     log.i(TAG, "Package '%s' installed successfully!" % name)
     return 0
+
 
 def __do_zip_binary_install(zip_file, item):
 
@@ -916,10 +949,11 @@ def __do_zip_binary_install(zip_file, item):
     # Update database
     if __update_binary(item) == 0:
         log.e(TAG, "Failed to update binary '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     return 0
+
 
 def __do_zip_library_install(zip_file, item):
 
@@ -938,10 +972,11 @@ def __do_zip_library_install(zip_file, item):
     # Update database
     if __update_library(item) == 0:
         log.e(TAG, "Failed to update library '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     return 0
+
 
 def __do_zip_module_install(zip_file, item):
 
@@ -960,10 +995,11 @@ def __do_zip_module_install(zip_file, item):
     # Update database
     if __update_module(item) == 0:
         log.e(TAG, "Failed to update module '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     return 0
+
 
 def __do_zip_package_install(zip_file, item):
 
@@ -982,10 +1018,11 @@ def __do_zip_package_install(zip_file, item):
     # Update database
     if __update_package(item) == 0:
         log.e(TAG, "Failed to update package '%s' details in database."
-                % (name))
+              % (name))
         return -2
 
     return 0
+
 
 def __install_zip_binary(zip_file, item, force_mode):
 
@@ -996,7 +1033,7 @@ def __install_zip_binary(zip_file, item, force_mode):
     # Does the resource even exist?
     if not file_in_zip(zip_file, item.local_name):
         log.w(TAG, "'%s' defined, but local file '%s' does not exist!"
-            % (item.name, item.local_name))
+              % (item.name, item.local_name))
         return -1
 
     try:
@@ -1006,7 +1043,7 @@ def __install_zip_binary(zip_file, item, force_mode):
             # Prompt for install.
             if not force_mode:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1029,6 +1066,7 @@ def __install_zip_binary(zip_file, item, force_mode):
 
     return rtn
 
+
 def __install_zip_library(zip_file, item, force_mode):
 
     """Install a library from a ZIP"""
@@ -1038,7 +1076,7 @@ def __install_zip_library(zip_file, item, force_mode):
     # Does the resource even exist?
     if not directory_in_zip(zip_file, item.local_name):
         log.w(TAG, "'%s' defined, but directory '%s' does not exist!"
-            % (item.name, item.local_name))
+              % (item.name, item.local_name))
         return -1
 
     try:
@@ -1048,7 +1086,7 @@ def __install_zip_library(zip_file, item, force_mode):
             # Prompt for install.
             if not force_mode:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1071,6 +1109,7 @@ def __install_zip_library(zip_file, item, force_mode):
 
     return rtn
 
+
 def __install_zip_module(zip_file, item, force_mode):
 
     """Install a module from a ZIP"""
@@ -1080,7 +1119,7 @@ def __install_zip_module(zip_file, item, force_mode):
     # Does the resource even exist?
     if not file_in_zip(zip_file, item.local_name):
         log.w(TAG, "'%s' defined, but local file '%s' does not exist!"
-            % (item.name, item.local_name))
+              % (item.name, item.local_name))
         return -1
 
     try:
@@ -1090,7 +1129,7 @@ def __install_zip_module(zip_file, item, force_mode):
             # Prompt for install.
             if not force_mode:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1113,6 +1152,7 @@ def __install_zip_module(zip_file, item, force_mode):
 
     return rtn
 
+
 def __install_zip_package(zip_file, item, force_mode):
 
     """Install a package from a ZIP"""
@@ -1122,7 +1162,7 @@ def __install_zip_package(zip_file, item, force_mode):
     # Does the resource even exist?
     if not directory_in_zip(zip_file, item.local_name):
         log.w(TAG, "'%s' defined, but directory '%s' does not exist!"
-            % (item.name, item.local_name))
+              % (item.name, item.local_name))
         return -1
 
     try:
@@ -1132,7 +1172,7 @@ def __install_zip_package(zip_file, item, force_mode):
             # Prompt for install.
             if not force_mode:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1154,6 +1194,7 @@ def __install_zip_package(zip_file, item, force_mode):
         rtn = -4
 
     return rtn
+
 
 def __update_binary(item):
 
@@ -1181,6 +1222,7 @@ def __update_binary(item):
 
     return cur.rowcount
 
+
 def __update_library(item):
 
     """Update a library in the DB"""
@@ -1206,6 +1248,7 @@ def __update_library(item):
     conn.commit()
 
     return cur.rowcount
+
 
 def __update_module(item):
 
@@ -1233,6 +1276,7 @@ def __update_module(item):
 
     return cur.rowcount
 
+
 def __update_package(item):
 
     """Update package in the DB"""
@@ -1259,6 +1303,7 @@ def __update_package(item):
 
     return cur.rowcount
 
+
 def __do_binary_delete(item):
 
     """Perform the binary removal"""
@@ -1279,6 +1324,7 @@ def __do_binary_delete(item):
     conn.commit()
 
     return cur.rowcount
+
 
 def __do_library_delete(item):
 
@@ -1301,6 +1347,7 @@ def __do_library_delete(item):
 
     return cur.rowcount
 
+
 def __do_module_delete(item):
 
     """Perform the module removal"""
@@ -1321,6 +1368,7 @@ def __do_module_delete(item):
     conn.commit()
 
     return cur.rowcount
+
 
 def __do_package_delete(item):
 
@@ -1343,6 +1391,7 @@ def __do_package_delete(item):
 
     return cur.rowcount
 # End INTERNAL #####################################################
+
 
 # Database Initialization ##########################################
 def initialize_db():
@@ -1432,6 +1481,7 @@ def initialize_db():
 
     return 0
 
+
 def create_data_dirs():
 
     """Create the .dtf/ directory structure"""
@@ -1457,6 +1507,7 @@ def create_data_dirs():
     return 0
 # End Initialization ###############################################
 
+
 # Package Installation #############################################
 def install_single_binary(item, force=False):
 
@@ -1471,7 +1522,7 @@ def install_single_binary(item, force=False):
             # Prompt for install.
             if not force:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1494,6 +1545,7 @@ def install_single_binary(item, force=False):
 
     return rtn
 
+
 def install_single_library(item, force=False):
 
     """Install a single library"""
@@ -1507,7 +1559,7 @@ def install_single_library(item, force=False):
             # Prompt for install.
             if not force:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1530,6 +1582,7 @@ def install_single_library(item, force=False):
 
     return rtn
 
+
 def install_single_module(item, force=False):
 
     """Install a single module"""
@@ -1543,7 +1596,7 @@ def install_single_module(item, force=False):
             # Prompt for install.
             if not force:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1566,6 +1619,7 @@ def install_single_module(item, force=False):
 
     return rtn
 
+
 def install_single_package(item, force=False):
 
     """Install a single package"""
@@ -1579,7 +1633,7 @@ def install_single_package(item, force=False):
             # Prompt for install.
             if not force:
                 print ("[WARNING] An item with this name is already installed."
-                      " See details below.")
+                       " See details below.")
 
                 installed_item = __load_item(item)
 
@@ -1602,6 +1656,7 @@ def install_single_package(item, force=False):
 
     return rtn
 
+
 def install_zip(zip_file_name, force=False):
 
     """Install a ZIP file"""
@@ -1617,7 +1672,7 @@ def install_zip(zip_file_name, force=False):
     # Get Manifest
     if not file_in_zip(zip_f, MANIFEST_NAME):
         log.e(TAG, "Error extracting '%s' from ZIP archive - does it exist?"
-                % (MANIFEST_NAME))
+              % (MANIFEST_NAME))
         return -3
 
     manifest_data = zip_f.read(MANIFEST_NAME)
@@ -1625,9 +1680,9 @@ def install_zip(zip_file_name, force=False):
     # Read Manifest
     try:
         manifest_root = etree.XML(manifest_data)
-    except etree.XMLSyntaxError as err:
+    except etree.XMLSyntaxError:
         log.e(TAG, "Error parsing XML file '%s'! Exiting."
-                                                % MANIFEST_NAME)
+              % MANIFEST_NAME)
         return -4
 
     # Processing Stuff
@@ -1637,13 +1692,14 @@ def install_zip(zip_file_name, force=False):
 
     if rtn == 0:
         log.i(TAG, "ZIP content '%s' installed successfully!"
-                                            % zip_file_name)
+              % zip_file_name)
     else:
         log.e(TAG, "Unable to install ZIP file: %d" % rtn)
 
     return rtn
 
 # End Package Installation ##############################################
+
 
 # Removing Content ######################################################
 def delete_binary(name, force=False):
@@ -1679,6 +1735,7 @@ def delete_binary(name, force=False):
 
     return rtn
 
+
 def delete_library(name, force=False):
 
     """Remove a library"""
@@ -1711,6 +1768,7 @@ def delete_library(name, force=False):
         rtn = -1
 
     return rtn
+
 
 def delete_module(name, force=False):
 
@@ -1745,6 +1803,7 @@ def delete_module(name, force=False):
 
     return rtn
 
+
 def delete_package(name, force=False):
 
     """Remove a package"""
@@ -1777,6 +1836,7 @@ def delete_package(name, force=False):
         rtn = -1
 
     return rtn
+
 
 # Database Removal ######################################################
 def purge():

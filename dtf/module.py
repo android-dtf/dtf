@@ -18,9 +18,8 @@
 import dtf.logging as log
 import os
 
-#pylint: disable-msg=R0903
-
 TAG = "dtf-module"
+
 
 class Module(object):
 
@@ -64,7 +63,7 @@ class Module(object):
         else:
 
             log.e(TAG, "Module '%s' does not define a entry point!"
-                    % self.__self__)
+                  % self.__self__)
             result = None
 
         return result

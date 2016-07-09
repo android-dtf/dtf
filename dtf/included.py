@@ -19,6 +19,7 @@ from dtf.globals import DTF_INCLUDED_DIR
 
 from subprocess import Popen, PIPE
 
+
 def aapt(cmd):
 
     """aapt wrapper"""
@@ -36,12 +37,13 @@ def aapt(cmd):
 
     return stdout, stderr, rtn
 
+
 def apktool(cmd):
 
     """apktool wrapper"""
 
     apktool_path = ("%s/apktool/apktool_2.0.3-83f327-SNAPSHOT.jar"
-                        % DTF_INCLUDED_DIR)
+                    % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx512M -jar"
 
@@ -57,12 +59,13 @@ def apktool(cmd):
 
     return stdout, stderr, rtn
 
+
 def smali(cmd):
 
     """smali wrapper"""
 
     smali_path = ("%s/smali/smali-2.1.0-3e265038.jar"
-                        % DTF_INCLUDED_DIR)
+                  % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx512M -jar"
 
@@ -78,12 +81,13 @@ def smali(cmd):
 
     return stdout, stderr, rtn
 
+
 def baksmali(cmd):
 
     """baksmali wrapper"""
 
     baksmali_path = ("%s/smali/baksmali-2.1.0-3e265038.jar"
-                        % DTF_INCLUDED_DIR)
+                     % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx512M -jar"
 
@@ -99,23 +103,25 @@ def baksmali(cmd):
 
     return stdout, stderr, rtn
 
+
 def dex2jar():
 
     """dex2jar wrapper"""
 
     raise NotImplementedError
 
+
 def axmlprinter2(manifest_file_name, out_file_name):
 
     """axmlprinter2 wrapper"""
 
     axmlprinter2_path = ("%s/axmlprinter2/axmlprinter2.jar"
-                        % DTF_INCLUDED_DIR)
+                         % DTF_INCLUDED_DIR)
 
     java_args = "java -Xmx256M -jar"
 
     cmd = ("%s %s %s"
-        % (java_args, axmlprinter2_path, manifest_file_name)).split(' ')
+           % (java_args, axmlprinter2_path, manifest_file_name)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 

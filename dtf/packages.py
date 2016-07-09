@@ -33,6 +33,7 @@ from contextlib import contextmanager
 
 TAG = "dtf-packages"
 
+
 # Internal
 @contextmanager
 def stdout_redirector(stream):
@@ -45,6 +46,7 @@ def stdout_redirector(stream):
         yield
     finally:
         sys.stdout = old_stdout
+
 
 def __update_path():
 
@@ -63,6 +65,7 @@ def __update_path():
         sys.path.append(lib_path)
 
     return 0
+
 
 def __launch_python_module(path, cmd, args, chdir=True):
 
@@ -97,6 +100,7 @@ def __launch_python_module(path, cmd, args, chdir=True):
 
     return mod_inst.run(args)
 
+
 def __launch_bash_module(module_path, args):
 
     """Launch a bash module by path"""
@@ -126,7 +130,7 @@ def __launch_bash_module(module_path, args):
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=new_env)
     except OSError:
         log.e(TAG, "Unable to execute '%s'. Are the permission flags correct?"
-            % module_path)
+              % module_path)
         return -5
 
     lines_iterator = iter(popen.stdout.readline, b"")
@@ -135,8 +139,8 @@ def __launch_bash_module(module_path, args):
         sys.stdout.write(line)
 
     return popen.returncode
-
 # End Internal
+
 
 # Launching stuff
 def launch_builtin_module(cmd, args, chdir=True):
@@ -161,6 +165,7 @@ def launch_local_module(root, cmd, args):
         return __launch_bash_module(module_path, args)
 
     return __launch_python_module(module_path, cmd, args)
+
 
 def launch_module(cmd, args, redirect=False):
 
@@ -190,6 +195,7 @@ def launch_module(cmd, args, redirect=False):
             return __launch_bash_module(module_path, args)
         return __launch_python_module(module_path, cmd, args)
 
+
 def launch_binary(binary, args, launcher=None):
 
     """Launch a binary"""
@@ -218,6 +224,7 @@ def launch_binary(binary, args, launcher=None):
 
     return stdout, stderr, rtn
 
+
 # Determining if stuff is installed
 def is_binary_installed(name):
 
@@ -232,17 +239,20 @@ def is_library_installed(name):
 
     return pm.is_library_installed(name)
 
+
 def is_module_installed(name):
 
     """Determine if module is installed"""
 
     return pm.is_module_installed(name)
 
+
 def is_package_installed(name):
 
     """Determine if package is installed"""
 
     return pm.is_package_installed(name)
+
 
 def find_local_module(root, name):
 

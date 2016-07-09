@@ -24,6 +24,7 @@ import dtf.core.utils as utils
 from dtf.properties import (get_prop, set_prop, del_prop,
                             test_prop, PropertyError)
 
+
 class prop(Module):
 
     """Module class for property management"""
@@ -37,7 +38,7 @@ class prop(Module):
         print "    get [sec] [prop]        Get a property."
         print "    set [sec] [prop] [val]  Set a property."
         print "    del [sec] [prop]        Delete a property."
-        print "    dump                    Dump properties for current project."
+        print "    dump                    Dump current properties."
         print "    test [sec] [prop]       Test if a value is set."
         print ""
 

@@ -23,6 +23,7 @@ from dtf.module import Module
 
 TAG = 'reset'
 
+
 class reset(Module):
 
     """Module class for reseting a project"""

@@ -49,11 +49,13 @@ DTF_SOCKET = "dtf_socket"
 
 FORWARD_SOCKET = "localabstract:" + DTF_SOCKET
 
+
 def bytes_to_int(byte_stream):
 
     """Convert bytes to integer"""
 
     return struct.unpack(">L", byte_stream)[0]
+
 
 def bytes_to_long(byte_stream):
 
@@ -61,11 +63,13 @@ def bytes_to_long(byte_stream):
 
     return struct.unpack(">Q", byte_stream)[0]
 
+
 def long_to_bytes(long_in):
 
     """Convert a long into byte stream"""
 
     return struct.pack(">Q", long_in)
+
 
 class DtfClient(object):
 
@@ -75,7 +79,6 @@ class DtfClient(object):
     stdout = None
     stderr = None
     adb = None
-
 
     def __init__(self):
 

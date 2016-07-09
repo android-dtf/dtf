@@ -42,6 +42,7 @@ SEANDROID_PERMISSIVE = "Permissive"
 SEANDROID_ENFORCING = "Enforcing"
 SEANDROID_OFF = "Off"
 
+
 # http://stackoverflow.com/questions/1158076/implement-touch-using-python
 def touch(file_name, times=None):
 
@@ -49,6 +50,7 @@ def touch(file_name, times=None):
 
     with open(file_name, 'a'):
         os.utime(file_name, times)
+
 
 def rmfile(file_name):
 
@@ -59,6 +61,7 @@ def rmfile(file_name):
     except OSError:
         pass
 
+
 def mkdir(dir_name):
 
     """Create a directory (that may or may not exist)"""
@@ -67,6 +70,7 @@ def mkdir(dir_name):
         os.mkdir(dir_name)
     except OSError:
         pass
+
 
 def get_set_value(set_data, match_key):
 
@@ -83,6 +87,7 @@ def get_set_value(set_data, match_key):
             return value
 
     return None
+
 
 class init(Module):
 
@@ -315,7 +320,7 @@ class init(Module):
             log.e(TAG, "Configuration file already exists!")
             return -1
 
-        raw_input("\nPlease connect the test device (press Enter to continue) ")
+        raw_input("\nPlease connect test device (press Enter to continue) ")
 
         # This might get in the way.
         try:
@@ -345,7 +350,7 @@ class init(Module):
             serial = init_device['serial']
 
             res = raw_input("Got serial '%s', is this correct? [Y/n] "
-                                % serial)
+                            % serial)
             if res.lower() == 'n':
                 log.e(TAG, "Initialization aborted.")
                 return -3

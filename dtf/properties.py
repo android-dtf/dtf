@@ -27,10 +27,12 @@ CONFIG_FILE_NAME = utils.CONFIG_FILE_NAME
 
 TAG = "dtf-properties"
 
+
 class PropertyError(Exception):
 
     """General exception for properties"""
     pass
+
 
 def __upsearch(file_name, dir_name):
 
@@ -45,6 +47,7 @@ def __upsearch(file_name, dir_name):
         return __upsearch(file_name, new_dir)
 
 TOP = __upsearch(CONFIG_FILE_NAME, getcwd())
+
 
 def get_prop(section, prop):
 
@@ -66,6 +69,7 @@ def get_prop(section, prop):
 
     return rtn
 
+
 def set_prop(section, prop, value):
 
     """Set a property"""
@@ -85,6 +89,7 @@ def set_prop(section, prop, value):
     prop_f.close()
 
     return 0
+
 
 def del_prop(section, prop):
 
@@ -115,6 +120,7 @@ def del_prop(section, prop):
     prop_f.close()
 
     return 0
+
 
 def test_prop(section, prop):
 

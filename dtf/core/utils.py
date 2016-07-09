@@ -23,6 +23,7 @@ from site import getsitepackages
 
 CONFIG_FILE_NAME = '.dtfini'
 
+
 def __upsearch(file_name, dir_name):
 
     """Recursively find a file, searching up."""
@@ -34,6 +35,7 @@ def __upsearch(file_name, dir_name):
         if dir_name == new_dir:
             return None
         return __upsearch(file_name, new_dir)
+
 
 def get_project_root():
 
@@ -52,11 +54,13 @@ def get_pydtf_dir():
     except IndexError:
         return None
 
+
 def get_dtf_data_dir():
 
     """Return the location of the dtf data directory."""
 
     return os.path.expanduser('~') + '/.dtf'
+
 
 def md5_local(file_path):
 
@@ -73,12 +77,14 @@ def md5_local(file_path):
 
     return local_m.hexdigest()
 
+
 def is_exe(fpath):
 
     """ Check if file is an executable"""
 
     # stackoverflow.com/questions/377017/test-if-executable-exists-in-python
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
 
 def which(program):
 

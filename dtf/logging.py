@@ -20,11 +20,9 @@ from sys import stdout
 
 import dtf.core.utils as utils
 
-#pylint: disable-msg=C0103
-
 # Can override just like the shell
-LOG_LEVEL_FILE = 4   # By default, log E-V
-LOG_LEVEL_STDOUT = 4 # By default, log E-V
+LOG_LEVEL_FILE = 4    # By default, log E-V
+LOG_LEVEL_STDOUT = 4  # By default, log E-V
 
 # Internals ###########################################################
 LOG_FILE_NAME = '.dtflog'
@@ -42,17 +40,20 @@ TOP = utils.get_project_root()
 if TOP is not None:
     LOG_FILE = open(LOG_FILE_NAME, 'a')
 
+
 def __get_date():
 
     """Format current date"""
 
     return strftime("%a %b %d %H:%M:%S %Z %Y", localtime())
 
+
 def __log(buf, entry):
 
     """Low level print function"""
 
     buf.write(entry)
+
 
 # Low level stdout print
 def __log_to_stdout(color, date, tag, message):
@@ -61,6 +62,7 @@ def __log_to_stdout(color, date, tag, message):
 
     entry = "%s[%s] %s - %s %s\n" % (color, date, tag, message, attr(0))
     __log(stdout, entry)
+
 
 # Low level file print
 def __log_to_file(date, tag, message):
@@ -75,6 +77,7 @@ def __log_to_file(date, tag, message):
 
 # ######################################################################
 
+
 # Public Calls #########################################################
 def e(tag, message):
 
@@ -86,6 +89,7 @@ def e(tag, message):
     if LOG_LEVEL_FILE >= 1:
         __log_to_file(date, tag+"/E", message)
 
+
 def w(tag, message):
 
     """Print a warning message"""
@@ -95,6 +99,7 @@ def w(tag, message):
         __log_to_stdout(COLOR_WARN, date, tag+"/W", message)
     if LOG_LEVEL_FILE >= 2:
         __log_to_file(date, tag+"/W", message)
+
 
 def i(tag, message):
 
@@ -106,6 +111,7 @@ def i(tag, message):
     if LOG_LEVEL_FILE >= 3:
         __log_to_file(date, tag+"/I", message)
 
+
 def v(tag, message):
 
     """Print a verbose message (non-debug)"""
@@ -115,6 +121,7 @@ def v(tag, message):
         __log_to_stdout(COLOR_VERB, date, tag+"/V", message)
     if LOG_LEVEL_FILE >= 4:
         __log_to_file(date, tag+"/V", message)
+
 
 def d(tag, message):
 
@@ -126,12 +133,13 @@ def d(tag, message):
     if LOG_LEVEL_FILE >= 5:
         __log_to_file(date, tag+"/D", message)
 
+
 # Multi-line Logging
 def e_ml(tag, messages):
 
     """Print a multi-line error message"""
 
-    if type(messages) != type(list()):
+    if not isinstance(messages, list):
         raise TypeError
 
     for message in messages:
@@ -140,11 +148,12 @@ def e_ml(tag, messages):
 
         e(tag, message)
 
+
 def w_ml(tag, messages):
 
     """Print a multi-lne warning message"""
 
-    if type(messages) != type(list()):
+    if not isinstance(messages, list):
         raise TypeError
 
     for message in messages:
@@ -153,11 +162,12 @@ def w_ml(tag, messages):
 
         w(tag, message)
 
+
 def i_ml(tag, messages):
 
     """Print a multi-line informational message"""
 
-    if type(messages) != type(list()):
+    if not isinstance(messages, list):
         raise TypeError
 
     for message in messages:
@@ -166,11 +176,12 @@ def i_ml(tag, messages):
 
         i(tag, message)
 
+
 def v_ml(tag, messages):
 
     """Print a multi-line verbose message"""
 
-    if type(messages) != type(list()):
+    if not isinstance(messages, list):
         raise TypeError
 
     for message in messages:
@@ -179,11 +190,12 @@ def v_ml(tag, messages):
 
         v(tag, message)
 
+
 def d_ml(tag, messages):
 
     """Print a multi-line debugging message"""
 
-    if type(messages) != type(list()):
+    if not isinstance(messages, list):
         raise TypeError
 
     for message in messages:

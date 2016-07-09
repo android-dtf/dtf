@@ -19,6 +19,7 @@ from dtf.module import Module
 import dtf.properties as prop
 import dtf.adb as DtfAdb
 
+
 class status(Module):
 
     """Module class for getting the status of a device"""
