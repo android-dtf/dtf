@@ -26,6 +26,7 @@ STATUS_DEVICE = 'device'
 STATUS_OFFLINE = 'offline'
 STATUS_BOOTLOADER = 'bootloader'
 
+
 class DtfAdb(object):
 
     """Python wrapper class for `adb`"""

@@ -27,6 +27,9 @@ DTF_MODULES=${DTF_DIR}/modules
 DTF_PACKAGES=${DTF_DIR}/packages
 DTF_INCLUDED=__INCLUDED__
 
+# Hack to expand wildcards
+DTF_INCLUDED=$(echo $DTF_INCLUDED)
+
 # Additional sourcing. Move this eventually?
 . ${DTF_INCLUDED}/dtf_aapt.sh
 . ${DTF_INCLUDED}/dtf_abe.sh

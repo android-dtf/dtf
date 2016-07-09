@@ -2,7 +2,7 @@
 #  -*- mode: python; -*-
 #
 # Android Device Testing Framework ("dtf")
-# Copyright 2013-2015 Jake Valletta (@jake_valletta)
+# Copyright 2013-2016 Jake Valletta (@jake_valletta)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,14 +17,8 @@
 # limitations under the License.
 #
 """ dtf Main Launcher """
-#pylint: disable-msg=E0611
+# pylint: disable-msg=E0611
 import sys
-
-# Check for version before anything
-if sys.version_info < (2, 6, 0):
-    sys.stderr.write("dtf requires python version 2.6 or higher!")
-    sys.exit(1)
-
 import subprocess
 import os
 import os.path
@@ -34,13 +28,16 @@ import dtf.core.utils as utils
 import dtf.packages as pkg
 import dtf.logging as log
 
+# Check for version before anything
+if sys.version_info < (2, 6, 0):
+    sys.stderr.write("dtf requires python version 2.6 or higher!")
+    sys.exit(1)
+
 TAG = "dtf"
 
 BUILT_IN_LIST = ['archive', 'client', 'local', 'prop', 'reset',
                  'source', 'status']
 
-# No file logging
-#log.LOG_LEVEL_FILE = 0
 
 def usage():
 
@@ -53,6 +50,7 @@ def usage():
     print "Run with '-h' or 'help' for additional information."
 
     return -1
+
 
 def usage_full():
 
@@ -75,6 +73,7 @@ def usage_full():
 
     return -1
 
+
 def find_built_in_module(cmd):
 
     """Determine if the command is a built in module"""
@@ -83,6 +82,7 @@ def find_built_in_module(cmd):
         return True
     else:
         return False
+
 
 def check_dependencies():
 
@@ -120,6 +120,7 @@ def check_dependencies():
 
     return 0
 
+
 def main():
 
     """Main loop"""
@@ -138,7 +139,7 @@ def main():
     sys.argv.pop(0)
     # Remove and store cmd_name
     command_name = sys.argv.pop(0)
-    
+
     # Help menu
     if command_name in ['-h', '--help', 'help']:
         sys.exit(usage_full())

@@ -16,12 +16,12 @@
 #
 """dtf Setup Script"""
 
-from distutils.core import setup
-from os.path import expanduser, isfile
+from setuptools import setup
+from os.path import isfile
 from site import getsitepackages
 
-import src.dtf.constants as constants
-
+import dtf.constants as constants
+import dtf.core.utils as utils
 import os
 
 def is_root():
@@ -33,24 +33,24 @@ def is_root():
     else:
         return True
 
-def get_pydtf_dir():
+def make_include_replace():
 
-    """Return the location of the dtf dist-packages directory."""
+    """Make path replacement string for dtf_core.sh"""
 
-    return getsitepackages()[0] + '/dtf'
-
-def get_dtf_data_dir():
-
-    """Return the location of the dtf data directory."""
-
-    return expanduser('~') + '/.dtf'
+    try:
+        return ("%s/dtf-%s-*.egg/dtf/included"
+                % (getsitepackages()[0], constants.VERSION))
+    except IndexError:
+        return None
 
 def generate_include_files():
 
     """Generate list of includes dynamically"""
-    dest_inc_dir = "%s/" % get_pydtf_dir()
 
-    return [(dest_inc_dir + d, [os.path.join(d, f) for f in files])
+    #dest_inc_dir = "%s/" % utils.get_pydtf_dir()
+
+    #return [(dest_inc_dir + d, [os.path.join(d, f) for f in files])
+    return [('dtf/' + d, [os.path.join(d, f) for f in files])
                 for d, folders, files in os.walk('included')]
 
 def do_replace(in_f_name, out_f_name, replacement_list):
@@ -64,9 +64,7 @@ def do_replace(in_f_name, out_f_name, replacement_list):
         out = in_f.read()
 
         for identifier, value in replacement_list:
-
             tmp_out = out.replace(identifier, value)
-
             out = tmp_out
 
         out_f.write(out)
@@ -80,7 +78,7 @@ def create_bash_completion():
 
     """Generate a bash completion script based on current system"""
 
-    db_file_path = get_dtf_data_dir() + "/main.db"
+    db_file_path = utils.get_dtf_data_dir() + "/main.db"
     completion_template = 'templates/completion_template.sh'
     completion_output = 'gen/dtf_bash_completion.sh'
 
@@ -111,7 +109,7 @@ def create_dtf_core():
         return 0
 
     replacements.append(('__VERSION__', constants.VERSION))
-    replacements.append(('__INCLUDED__', get_pydtf_dir() + '/included'))
+    replacements.append(('__INCLUDED__', make_include_replace()))
 
     if do_replace(core_template, core_output, replacements) != 0:
 
@@ -119,6 +117,15 @@ def create_dtf_core():
         return -1
 
     return 0
+
+def get_long_description():
+
+    """Generate long description"""
+
+    here = os.path.abspath(os.path.dirname(__file__))
+
+    with open(os.path.join(here, 'README.rst')) as readme_f:
+        return readme_f.read()
 
 if not is_root():
     print "You must run this script as root!"
@@ -140,25 +147,49 @@ if create_bash_completion() != 0:
 if create_dtf_core() != 0:
     print "Unable to generate dtf_core. Exiting!"
 
-opts = {}
+# Main Setup Execution
+setup(
+    name='dtf',
+    version=constants.VERSION,
+    description='Android Device Testing Framework (dtf)',
+    long_description=get_long_description(),
 
-opts['name'] = 'dtf'
-opts['version'] = constants.VERSION
-opts['description'] = 'Android Device Testing Framework (dtf)'
-opts['author'] = 'Jake Valletta'
-opts['author_email'] = 'javallet@gmail.com'
-opts['url'] = 'https://thecobraden.com/projects/dtf'
-opts['license'] = 'ASL2.0'
-opts['scripts'] = ["dtf"]
-opts['package_dir'] = {'' : 'src'}
-opts['packages'] = ["dtf",
-                    "dtf.core",
-                    "dtf.core.cmds"]
+    url='https://thecobraden.com/projects/dtf',
+    download_url='https://github.com/jakev/dtf',
 
-opts['data_files'] = [
-        ('/etc/bash_completion.d',
-        ['gen/dtf_bash_completion.sh'])] + generate_include_files()
+    author='Jake Valletta',
+    author_email='javallet@gmail.com',
+    license='ASL',
 
-distrib = setup(**opts)
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Information Technology',
+        'Topic :: Security',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7'],
+
+    keywords='android device security mobile reverse-engineering framework',
+
+    packages=["dtf",
+              "dtf.core",
+              "dtf.core.cmds"],
+
+    install_requires=['colored'],
+
+    data_files=[('/etc/bash_completion.d',
+                    ['gen/dtf_bash_completion.sh'])]
+                            + generate_include_files(),
+
+    entry_points={
+        'console_scripts': [
+            'dtf = dtf.launcher:main',
+        ],
+    },
+
+    zip_safe=False,
+    include_package_data=True,
+)
 
 print "dtf installation completed!"
