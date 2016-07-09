@@ -51,6 +51,7 @@ class client(Module):
         print "dtf Client Manager"
         print "Subcommands:"
         print "    download   Download a file using dtfClient."
+        print "    execute    Execute a command using dtfClient."
         print "    install    Install the dtf client on device."
         print "    status     Print the install status of the client."
         print "    remove     Uninstall the dtf client."
@@ -264,7 +265,7 @@ class client(Module):
             log.e(self.name, "Socket error!")
             return -1
         else:
-            log.e(self.name, "Something went wrong with running the command: %d"
+            log.e(self.name, "Something went wrong with running the command: %s"
                   % resp_code)
             return -1
 
