@@ -31,7 +31,7 @@ from argparse import ArgumentParser
 
 import os.path
 
-DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.3-1.apk" %
+DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.0-4.apk" %
                    utils.get_pydtf_dir())
 
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
