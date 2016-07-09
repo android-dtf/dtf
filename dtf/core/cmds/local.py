@@ -23,7 +23,7 @@ from os import listdir
 from os.path import isfile, join
 
 
-class local(Module):
+class local(Module):  # pylint: disable=invalid-name
 
     """Module class for listing local modules"""
 
@@ -36,7 +36,7 @@ class local(Module):
 
         return [f for f in listdir(local_path) if isfile(join(local_path, f))]
 
-    def execute(self, args):
+    def execute(self, args):  # pylint: disable=unused-argument
 
         """Main module executor"""
 

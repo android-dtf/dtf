@@ -21,7 +21,7 @@ import os
 TAG = "dtf-module"
 
 
-class Module(object):
+class Module(object):  # pylint: disable=too-few-public-methods
 
     """
     Base class for creating a python module with dtf. Override the

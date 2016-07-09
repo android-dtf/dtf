@@ -24,11 +24,11 @@ from dtf.module import Module
 TAG = 'reset'
 
 
-class reset(Module):
+class reset(Module):  # pylint: disable=invalid-name
 
     """Module class for reseting a project"""
 
-    def execute(self, args):
+    def execute(self, args):  # pylint: disable=unused-argument,no-self-use
 
         """Main module executor"""
 

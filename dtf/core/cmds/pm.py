@@ -46,7 +46,7 @@ TYPE_PACKAGE = packagemanager.TYPE_PACKAGE
 log.LOG_LEVEL_FILE = 0
 
 
-class pm(Module):
+class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
     """Module class for dtf pm"""
 
@@ -129,39 +129,7 @@ class pm(Module):
 
         # Install single.
         else:
-            # Check for auto-mode:
-            if parsed_args.single_auto:
-                # Only modules can be auto-parsed
-                if single_type == TYPE_MODULE:
-                    log.i(TAG, "Attempting to auto parse...")
-
-                    item = self.auto_parse_module(parsed_args)
-                    if item is None:
-                        log.e(TAG, "Error autoparsing module!")
-                        return -9
-                else:
-                    log.e(TAG, "Autoparse is only available for modules!")
-                    return -4
-            # Not auto
-            else:
-                item = self.parse_single_item(parsed_args)
-                if item is None:
-                    log.e(TAG, "Error parsing single item!")
-                    return -5
-
-            # Now do the installation.
-            if single_type == TYPE_BINARY:
-                return packagemanager.install_single_binary(item,
-                                                            force=force_mode)
-            elif single_type == TYPE_LIBRARY:
-                return packagemanager.install_single_library(item,
-                                                             force=force_mode)
-            elif single_type == TYPE_MODULE:
-                return packagemanager.install_single_module(item,
-                                                            force=force_mode)
-            elif single_type == TYPE_PACKAGE:
-                return packagemanager.install_single_package(item,
-                                                             force=force_mode)
+            return self.install_single(parsed_args, single_type)
 
     @classmethod
     def do_delete(cls, args):
@@ -379,13 +347,35 @@ class pm(Module):
 
         return 0
 
-    @classmethod
-    def generate_export_xml(cls, export_items, manifest_f):
+    def generate_export_xml(self, export_items, manifest_f):
 
         """Create and populate manifest"""
 
-        rtn = 0
         root = etree.Element('Items')
+
+        # Add binaries
+        self.export_binaries(root, export_items)
+
+        # Add libraries
+        self.export_libraries(root, export_items)
+
+        # Add modules
+        self.export_modules(root, export_items)
+
+        # Add packages
+        self.export_packages(root, export_items)
+
+        # Write it all out
+        export_tree = etree.ElementTree(root)
+        export_tree.write(manifest_f, pretty_print=True)
+        manifest_f.flush()
+
+        return 0
+
+    @classmethod
+    def export_binaries(cls, etree_root, export_items):
+
+        """Export all binaries"""
 
         # Add binaries
         bin_items = [item for item in export_items
@@ -393,7 +383,7 @@ class pm(Module):
 
         for item in bin_items:
 
-            item_xml = etree.SubElement(root, 'Item')
+            item_xml = etree.SubElement(etree_root, 'Item')
             item_xml.attrib['type'] = TYPE_BINARY
             item_xml.attrib['name'] = item.name
 
@@ -415,13 +405,19 @@ class pm(Module):
 
             item_xml.attrib['localName'] = item.local_name
 
-        # Add libraries
+        return
+
+    @classmethod
+    def export_libraries(cls, etree_root, export_items):
+
+        """Export all libraries"""
+
         lib_items = [item for item in export_items
                      if item.type == TYPE_LIBRARY]
 
         for item in lib_items:
 
-            item_xml = etree.SubElement(root, 'Item')
+            item_xml = etree.SubElement(etree_root, 'Item')
             item_xml.attrib['type'] = TYPE_LIBRARY
             item_xml.attrib['name'] = item.name
 
@@ -443,13 +439,19 @@ class pm(Module):
 
             item_xml.attrib['localName'] = item.local_name
 
-        # Add modules
+        return
+
+    @classmethod
+    def export_modules(cls, etree_root, export_items):
+
+        """Export all modules"""
+
         mod_items = [item for item in export_items
                      if item.type == TYPE_MODULE]
 
         for item in mod_items:
 
-            item_xml = etree.SubElement(root, 'Item')
+            item_xml = etree.SubElement(etree_root, 'Item')
             item_xml.attrib['type'] = TYPE_MODULE
             item_xml.attrib['name'] = item.name
 
@@ -476,13 +478,19 @@ class pm(Module):
 
             item_xml.attrib['localName'] = item.local_name
 
-        # Add packages
+        return
+
+    @classmethod
+    def export_packages(cls, etree_root, export_items):
+
+        """Export all packages"""
+
         pkg_items = [item for item in export_items
                      if item.type == TYPE_PACKAGE]
 
         for item in pkg_items:
 
-            item_xml = etree.SubElement(root, 'Item')
+            item_xml = etree.SubElement(etree_root, 'Item')
             item_xml.attrib['type'] = TYPE_PACKAGE
             item_xml.attrib['name'] = item.name
 
@@ -504,12 +512,7 @@ class pm(Module):
 
             item_xml.attrib['localName'] = item.local_name
 
-        # Write it all out
-        export_tree = etree.ElementTree(root)
-        export_tree.write(manifest_f, pretty_print=True)
-        manifest_f.flush()
-
-        return rtn
+        return
 
     @classmethod
     def generate_export_items(cls):
@@ -675,33 +678,29 @@ class pm(Module):
 
         return item
 
-    @classmethod
-    def parse_single_item(cls, args):
+    def parse_single_item(self, args):
 
         """Parse args, return Item"""
 
         item = packagemanager.Item()
 
-        name = args.single_name
-        if name is None:
+        if args.single_name is None:
             log.e(TAG, "No '--name' specified in single item mode. Exiting.")
             return None
 
-        item.name = name
+        item.name = args.single_name
 
-        single_type = args.single_type
-        if single_type not in packagemanager.VALID_TYPES:
+        if args.single_type not in packagemanager.VALID_TYPES:
             log.e(TAG, "Invalid type passed to single. Exiting.")
             return None
 
-        item.type = single_type
+        item.type = args.single_type
 
-        health = args.single_health
-        if health not in packagemanager.VALID_HEALTH_VALUES:
+        if args.health not in packagemanager.VALID_HEALTH_VALUES:
             log.e(TAG, "Invalid health specified. Exiting.")
             return None
 
-        item.health = health
+        item.health = args.health
 
         version = args.single_version
         if version is not None:
@@ -729,13 +728,65 @@ class pm(Module):
 
         if install_name is None:
             log.d(TAG, "install_name is null, using name...")
-            install_name = name
+            install_name = args.single_name
         if local_name is None:
             log.d(TAG, "local_name is null, using name...")
-            local_name = name
+            local_name = args.single_name
 
         item.install_name = install_name
         item.local_name = local_name
+
+        if self.check_local_exists(item):
+            return item
+        else:
+            return None
+
+    def install_single(self, args, single_type):
+
+        """Parse and install single item"""
+
+        force_mode = args.force_mode
+        rtn = 0
+
+        # Check for auto-mode:
+        if args.single_auto:
+            # Only modules can be auto-parsed
+            if single_type == TYPE_MODULE:
+                log.i(TAG, "Attempting to auto parse...")
+
+                item = self.auto_parse_module(args)
+                if item is None:
+                    log.e(TAG, "Error autoparsing module!")
+                    return -9
+            else:
+                log.e(TAG, "Autoparse is only available for modules!")
+                return -4
+        # Not auto
+        else:
+            item = self.parse_single_item(args)
+            if item is None:
+                log.e(TAG, "Error parsing single item!")
+                return -5
+
+        # Now do the installation.
+        if single_type == TYPE_BINARY:
+            rtn = packagemanager.install_single_binary(item,
+                                                       force=force_mode)
+        elif single_type == TYPE_LIBRARY:
+            rtn = packagemanager.install_single_library(item,
+                                                        force=force_mode)
+        elif single_type == TYPE_MODULE:
+            rtn = packagemanager.install_single_module(item,
+                                                       force=force_mode)
+        elif single_type == TYPE_PACKAGE:
+            rtn = packagemanager.install_single_package(item,
+                                                        force=force_mode)
+        return rtn
+
+    @classmethod
+    def check_local_exists(cls, item):
+
+        """Check if local item exists and print error"""
 
         if item.type == TYPE_BINARY:
             if not os.path.isfile(item.local_name):

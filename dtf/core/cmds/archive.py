@@ -24,7 +24,7 @@ import os
 from subprocess import Popen
 
 
-class archive(Module):
+class archive(Module):  # pylint: disable=invalid-name
 
     """Module class for archiving a project"""
 

@@ -20,13 +20,13 @@ import dtf.properties as prop
 import dtf.adb as DtfAdb
 
 
-class status(Module):
+class status(Module):  # pylint: disable=invalid-name
 
     """Module class for getting the status of a device"""
 
     adb = DtfAdb.DtfAdb()
 
-    def execute(self, args):
+    def execute(self, args):  # pylint: disable=unused-argument
 
         """Main module executor"""
 

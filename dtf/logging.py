@@ -79,7 +79,7 @@ def __log_to_file(date, tag, message):
 
 
 # Public Calls #########################################################
-def e(tag, message):
+def e(tag, message):  # pylint: disable=invalid-name
 
     """Print an error message"""
 
@@ -90,7 +90,7 @@ def e(tag, message):
         __log_to_file(date, tag+"/E", message)
 
 
-def w(tag, message):
+def w(tag, message):  # pylint: disable=invalid-name
 
     """Print a warning message"""
 
@@ -101,7 +101,7 @@ def w(tag, message):
         __log_to_file(date, tag+"/W", message)
 
 
-def i(tag, message):
+def i(tag, message):  # pylint: disable=invalid-name
 
     """Print an informational message (non-debug)"""
 
@@ -112,7 +112,7 @@ def i(tag, message):
         __log_to_file(date, tag+"/I", message)
 
 
-def v(tag, message):
+def v(tag, message):  # pylint: disable=invalid-name
 
     """Print a verbose message (non-debug)"""
 
@@ -123,7 +123,7 @@ def v(tag, message):
         __log_to_file(date, tag+"/V", message)
 
 
-def d(tag, message):
+def d(tag, message):  # pylint: disable=invalid-name
 
     """Print a debugging message"""
 

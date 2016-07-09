@@ -37,7 +37,7 @@ DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.0-4.apk" %
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 
 
-class client(Module):
+class client(Module):  # pylint: disable=invalid-name
 
     """Module class for dtf client"""
 
@@ -154,23 +154,21 @@ class client(Module):
         if resp == RESP_OK:
             log.i(self.name, "File upload success!")
             return 0
-        elif resp == RESP_ERROR:
+
+        # These are all error conditions
+        if resp == RESP_ERROR:
             log.e(self.name, "General error!")
-            return -1
         elif resp == RESP_EXISTS:
             log.e(self.name, "Remote file exist!")
-            return -1
         elif resp == RESP_NO_WRITE:
             log.e(self.name, "No write permissions!")
-            return -1
         elif resp == ERR_SOCK:
             log.e(self.name, "Socket error!")
-            return -1
         else:
             log.e(self.name, "Unknown response, cannot proceed.")
-            return -1
 
-        return 0
+        # Getting here means error.
+        return -1
 
     def do_download(self, args):
 
@@ -210,21 +208,21 @@ class client(Module):
         if resp == RESP_OK:
             log.i(self.name, "File download success!")
             return 0
-        elif resp == RESP_ERROR:
+
+        # These are all error conditions
+        if resp == RESP_ERROR:
             log.e(self.name, "General error!")
-            return -1
         elif resp == RESP_NO_EXIST:
             log.e(self.name, "Remote file doesnt exist!")
-            return -1
         elif resp == RESP_NO_READ:
             log.e(self.name, "No read permissions!")
-            return -1
         elif resp == ERR_SOCK:
             log.e(self.name, "Socket error!")
-            return -1
         else:
             log.e(self.name, "Unknown response, cannot proceed.")
-            return -1
+
+        # Getting here means an error
+        return -1
 
     def do_restart(self):
 

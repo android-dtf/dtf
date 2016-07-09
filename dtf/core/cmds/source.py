@@ -19,11 +19,11 @@ from dtf.module import Module
 from dtf.globals import DTF_INCLUDED_DIR
 
 
-class source(Module):
+class source(Module):  # pylint: disable=invalid-name
 
     """Module class for source dtf stuff"""
 
-    def execute(self, args):
+    def execute(self, args):  # pylint: disable=unused-argument,no-self-use
 
         """Main module executor"""
 

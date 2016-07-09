@@ -25,11 +25,12 @@ from dtf.properties import (get_prop, set_prop, del_prop,
                             test_prop, PropertyError)
 
 
-class prop(Module):
+class prop(Module):  # pylint: disable=invalid-name
 
     """Module class for property management"""
 
-    def usage(self):
+    @classmethod
+    def usage(cls):
 
         """Display module usage"""
 
@@ -106,7 +107,8 @@ class prop(Module):
 
         return rtn
 
-    def do_dump(self):
+    @classmethod
+    def do_dump(cls):
 
         """Dump entire configuration"""
 

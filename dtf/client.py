@@ -266,7 +266,7 @@ class DtfClient(object):
         sock = self.__sock_connect(DTF_SOCKET)
         if sock is None:
             log.e(TAG, "Cannot __do_execute, socket failure.")
-            return ERR_SOCK
+            return ("", ERR_SOCK)
 
         sock.send(CMD_EXECUTE)
 
@@ -341,11 +341,11 @@ class DtfClient(object):
         """Execute command using dtfClient"""
 
         if cmd_string == "":
-            return None
+            return (None, None)
 
         self.__enable_forward()
         output, resp_code = self.__do_execute(cmd_string)
         self.__disable_forward()
 
-        return output, resp_code
+        return (output, resp_code)
     # End public API

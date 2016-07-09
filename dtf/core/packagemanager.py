@@ -30,6 +30,9 @@ import sqlite3
 
 from lxml import etree
 
+# Eventually this will be changed
+# pylint: disable=too-many-instance-attributes
+
 TAG = "dtf_package_manager"
 
 MANIFEST_NAME = "manifest.xml"
@@ -55,7 +58,7 @@ DTF_PACKAGES_DIR = dtf.globals.DTF_PACKAGES_DIR
 DTF_DB = dtf.globals.DTF_DB
 
 
-class Item(object):
+class Item(object):  # pylint: disable=too-few-public-methods
 
     """Class for working with content"""
 

@@ -89,14 +89,14 @@ def get_set_value(set_data, match_key):
     return None
 
 
-class init(Module):
+class init(Module):  # pylint: disable=invalid-name
 
     """Module class for creating a dtf project"""
 
     adb = None
 
     @classmethod
-    def do_shutdown(cls, signum, frame):
+    def do_shutdown(cls, signum, frame):  # pylint: disable=unused-argument
 
         """Handle a Ctrl+C"""
 
@@ -211,18 +211,59 @@ class init(Module):
         else:
             return version_string
 
+    @classmethod
+    def make_project_directories(cls):
+
+        """Create all directories associated with a dtf project"""
+
+        mkdir(REPORTS_DIRECTORY)
+        mkdir(DBS_DIRECTORY)
+        mkdir(LOCAL_MODULES_DIRECTORY)
+
+        return 0
+
+    def determine_device(self):
+
+        """Determine which device to use"""
+
+        devices = self.adb.get_devices()
+
+        if len(devices) == 0:
+            log.e(TAG, "No devices found, exiting.")
+            return None
+
+        elif len(devices) == 1:
+
+            init_device = devices[0]
+            serial = init_device['serial']
+
+            res = raw_input("Got serial '%s', is this correct? [Y/n] "
+                            % serial)
+            if res.lower() == 'n':
+                log.e(TAG, "Initialization aborted.")
+                return None
+        else:
+            print "Found many devices. Please select from the following list:"
+
+            i = 1
+            for serial, status in devices:
+                print "#%d. %s (%s)" % (i, serial, status)
+                i += 1
+
+            res = raw_input("\nWhich device #? ")
+
+            try:
+                int_res = int(res)
+                init_device = devices[int_res - 1]
+            except (ValueError, IndexError):
+                log.e(TAG, "Invalid input!")
+                return None
+
+        return init_device
+
     def initialize_device(self, init_device):
 
         """Perform the actual initialization"""
-
-        # Is this device offline?
-        device_status = init_device['status']
-        if device_status != DtfAdb.STATUS_DEVICE:
-            log.e(TAG, "Cannot initialize offline/bootloader device!")
-            log.e(TAG, "Try either: ")
-            log.e(TAG, "    1. Run: adb kill-server && dtf init")
-            log.e(TAG, "    2. Reboot the device.")
-            return -2
 
         device_serial = init_device['serial']
 
@@ -293,11 +334,10 @@ class init(Module):
         log.d(TAG, "Determine SEAndroid state: %s" % se_state)
         set_prop('Info', 'seandroid-state', se_state)
 
-        # Make project directories
-        mkdir(REPORTS_DIRECTORY)
-        mkdir(DBS_DIRECTORY)
-        mkdir(LOCAL_MODULES_DIRECTORY)
+        # Setup the directory structure
+        self.make_project_directories()
 
+        # Set directory related properties
         set_prop('Local', 'reports-dir', REPORTS_DIRECTORY)
         set_prop('Local', 'db-dir', DBS_DIRECTORY)
 
@@ -338,47 +378,28 @@ class init(Module):
 
         time.sleep(1)
 
-        devices = self.adb.get_devices()
-
-        if len(devices) == 0:
-            log.e(TAG, "No devices found, exiting.")
+        init_device = self.determine_device()
+        if init_device is None:
+            log.e(TAG, "Error determining device.")
             return -2
 
-        elif len(devices) == 1:
+        # Is this device offline?
+        if init_device['status'] != DtfAdb.STATUS_DEVICE:
+            log.e(TAG, "Cannot initialize offline/bootloader device!")
+            log.e(TAG, "Try either: ")
+            log.e(TAG, "    1. Run: adb kill-server && dtf init")
+            log.e(TAG, "    2. Reboot the device.")
+            return -3
 
-            init_device = devices[0]
-            serial = init_device['serial']
-
-            res = raw_input("Got serial '%s', is this correct? [Y/n] "
-                            % serial)
-            if res.lower() == 'n':
-                log.e(TAG, "Initialization aborted.")
-                return -3
-        else:
-            print "Found many devices. Please select from the following list:"
-
-            i = 1
-            for serial, status in devices:
-                print "#%d. %s (%s)" % (i, serial, status)
-                i += 1
-
-            res = raw_input("\nWhich device #? ")
-
-            try:
-                int_res = int(res)
-                init_device = devices[int_res - 1]
-            except (ValueError, IndexError):
-                log.e(TAG, "Invalid input!")
-                return -4
-
+        # Initialize device
         if self.initialize_device(init_device) != 0:
             log.e(TAG, "Error initializing device!")
-            return -5
-        else:
-            log.i(TAG, "Device initialization complete!")
-            return 0
+            return -4
 
-    def execute(self, args):
+        log.i(TAG, "Device initialization complete!")
+        return 0
+
+    def execute(self, args):  # pylint: disable=unused-argument
 
         """Main module executor"""
 
