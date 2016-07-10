@@ -1,7 +1,6 @@
 # Some dtf stuff shouldn't be added.
 .dtf*
-included/dtf_core.sh
-gen/
+dtf/*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

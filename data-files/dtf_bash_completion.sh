@@ -29,7 +29,7 @@ upsearch () {
 
 _dtf()
 {
-    MAIN_DB=__REPLACE__
+    MAIN_DB=~/.dtf/main.db
 
     local cur prev opts
     COMPREPLY=()

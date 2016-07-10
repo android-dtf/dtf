@@ -1,20 +1,23 @@
 // Build egg + pydocs with documentation
-task buildFull() {
+task buildFull() {}
 
-}
+
+// Run all tests
+task doTests() {}
+
+task bundleIncluded() {}
 
 // Build just Python egg
 task buildEgg(type:Exec) {
 
-    commandLine 'python', 'setup.py', "bdist_egg"
-
-    standardOutput = new ByteArrayOutputStream()
-
-    ext.output = {
-        return standardOutput.toString()
-    }
+    commandLine 'python', 'setup.py', 'bdist_egg'
 }
 
+// Task to install local .egg
+task installEgg(type:Exec) {
+
+    commandLine 'python', 'setup.py', 'install'
+}
 
 // Task to generate documentation
 task genDocs(type:Exec) {
@@ -24,40 +27,50 @@ task genDocs(type:Exec) {
     workingDir = './docs/'
 
     commandLine 'pydoc', '-w', "../dtf/*.py"
-
-    standardOutput = new ByteArrayOutputStream()
-
-    ext.output = {
-        return standardOutput.toString()
-    }
 }
 
 // Flake8 the Code
-task doLint(type:Exec) {
+task doFlake(type:Exec) {
 
     commandLine 'flake8', './dtf'
+}
 
-    standardOutput = new ByteArrayOutputStream()
+// pylint the Code
+task doLint(type:Exec) {
 
-    ext.output = {
-        return standardOutput.toString()
-    }
+    commandLine 'pylint', './dtf', '--rcfile=./pylint.config'
+}
+
+task deleteIncludedZip(type:Delete) {
+
+    delete 'dtf/included.zip'
 }
 
 // Create ZIP bundle of included
-task bundleIncluded(type:Exec) {
+task zipIncluded(type:Zip) {
 
-    commandLine 'ls', './dtf'
-
-    standardOutput = new ByteArrayOutputStream()
-
-    ext.output = {
-        return standardOutput.toString()
-    }
+    from ('included/')
+    include '**/*'
+    into ''
+    archiveName 'included.zip'
+    destinationDir file('dtf/')
 }
 
-buildEgg.dependsOn bundleIncluded
-buildEgg.dependsOn doLint
+// doTests will make sure the code passes all tests
+doTests.dependsOn doLint
+doTests.dependsOn doFlake
 
+// buildEgg will produce a .egg installation
+buildEgg.dependsOn doTests
+buildEgg.dependsOn bundleIncluded
+
+// buildFull creates an .egg and associated documentation
 buildFull.dependsOn buildEgg
 buildFull.dependsOn genDocs
+
+// installEgg requires a valid .egg
+installEgg.dependsOn buildEgg
+
+// Bundling
+bundleIncluded.dependsOn zipIncluded
+zipIncluded.dependsOn deleteIncludedZip

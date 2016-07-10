@@ -24,15 +24,15 @@ from dtf.client import (DtfClient, RESP_OK, RESP_NO_READ, RESP_ERROR,
 
 import dtf.logging as log
 import dtf.properties as prop
-import dtf.core.utils as utils
 
 from dtf.constants import DTF_CLIENT
+from dtf.globals import DTF_INCLUDED_DIR
 from argparse import ArgumentParser
 
 import os.path
 
-DTF_CLIENT_PATH = ("%s/included/dtfClient/com.dtf.client-1.0-4.apk" %
-                   utils.get_pydtf_dir())
+DTF_CLIENT_PATH = ("%s/dtfClient/com.dtf.client-1.0-4.apk"
+                   % DTF_INCLUDED_DIR)
 
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 

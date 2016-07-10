@@ -16,19 +16,13 @@
 
 # Modules that want to take advantage of built-in functionality should source this file.
 
-# Other stuff.
-DTF_VERSION=__VERSION__
-
 # This allows modules to access dtf resources
 DTF_DIR=~/.dtf
 DTF_BINS=${DTF_DIR}/binaries
 DTF_LIBS=${DTF_DIR}/libraries
 DTF_MODULES=${DTF_DIR}/modules
 DTF_PACKAGES=${DTF_DIR}/packages
-DTF_INCLUDED=__INCLUDED__
-
-# Hack to expand wildcards
-DTF_INCLUDED=$(echo $DTF_INCLUDED)
+DTF_INCLUDED=${DTF_DIR}/included
 
 # Additional sourcing. Move this eventually?
 . ${DTF_INCLUDED}/dtf_aapt.sh

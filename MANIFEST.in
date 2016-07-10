@@ -1,3 +1,1 @@
-include MANIFEST.in
-include setup.py
-include included/*
+include dtf/*.zip

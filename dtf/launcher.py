@@ -21,11 +21,14 @@ import sys
 import subprocess
 import os
 import os.path
+import zipfile
 
 import dtf.constants as constants
 import dtf.core.utils as utils
 import dtf.packages as pkg
 import dtf.logging as log
+
+from dtf.globals import DTF_INCLUDED_DIR
 
 # Check for version before anything
 if sys.version_info < (2, 6, 0):
@@ -71,6 +74,30 @@ def usage_full():
     print '    status      Determine if project device is attached.'
 
     return -1
+
+
+def is_first_run():
+
+    """Determine if this is first run"""
+
+    if os.path.isdir(DTF_INCLUDED_DIR):
+        return False
+    else:
+        return True
+
+
+def unpack_included():
+
+    """Unzip the included ZIP"""
+
+    os.mkdir(DTF_INCLUDED_DIR)
+
+    included_zip = "%s/included.zip" % (os.path.split(__file__)[0])
+
+    with zipfile.ZipFile(included_zip, 'r') as included_zip:
+        included_zip.extractall(DTF_INCLUDED_DIR)
+
+    return 0
 
 
 def find_built_in_module(cmd):
@@ -129,6 +156,10 @@ def main():
     # First, lets make sure dtf has the dependencies we want.
     if check_dependencies() != 0:
         return -2
+
+    # If this is first run, we need to extract the included files
+    if is_first_run():
+        unpack_included()
 
     # Next, check args.
     if len(sys.argv) < 2:
