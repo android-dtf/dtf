@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 """dtf Constants"""
+import dtf
 
-VERSION = "1.3.1.dev"
+VERSION = dtf.__version__
 
 DTF_CLIENT = "com.dtf.client"

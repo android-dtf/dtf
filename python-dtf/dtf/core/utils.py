@@ -16,7 +16,6 @@
 """ dtf Utilities """
 
 from hashlib import md5
-import glob
 import os
 import os.path
 from site import getsitepackages
@@ -48,11 +47,7 @@ def get_pydtf_dir():
 
     """Return the location of the dtf dist-packages directory."""
 
-    try:
-        search_string = getsitepackages()[0] + '/dtf-*.egg/'
-        return glob.glob(search_string)[0] + 'dtf'
-    except IndexError:
-        return None
+    return getsitepackages()[0] + '/dtf'
 
 
 def get_dtf_data_dir():

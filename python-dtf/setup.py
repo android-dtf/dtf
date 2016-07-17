@@ -19,23 +19,27 @@
 from setuptools import setup
 import os
 
-import dtf.constants as constants
 
+# Read in the version data.
+def generate_version_string():
 
-def get_long_description():
+    """Generate version string based on VERSION"""
 
-    """Generate long description"""
+    values = open(os.path.join(
+        os.path.dirname(__file__),
+        "dtf/VERSION")).read().rstrip().split('-')
 
-    here = os.path.abspath(os.path.dirname(__file__))
-
-    with open(os.path.join(here, 'README.rst')) as readme_f:
-        return readme_f.read()
+    if len(values) < 3:
+        return "%s.%s" % (values[0], values[1])
+    else:
+        return "%s.%s.%s" % (values[0], values[1], values[2])
 
 setup(
     name='dtf',
-    version=constants.VERSION,
+    version=generate_version_string(),
     description='Android Device Testing Framework (dtf)',
-    long_description=get_long_description(),
+    long_description=open(
+        os.path.join(os.path.dirname(__file__), "README.rst")).read(),
 
     url='https://thecobraden.com/projects/dtf',
     download_url='https://github.com/jakev/dtf',
@@ -63,7 +67,7 @@ setup(
 
     data_files=[
         ('/etc/bash_completion.d',
-         ['data-files/dtf_bash_completion.sh']),
+         ['data-files/dtf.bash']),
     ],
 
     entry_points={

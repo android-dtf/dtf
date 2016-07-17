@@ -50,7 +50,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************
 
 Various portions of the compiled code are taken from the apktool project, written
-and copyrighted by Ryszard Wiśniewski, released under the the following Apache 
+and copyrighted by Ryszard Wiśniewski, released under the following Apache 
 License, Version 2.0:
 
 *******************************************************************************
@@ -68,7 +68,7 @@ This product includes software developed by:
 *******************************************************************************
 
 Various portions of the compiled code are taken from the dex2jar project, written
-and copyrighted by Ryszard Wiśniewski, released under the the following Apache 
+and copyrighted by Ryszard Wiśniewski, released under the following Apache 
 License, Version 2.0:
 
 *******************************************************************************
@@ -90,8 +90,8 @@ handing & attribute formatting).
 Copyright 2008 Android4ME
 *******************************************************************************
 
-A compiled version of `aapt` is take from the Android Open Source Project (AOSP),
-written and copyrighted under the following Apache License, Version 2.0:
+A compiled version of `aapt` is taken from the Android Open Source Project
+(AOSP), written and copyrighted under the following Apache License, Version 2.0:
 
 *******************************************************************************
 # Copyright (C) 2008 The Android Open Source Project
@@ -108,3 +108,24 @@ written and copyrighted under the following Apache License, Version 2.0:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 *******************************************************************************
+
+A compile version of `android-backup-extractor` is taken from the
+android-backup-extractor project, written and copyrighted by Nikolay Elenkov,
+released under the following Apache License, Version 2.0:
+
+*******************************************************************************
+Copyright 2012 Nikolay Elenkov
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*******************************************************************************
+

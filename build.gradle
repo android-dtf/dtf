@@ -1,36 +1,98 @@
-// Build egg + pydocs with documentation
-task buildFull() {}
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.netflix.nebula:gradle-ospackage-plugin:3.6.1"
+  }
+}
 
+apply plugin: "nebula.ospackage"
+
+// Populate version information
+String versionContents = new File("VERSION").text.trim()
+def values = versionContents.split('-')
+
+project.ext.set("buildVersion", values[0])
+project.ext.set("buildRelease", values[1])
+
+if ( values.length == 3) {
+    project.ext.set("buildBranch", values[2])
+} else {
+    project.ext.set("buildBranch", "")
+}
+
+task makeDeb(type:Deb) {
+
+    packageName = 'android-dtf'
+    version = project.buildVersion
+    release = project.buildRelease
+    maintainer = 'Jake Valletta <javallet@gmail.com>'
+    url = 'https://github.com/jakev/dtf'
+    summary = 'Android Device Testing Framework (dtf)'
+    packageDescription = 'Module framework for discovering vulnerabilities on Android devices.'
+    packageGroup = 'main'
+
+    configurationFile('/etc/bash_completion.d/dtf.bash')
+
+    requires('python')
+    requires('xz-utils')
+    requires('sqlite3')
+
+    into 'build/'
+
+    /* Library Files */
+    from('python-dtf/build/usr/local/lib') {
+        createDirectoryEntry = true
+        fileMode 0644
+        into '/usr/local/lib'
+    }
+
+    /* Launcher */
+    from('python-dtf/build/usr/local/bin') {
+        createDirectoryEntry = true
+        fileMode 0755
+        into '/usr/local/bin'
+    }
+
+    /* Bash Completition */
+    from('python-dtf/build/etc') {
+        createDirectoryEntry = true
+        fileType CONFIG
+        fileMode 0644
+        into '/etc'
+    }
+}
 
 // Run all tests
-task doTests() {}
+task doPythonTests() {}
 
 task bundleIncluded() {}
 
-// Build just Python egg
-task buildEgg(type:Exec) {
+// Build Python files
+task buildPython(type:Exec) {
 
-    commandLine 'python', 'setup.py', 'bdist_egg'
-}
+    workingDir 'python-dtf'
 
-// Task to install local .egg
-task installEgg(type:Exec) {
-
-    commandLine 'python', 'setup.py', 'install'
+    commandLine 'python', 'setup.py', 'bdist_dumb'
 }
 
 // Task to generate documentation
 task genDocs(type:Exec) {
 
-    mkdir('docs')
+    mkdir('python-dtf/api-docs')
 
-    workingDir = './docs/'
+    workingDir 'python-dtf/api-docs'
 
-    commandLine 'pydoc', '-w', "../dtf/*.py"
+    commandLine 'bash', '-c', 'pydoc -w ../dtf/*.py'
 }
 
 // Flake8 the Code
 task doFlake(type:Exec) {
+
+    workingDir 'python-dtf'
 
     commandLine 'flake8', './dtf'
 }
@@ -38,39 +100,62 @@ task doFlake(type:Exec) {
 // pylint the Code
 task doLint(type:Exec) {
 
+    workingDir 'python-dtf'
+
     commandLine 'pylint', './dtf', '--rcfile=./pylint.config'
 }
 
 task deleteIncludedZip(type:Delete) {
 
-    delete 'dtf/included.zip'
+    delete 'python-dtf/dtf/included.zip'
 }
 
 // Create ZIP bundle of included
 task zipIncluded(type:Zip) {
 
-    from ('included/')
+    from ('python-dtf/included/')
     include '**/*'
     into ''
     archiveName 'included.zip'
-    destinationDir file('dtf/')
+    destinationDir file('python-dtf/dtf/')
+}
+
+// Copy version file
+task copyVersion(type:Copy) {
+
+    from('.')
+    into 'python-dtf/dtf/'
+    include('VERSION')
+}
+
+// Clean up
+clean {
+
+    delete 'build'
+    delete 'python-dtf/build'
+    delete 'python-dtf/dist'
+    delete "python-dtf/dtf.egg-info"
+    delete 'python-dtf/api-docs'
+    delete 'python-dtf/dtf/included.zip'
+    delete 'python-dtf/dtf/VERSION'
 }
 
 // doTests will make sure the code passes all tests
-doTests.dependsOn doLint
-doTests.dependsOn doFlake
+doPythonTests.dependsOn doLint
+doPythonTests.dependsOn doFlake
 
-// buildEgg will produce a .egg installation
-buildEgg.dependsOn doTests
-buildEgg.dependsOn bundleIncluded
+// Prepare the python code
+buildPython.dependsOn doPythonTests
+buildPython.dependsOn bundleIncluded
+buildPython.dependsOn copyVersion
 
-// buildFull creates an .egg and associated documentation
-buildFull.dependsOn buildEgg
-buildFull.dependsOn genDocs
-
-// installEgg requires a valid .egg
-installEgg.dependsOn buildEgg
+// Documentation requires valid Python
+genDocs.dependsOn buildPython
 
 // Bundling
 bundleIncluded.dependsOn zipIncluded
 zipIncluded.dependsOn deleteIncludedZip
+
+// Building Debian
+build.dependsOn makeDeb
+makeDeb.dependsOn buildPython
