@@ -18,7 +18,7 @@ import sys
 import subprocess
 import os
 import os.path
-import zipfile
+import tarfile
 
 import dtf.constants as constants
 import dtf.core.utils as utils
@@ -85,14 +85,14 @@ def is_first_run():
 
 def unpack_included():
 
-    """Unzip the included ZIP"""
+    """Unzip the included TAR"""
 
     os.mkdir(DTF_INCLUDED_DIR)
 
-    included_zip = "%s/included.zip" % (os.path.split(__file__)[0])
+    tar_path = "%s/included.tar" % (os.path.split(__file__)[0])
 
-    with zipfile.ZipFile(included_zip, 'r') as included_zip:
-        included_zip.extractall(DTF_INCLUDED_DIR)
+    with tarfile.TarFile(tar_path, 'r') as included_tar:
+        included_tar.extractall(DTF_INCLUDED_DIR)
 
     return 0
 

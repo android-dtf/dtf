@@ -105,18 +105,18 @@ task doLint(type:Exec) {
     commandLine 'pylint', './dtf', '--rcfile=./pylint.config'
 }
 
-task deleteIncludedZip(type:Delete) {
+task deleteIncludedTar(type:Delete) {
 
-    delete 'python-dtf/dtf/included.zip'
+    delete 'python-dtf/dtf/included.tar'
 }
 
-// Create ZIP bundle of included
-task zipIncluded(type:Zip) {
+// Create TAR bundle of included
+task tarIncluded(type:Tar) {
 
     from ('python-dtf/included/')
     include '**/*'
     into ''
-    archiveName 'included.zip'
+    archiveName 'included.tar'
     destinationDir file('python-dtf/dtf/')
 }
 
@@ -136,7 +136,7 @@ clean {
     delete 'python-dtf/dist'
     delete "python-dtf/dtf.egg-info"
     delete 'python-dtf/api-docs'
-    delete 'python-dtf/dtf/included.zip'
+    delete 'python-dtf/dtf/included.tar'
     delete 'python-dtf/dtf/VERSION'
 }
 
@@ -153,8 +153,8 @@ buildPython.dependsOn copyVersion
 genDocs.dependsOn buildPython
 
 // Bundling
-bundleIncluded.dependsOn zipIncluded
-zipIncluded.dependsOn deleteIncludedZip
+bundleIncluded.dependsOn tarIncluded
+tarIncluded.dependsOn deleteIncludedTar
 
 // Building Debian
 build.dependsOn makeDeb
