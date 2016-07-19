@@ -69,8 +69,6 @@ task makeDeb(type:Deb) {
 // Run all tests
 task doPythonTests() {}
 
-task bundleIncluded() {}
-
 // Build Python files
 task buildPython(type:Exec) {
 
@@ -146,14 +144,13 @@ doPythonTests.dependsOn doFlake
 
 // Prepare the python code
 buildPython.dependsOn doPythonTests
-buildPython.dependsOn bundleIncluded
+buildPython.dependsOn tarIncluded
 buildPython.dependsOn copyVersion
 
 // Documentation requires valid Python
 genDocs.dependsOn buildPython
 
 // Bundling
-bundleIncluded.dependsOn tarIncluded
 tarIncluded.dependsOn deleteIncludedTar
 
 // Building Debian
