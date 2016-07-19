@@ -69,6 +69,7 @@ def usage_full():
     print '    reset       Removes the dtf config from current directory.'
     print '    source      Used for sourcing additional commands.'
     print '    status      Determine if project device is attached.'
+    print '    version     Print version number.'
 
     return -1
 
@@ -170,17 +171,18 @@ def main():
     # Help menu
     if command_name in ['-h', '--help', 'help']:
         sys.exit(usage_full())
+    # Version information
+    elif command_name in ['-v', '--version', 'version']:
+        print constants.VERSION
+        sys.exit(0)
 
     # Almost all commands with dtf require you to be in a project directory,
     # but some don't. Check for those next.
     elif command_name == 'pm':
         return pkg.launch_builtin_module('pm', sys.argv, chdir=False)
 
-    elif command_name == 'init':
-        return pkg.launch_builtin_module('init', sys.argv)
-
-    elif command_name == 'source':
-        return pkg.launch_builtin_module('source', sys.argv)
+    elif command_name in ['init', 'source']:
+        return pkg.launch_builtin_module(command_name, sys.argv)
 
     # Ok, now we need to get to the top of the project directory.
     project_root = utils.get_project_root()
