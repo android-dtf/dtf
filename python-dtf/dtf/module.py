@@ -35,6 +35,8 @@ class Module(object):  # pylint: disable=too-few-public-methods
     author = "N/A"
     about = "A basic dtf module."
 
+    requires = []
+
     __self__ = ''
 
     def run(self, args):

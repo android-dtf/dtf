@@ -98,6 +98,14 @@ def __launch_python_module(path, cmd, args, chdir=True):
         log.e(TAG, "Unable to find class '%s' in module!" % cmd)
         return -6
 
+    # Make sure requirements are met
+    for requirement in mod_inst.requires:
+
+        if utils.which(requirement) is None:
+            log.e(TAG, "Unable to execute! Unmet dependency: %s"
+                  % requirement)
+            return -8
+
     return mod_inst.run(args)
 
 
