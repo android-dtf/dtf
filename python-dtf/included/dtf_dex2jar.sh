@@ -16,7 +16,7 @@
 
 # This this is a wraper script for "dex2jar".
 
-function dtf_dex2jar()
+dtf_dex2jar()
 {
 
     _classpath="."

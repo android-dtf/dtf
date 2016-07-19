@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Android Device Testing Framework ("dtf")
 # Copyright 2013-2016 Jake Valletta (@jake_valletta)
 #
@@ -31,11 +32,7 @@ dtf_abe()
         shift
     done
 
-    if [ "$OSTYPE" = "cygwin" ] ; then
-        jarpath=`cygpath -w  "$jarfile"`
-    else
-        jarpath="$jarfile"
-    fi
+    jarpath="$jarfile"
 
     java $javaOpts -jar "$jarpath" "$@"
 

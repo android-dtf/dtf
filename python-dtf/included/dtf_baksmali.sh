@@ -33,11 +33,7 @@ dtf_baksmali()
         shift
     done
 
-    if [ "$OSTYPE" = "cygwin" ] ; then
-        jarpath=`cygpath -w  "$jarfile"`
-    else
-        jarpath="$jarfile"
-    fi
+    jarpath="$jarfile"
 
     java $javaOpts -jar "$jarpath" "$@"
     return $?

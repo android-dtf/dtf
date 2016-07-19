@@ -67,13 +67,13 @@ getroot () {
 
     if [ -f .dtfini ]; then echo "$PWD" && return; fi
 
-    test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch ".dtfini"
+    test / = "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch ".dtfini"
 }
 
 # Helper for obtaining project root. Not meant to be called (unless you wanted
 # to?)
 upsearch () {
-    test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
+    test / = "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. && upsearch "$1"
 }
 
 # Top of the project.
@@ -85,29 +85,13 @@ dtf_reset_dir() {
     cd "$LAUNCH_DIR"
 }
 
-# Test if a element is in an array
-# arg1 : element
-# arg2 : array
-# returns : 1 if element in array, 0 if not found.
-containsElement () {
-    local e
-    for e in "${@:2}"; do
-        if [[ "$e" == "$1" ]]; then
-            echo "1"
-            return
-        fi
-    done
-    echo "0"
-}
-
-
 # Method to check if device is connected.
 # returns 1 if connected, 0 if not connected. 
 dtf_device_connected ()
 {
     state=$(adb get-state)
 
-    if [ "$state" == "device" ]; then
+    if [ "$state" = "device" ]; then
         return 0
     fi
 
@@ -136,7 +120,7 @@ dtf_has_module ()
 
     rtn=$(sqlite3 ${dtf_db} "${sql}")
 
-    if [[ -z "$rtn" ]]; then
+    if [ -z "$rtn" ]; then
         return 1
     else
         return 0
@@ -156,7 +140,7 @@ dtf_has_binary ()
 
     rtn=$(sqlite3 ${dtf_db} "${sql}")
 
-    if [[ -z "$rtn" ]]; then
+    if [ -z "$rtn" ]; then
         return 1
     else
         return 0
@@ -176,7 +160,7 @@ dtf_has_library ()
 
     rtn=$(sqlite3 ${dtf_db} "${sql}")
 
-    if [[ -z "$rtn" ]]; then
+    if [ -z "$rtn" ]; then
         return 1
     else
         return 0
@@ -196,7 +180,7 @@ dtf_has_package ()
 
     rtn=$(sqlite3 ${dtf_db} "${sql}")
 
-    if [[ -z "$rtn" ]]; then
+    if [ -z "$rtn" ]; then
         return 1
     else
         return 0
