@@ -34,7 +34,7 @@ Contributing & Building
 -----------------------
 Pull requests are welcome. In order to build `dtf`, you'll need a couple of dependences:
 
-    $ sudo apt-get install pylint lintian python2.7 openjdk-8-jdk python-pip
+    $ sudo apt-get install pylint lintian python2.7 openjdk-8-jdk python-pip devscripts
     $ sudo pip install flake8
 
 Building `dtf` is currently limited to Debian '.deb' packages. To generate a new Debian archive, you can use the following command:

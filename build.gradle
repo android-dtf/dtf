@@ -103,6 +103,14 @@ task doLint(type:Exec) {
     commandLine 'pylint', './dtf', '--rcfile=./pylint.config'
 }
 
+// Run checkbashisms
+task doCheckBashisms(type:Exec) {
+
+    workingDir 'python-dtf/included'
+
+    commandLine 'bash', '-c', 'checkbashisms -f ./*.sh'
+}
+
 task deleteIncludedTar(type:Delete) {
 
     delete 'python-dtf/dtf/included.tar'
@@ -152,6 +160,7 @@ genDocs.dependsOn buildPython
 
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar
+tarIncluded.dependsOn doCheckBashisms
 
 // Building Debian
 build.dependsOn makeDeb
