@@ -2,6 +2,7 @@
 app/build/
 app/src/main/bin/
 app/src/main/gen/
+app/keys/
 build/
 .idea/
 .gradle

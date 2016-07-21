@@ -5,18 +5,63 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.dtf.client"
+        applicationId PACKAGE_NAME
         minSdkVersion 10
         targetSdkVersion 23
-        versionCode 4
-        versionName "1.0"
+        versionCode VERSION_CODE.toInteger()
+        versionName VERSION_NAME
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("keys/ReleaseKeys.jks")
+            keyAlias 'dtfReleaseKeys'
+            storePassword "X"
+            keyPassword "X"
+        }
     }
 
     buildTypes {
         release {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def newName = output.outputFile.name
+                    def versionString = PACKAGE_NAME + "-" + VERSION_NAME + "-" + VERSION_CODE + "-"
+
+                    newName = newName.replace("app-", versionString)
+
+                    //noinspection GroovyAssignabilityCheck
+                    output.outputFile = new File(output.outputFile.parent, newName)
+                }
+            }
+
         }
+    }
+}
+
+// Tricks for password prompt
+gradle.taskGraph.whenReady { taskGraph ->
+      if(taskGraph.hasTask(':app:packageRelease')) {
+
+        sleep(500)
+
+        def storePw = ''
+        def keyPw = ''
+
+        storePw = new String(System.console().readPassword("\n\nPlease enter keystore password: "))
+        keyPw = new String(System.console().readPassword("\nPlease enter alias password: "))
+
+        if(storePw.size() <= 0 || keyPw.size() <= 0) {
+          throw new InvalidUserDataException("Invalid Keys.")
+        }
+
+        android.signingConfigs.release.storePassword = storePw
+        android.signingConfigs.release.keyPassword = keyPw
     }
 }
 
