@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 
 public class NotificationService extends IntentService {
 
@@ -40,22 +42,30 @@ public class NotificationService extends IntentService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification.Builder builder = new Notification.Builder(this)
-                .setContentTitle("dtfClient is Installed!")
-                .setContentText("Click here to uninstall")
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_build_white_48dp)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
         Notification n;
 
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setContentTitle("dtfClient is Installed!")
+                    .setContentText("Click here to uninstall")
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.ic_build_white_48dp)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+
             n = builder.build();
         } else {
-            n = builder.getNotification();
+
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setContentTitle("dtfClient is Installed!")
+                    .setContentText("Click here to uninstall")
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.ic_build_white_48dp)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+            n = builder.build();
         }
 
         n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
-
         notificationManager.notify(NOTIFICATION_ID, n);
     }
 }
