@@ -38,6 +38,7 @@ task makeDeb(type:Deb) {
     configurationFile('/etc/bash_completion.d/dtf.bash')
 
     requires('python')
+    requires('python-lxml')
     requires('xz-utils')
     requires('sqlite3')
 
