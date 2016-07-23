@@ -745,7 +745,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         """Parse and install single item"""
 
-        force_mode = args.force_mode
+        force_mode = args.force
         rtn = 0
 
         # Check for auto-mode:
