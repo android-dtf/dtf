@@ -337,10 +337,10 @@ def is_bash_module(module_path):
 
         shebang = file_f.readline().rstrip('\n')
 
-        if shebang.find('bash') == -1:
-            return 0
-        else:
+        if re.match("^#!/.*sh$", shebang):
             return 1
+        else:
+            return 0
 
 
 def is_python_module(module_path, name):
