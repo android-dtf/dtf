@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Android Device Testing Framework ("dtf")
 # Copyright 2013-2015 Jake Valletta (@jake_valletta)
 #
