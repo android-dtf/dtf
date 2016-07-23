@@ -39,11 +39,11 @@ Pull requests are welcome. In order to build `dtf`, you'll need a couple of depe
 
 Building `dtf` is currently limited to Debian '.deb' packages. To generate a new Debian archive, you can use the following command:
 
-    $ gradle build
+    $ ./gradlew build
 
 `dtf` is fully PEP8 compliant and uses both `pylint` and `flake8` for syntax/style checking. Please confirm that all changes made to the Python code pass these checks.
 
-    $ gradle doPythonTests
+    $ ./gradlew doPythonTests
 
 Questions & Comments
 --------------------
