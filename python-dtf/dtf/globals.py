@@ -17,6 +17,9 @@
 
 import dtf.core.utils as utils
 
+import ConfigParser
+import os.path
+
 DTF_DATA_DIR = utils.get_dtf_data_dir()
 DTF_BINARIES_DIR = DTF_DATA_DIR + "/binaries/"
 DTF_LIBRARIES_DIR = DTF_DATA_DIR + "/libraries/"
@@ -25,3 +28,37 @@ DTF_PACKAGES_DIR = DTF_DATA_DIR + "/packages/"
 DTF_DB = DTF_DATA_DIR + "/main.db"
 
 DTF_INCLUDED_DIR = DTF_DATA_DIR + "/included"
+DTF_GLOBAL_CONFIG = DTF_INCLUDED_DIR + "/globals.ini"
+
+
+class GlobalPropertyError(Exception):
+
+    """General exception for global properties"""
+    pass
+
+
+def get_binding(dtf_binding):
+
+    """Read binding from global config"""
+
+    return os.path.expanduser(get_generic_global("Bindings", dtf_binding))
+
+
+def get_generic_global(section, prop):
+
+    """Generic getter for getting a property"""
+
+    if section is None:
+        raise GlobalPropertyError("Section cannot be null!")
+    elif prop is None:
+        raise GlobalPropertyError("Property cannot be null!")
+
+    global_conf = ConfigParser.ConfigParser()
+    global_conf.read(DTF_GLOBAL_CONFIG)
+
+    try:
+        return global_conf.get(section, prop)
+    except ConfigParser.NoSectionError:
+        raise GlobalPropertyError("Section not found: %s" % section)
+    except ConfigParser.NoOptionError:
+        raise GlobalPropertyError("Property not found: %s" % prop)

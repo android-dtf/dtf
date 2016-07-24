@@ -26,13 +26,10 @@ import dtf.logging as log
 import dtf.properties as prop
 
 from dtf.constants import DTF_CLIENT
-from dtf.globals import DTF_INCLUDED_DIR
+from dtf.globals import get_generic_global
 from argparse import ArgumentParser
 
 import os.path
-
-DTF_CLIENT_PATH = ("%s/dtfClient/com.dtf.client-1.0-4.apk"
-                   % DTF_INCLUDED_DIR)
 
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 
@@ -66,6 +63,13 @@ class client(Module):  # pylint: disable=invalid-name
 
         """Install the dtf client on device"""
 
+        dtf_client_path = os.path.expanduser(
+            get_generic_global("Client", "apk_file"))
+
+        if not os.path.isfile(dtf_client_path):
+            log.e(self.name, "Unable to find APK file: %s" % dtf_client_path)
+            return -1
+
         log.i(self.name, "Waiting for device to be connected...")
         self.adb.wait_for_device()
 
@@ -74,7 +78,7 @@ class client(Module):  # pylint: disable=invalid-name
 
         log.i(self.name, "Installing dtf client...")
 
-        self.adb.install(DTF_CLIENT_PATH)
+        self.adb.install(dtf_client_path)
 
         cmd = "am startservice -a com.dtf.action.name.INITIALIZE"
         self.adb.shell_command(cmd)

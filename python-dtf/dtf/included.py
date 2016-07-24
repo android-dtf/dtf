@@ -15,16 +15,15 @@
 #
 """Python wrapper for Android tools"""
 
-from dtf.globals import DTF_INCLUDED_DIR
-
 from subprocess import Popen, PIPE
+from dtf.globals import get_binding
 
 
 def aapt(cmd):
 
     """aapt wrapper"""
 
-    aapt_path = "%s/aapt/aapt-22.0.1" % DTF_INCLUDED_DIR
+    aapt_path = get_binding("dtf_aapt")
     cmd = ("%s %s" % (aapt_path, cmd)).split(' ')
 
     proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
@@ -42,9 +41,7 @@ def apktool(cmd):
 
     """apktool wrapper"""
 
-    apktool_path = ("%s/apktool/apktool_2.0.3-83f327-SNAPSHOT.jar"
-                    % DTF_INCLUDED_DIR)
-
+    apktool_path = get_binding("dtf_apktool")
     java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" % (java_args, apktool_path, cmd)).split(' ')
@@ -64,9 +61,7 @@ def smali(cmd):
 
     """smali wrapper"""
 
-    smali_path = ("%s/smali/smali-2.1.0-3e265038.jar"
-                  % DTF_INCLUDED_DIR)
-
+    smali_path = get_binding("dtf_smali")
     java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" % (java_args, smali_path, cmd)).split(' ')
@@ -86,9 +81,7 @@ def baksmali(cmd):
 
     """baksmali wrapper"""
 
-    baksmali_path = ("%s/smali/baksmali-2.1.0-3e265038.jar"
-                     % DTF_INCLUDED_DIR)
-
+    baksmali_path = get_binding("dtf_baksmali")
     java_args = "java -Xmx512M -jar"
 
     cmd = ("%s %s %s" % (java_args, baksmali_path, cmd)).split(' ')
@@ -115,9 +108,7 @@ def axmlprinter2(manifest_file_name, out_file_name):
 
     """axmlprinter2 wrapper"""
 
-    axmlprinter2_path = ("%s/axmlprinter2/axmlprinter2.jar"
-                         % DTF_INCLUDED_DIR)
-
+    axmlprinter2_path = get_binding("dtf_axmlprinter2")
     java_args = "java -Xmx256M -jar"
 
     cmd = ("%s %s %s"
