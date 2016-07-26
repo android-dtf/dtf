@@ -135,6 +135,13 @@ task copyVersion(type:Copy) {
     include('VERSION')
 }
 
+// Generate the globals file
+task generateGlobals(type:Exec) {
+
+    workingDir 'python-dtf'
+    commandLine './gen_globals.py'
+}
+
 // Clean up
 clean {
 
@@ -145,6 +152,7 @@ clean {
     delete 'python-dtf/api-docs'
     delete 'python-dtf/dtf/included.tar'
     delete 'python-dtf/dtf/VERSION'
+    delete 'python-dtf/included/globals.ini'
 }
 
 // doTests will make sure the code passes all tests
@@ -155,6 +163,7 @@ doPythonTests.dependsOn doFlake
 buildPython.dependsOn doPythonTests
 buildPython.dependsOn tarIncluded
 buildPython.dependsOn copyVersion
+tarIncluded.dependsOn generateGlobals
 
 // Documentation requires valid Python
 genDocs.dependsOn buildPython
