@@ -142,6 +142,25 @@ task generateGlobals(type:Exec) {
     commandLine './gen_globals.py'
 }
 
+// Make sure dtfClient APK exists
+task assertClientApk() {
+    doLast {
+        if (!new File('dtf-client-app/app/build/outputs/apk').exists()) {
+            throw new GradleException('dtfClient APK is not found. Are you sure you built the project?')
+        }
+    }
+}
+
+// Copy the dtfClient APK
+task copyClientApk(type:Copy) {
+
+    from('dtf-client-app/app/build/outputs/apk/') {
+        include '*-release.apk'
+    }
+
+    into 'python-dtf/included/dtfClient/'
+}
+
 // Clean up
 clean {
 
@@ -153,6 +172,9 @@ clean {
     delete 'python-dtf/dtf/included.tar'
     delete 'python-dtf/dtf/VERSION'
     delete 'python-dtf/included/globals.ini'
+    delete fileTree('python-dtf/included/dtfClient') {
+        include '*.apk'
+    }
 }
 
 // doTests will make sure the code passes all tests
@@ -164,6 +186,8 @@ buildPython.dependsOn doPythonTests
 buildPython.dependsOn tarIncluded
 buildPython.dependsOn copyVersion
 tarIncluded.dependsOn generateGlobals
+generateGlobals.dependsOn copyClientApk
+copyClientApk.dependsOn assertClientApk
 
 // Documentation requires valid Python
 genDocs.dependsOn buildPython
