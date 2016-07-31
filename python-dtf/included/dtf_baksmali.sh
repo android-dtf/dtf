@@ -28,13 +28,13 @@ dtf_baksmali()
     javaOpts="-Xmx256M"
 
     while expr "x$1" : 'x-J' >/dev/null; do
-        opt=`expr "$1" : '-J\(.*\)'`
+        opt=$(expr "$1" : '-J\(.*\)')
         javaOpts="${javaOpts} -${opt}"
         shift
     done
 
     jarpath="$jarfile"
 
-    java $javaOpts -jar "$jarpath" "$@"
+    java "$javaOpts" -jar "$jarpath" "$@"
     return $?
 }

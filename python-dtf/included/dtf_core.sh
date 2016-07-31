@@ -24,6 +24,8 @@ DTF_MODULES=${DTF_DIR}/modules
 DTF_PACKAGES=${DTF_DIR}/packages
 DTF_INCLUDED=${DTF_DIR}/included
 
+export DTF_BINS DTF_LIBS DTF_MODULES DTF_PACKAGES DTF_INCLUDED
+
 # Additional sourcing. Move this eventually?
 . ${DTF_INCLUDED}/dtf_aapt.sh
 . ${DTF_INCLUDED}/dtf_abe.sh
@@ -36,29 +38,29 @@ DTF_INCLUDED=${DTF_DIR}/included
 . ${DTF_INCLUDED}/dtf_axmlprinter2.sh
 
 # API Levels for quick references.
-API_1=1
-API_2=2
-CUPCAKE=3
-DONUT=4
-ECLAIR=5
-ECLAIR_R1=6
-ECLAIR_R2=7
-FROYO=8
-GINGERBREAD=9
-GINGERBREAD_R1=10
-HONEYCOMB=11
-HONEYCOMB_R1=12
-HONEYCOMB_R2=13
-ICE_CREAM_SANDWICH=14
-ICE_CREAM_SANDWICH_R1=15
-JELLY_BEAN=16
-JELLY_BEAN_R1=17
-JELLY_BEAN_R2=18
-KITKAT=19
-WEAR=20
-LOLLIPOP=21
-LOLLIPOP_R1=22
-MARSHMALLOW=23
+export API_1=1
+export API_2=2
+export CUPCAKE=3
+export DONUT=4
+export ECLAIR=5
+export ECLAIR_R1=6
+export ECLAIR_R2=7
+export FROYO=8
+export GINGERBREAD=9
+export GINGERBREAD_R1=10
+export HONEYCOMB=11
+export HONEYCOMB_R1=12
+export HONEYCOMB_R2=13
+export ICE_CREAM_SANDWICH=14
+export ICE_CREAM_SANDWICH_R1=15
+export JELLY_BEAN=16
+export JELLY_BEAN_R1=17
+export JELLY_BEAN_R2=18
+export KITKAT=19
+export WEAR=20
+export LOLLIPOP=21
+export LOLLIPOP_R1=22
+export MARSHMALLOW=23
 
 # In the case of $TOP not being set, you can use this to obtain the project
 # path. Chances are that you won't ever need to call this.
@@ -76,7 +78,7 @@ upsearch () {
 }
 
 # Top of the project.
-TOP=$(upsearch .dtfini)
+export TOP=$(upsearch .dtfini)
 
 # Change back to the launch directory
 dtf_reset_dir() {
@@ -103,7 +105,7 @@ dtf_busybox ()
     busybox=$(dtf prop get Info busybox)
     serial=$(dtf prop get Info serial)
 
-    adb -s ${serial} shell run-as com.dtf.client ${busybox} $@
+    adb -s "${serial}" shell run-as com.dtf.client "${busybox}" "$@"
 }
 
 # Check if a module is installed.

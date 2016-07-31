@@ -20,23 +20,8 @@
 # Terminal output control (http://www.termsys.demon.co.uk/vtansi.htm)
 
 TC='\e['
-
-CLR_LINE_START="${TC}1K"
-CLR_LINE_END="${TC}K"
-CLR_LINE="${TC}2K"
-
-# Hope no terminal is greater than 1k columns
-RESET_LINE="${CLR_LINE}${TC}1000D"
-
-# Colors and styles (based on https://github.com/demure/dotfiles/blob/master/subbash/prompt)
-
-Bold="${TC}1m"    # Bold text only, keep colors
-Undr="${TC}4m"    # Underline text only, keep colors
-Inv="${TC}7m"     # Inverse: swap background and foreground colors
-Reg="${TC}22;24m" # Regular text only, keep colors
-RegF="${TC}39m"   # Regular foreground coloring
-RegB="${TC}49m"   # Regular background coloring
 Rst="${TC}0m"     # Reset all coloring and style
+
 # ##########################
 
 
@@ -47,7 +32,7 @@ LOG_TO_STDOUT=1
 LOG_TO_FILE=1
 
 # Don't override the global logging.
-if [ -z $GLOG_LEVEL ]; then
+if [ -z "$GLOG_LEVEL" ]; then
     GLOG_LEVEL=$LOG_LEVEL
 fi
 
@@ -67,19 +52,19 @@ COLOR_DEB="${TC}38;5;163m" #d700af
 # Internal low-level logger
 _log()
 {
-    date="["`date`"]"
+    date="[$(date)]"
     color=$1
     app=$2
     shift
     shift
-    message=$@
+    message=$*
 
     if [ "${LOG_TO_FILE}" -eq "1" ]; then
         echo "${date} ${app} - ${message}" >> ${LOG_FILE};
     fi
 
     if [ "${LOG_TO_STDOUT}" -eq "1" ]; then
-        printf "${color}${date} ${app} - ${message}${Rst}\n";
+        printf "%s%s %s - %s%s\n" "${color}" "${date}" "${app}" "${message}" "${Rst}"
     fi
 }
 
@@ -88,8 +73,8 @@ log_e()
 {
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 1 ]; then
-        caller=$(basename ${0})
-        _log ${COLOR_ERROR} "${caller}/E" $@
+        caller=$(basename "${0}")
+        _log ${COLOR_ERROR} "${caller}/E" "$@"
     fi
 }
 
@@ -98,8 +83,8 @@ log_w()
 {
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 2 ]; then
-        caller=$(basename ${0})
-        _log ${COLOR_WARN} "${caller}/W" $@
+        caller=$(basename "${0}")
+        _log ${COLOR_WARN} "${caller}/W" "$@"
     fi
 }
 
@@ -108,8 +93,8 @@ log_i()
 {
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 3 ]; then
-        caller=$(basename ${0})
-        _log ${COLOR_INFO} "${caller}/I" $@
+        caller=$(basename "${0}")
+        _log ${COLOR_INFO} "${caller}/I" "$@"
     fi
 }
 
@@ -118,8 +103,8 @@ log_v()
 {
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 4 ]; then
-        caller=$(basename ${0})
-        _log ${COLOR_VERB} "${caller}/V" $@
+        caller=$(basename "${0}")
+        _log ${COLOR_VERB} "${caller}/V" "$@"
     fi
 }
 
@@ -128,7 +113,7 @@ log_d()
 {
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 5 ]; then
-        caller=$(basename ${0})
-        _log ${COLOR_DEB} "${caller}/D" $@
+        caller=$(basename "${0}")
+        _log ${COLOR_DEB} "${caller}/D" "$@"
     fi
 }
