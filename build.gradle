@@ -112,6 +112,14 @@ task doCheckBashisms(type:Exec) {
     commandLine 'bash', '-c', 'checkbashisms -f ./*.sh'
 }
 
+// Run shellcheck
+task doShellCheck(type:Exec) {
+
+    workingDir 'python-dtf/included'
+
+    commandLine 'bash', '-c', 'shellcheck ./*.sh'
+}
+
 task deleteIncludedTar(type:Delete) {
 
     delete 'python-dtf/dtf/included.tar'
@@ -195,6 +203,7 @@ genDocs.dependsOn buildPython
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar
 tarIncluded.dependsOn doCheckBashisms
+tarIncluded.dependsOn doShellCheck
 
 // Building Debian
 build.dependsOn makeDeb

@@ -34,7 +34,7 @@ Contributing & Building
 -----------------------
 If you're interested in building your own instance of `dtf`, you'll need a couple of dependences:
 
-    $ sudo apt-get install pylint lintian python2.7 openjdk-8-jdk python-pip devscripts
+    $ sudo apt-get install pylint lintian python2.7 openjdk-8-jdk python-pip devscripts shellcheck
     $ sudo pip install flake8
 
 ### Building the dtfClient
