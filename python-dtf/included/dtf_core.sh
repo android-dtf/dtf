@@ -40,28 +40,28 @@ export DTF_BINS DTF_LIBS DTF_MODULES DTF_PACKAGES DTF_INCLUDED
 # API Levels for quick references.
 export API_1=1
 export API_2=2
-export CUPCAKE=3
-export DONUT=4
-export ECLAIR=5
-export ECLAIR_R1=6
-export ECLAIR_R2=7
-export FROYO=8
-export GINGERBREAD=9
-export GINGERBREAD_R1=10
-export HONEYCOMB=11
-export HONEYCOMB_R1=12
-export HONEYCOMB_R2=13
-export ICE_CREAM_SANDWICH=14
-export ICE_CREAM_SANDWICH_R1=15
-export JELLY_BEAN=16
-export JELLY_BEAN_R1=17
-export JELLY_BEAN_R2=18
-export KITKAT=19
-export WEAR=20
-export LOLLIPOP=21
-export LOLLIPOP_R1=22
-export MARSHMALLOW=23
-export NOUGAT=24
+export API_CUPCAKE=3
+export API_DONUT=4
+export API_ECLAIR=5
+export API_ECLAIR_R1=6
+export API_ECLAIR_R2=7
+export API_FROYO=8
+export API_GINGERBREAD=9
+export API_GINGERBREAD_R1=10
+export API_HONEYCOMB=11
+export API_HONEYCOMB_R1=12
+export API_HONEYCOMB_R2=13
+export API_ICE_CREAM_SANDWICH=14
+export API_ICE_CREAM_SANDWICH_R1=15
+export API_JELLY_BEAN=16
+export API_JELLY_BEAN_R1=17
+export API_JELLY_BEAN_R2=18
+export API_KITKAT=19
+export API_WEAR=20
+export API_LOLLIPOP=21
+export API_LOLLIPOP_R1=22
+export API_MARSHMALLOW=23
+export API_NOUGAT=24
 
 # In the case of $TOP not being set, you can use this to obtain the project
 # path. Chances are that you won't ever need to call this.
