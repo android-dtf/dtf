@@ -61,6 +61,7 @@ export WEAR=20
 export LOLLIPOP=21
 export LOLLIPOP_R1=22
 export MARSHMALLOW=23
+export NOUGAT=24
 
 # In the case of $TOP not being set, you can use this to obtain the project
 # path. Chances are that you won't ever need to call this.
