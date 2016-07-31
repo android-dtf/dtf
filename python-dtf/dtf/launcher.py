@@ -117,11 +117,6 @@ def check_dependencies():
         log.e(TAG, "dtf requires `adb` (part of Android SDK)!")
         return -5
 
-    # Check for Bash
-    if os.readlink(utils.which('sh')) != 'bash':
-        log.e(TAG, "dtf requires a true bash shell; no dash!!")
-        return -5
-
     # Check for sqlite3
     if utils.which("sqlite3") == "":
         log.e(TAG, "dtf requires `sqlite3`!")
