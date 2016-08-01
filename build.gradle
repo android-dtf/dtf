@@ -32,7 +32,7 @@ task makeDeb(type:Deb) {
     maintainer = 'Jake Valletta <javallet@gmail.com>'
     url = 'https://github.com/jakev/dtf'
     summary = 'Android Device Testing Framework (dtf)'
-    packageDescription = 'Module framework for discovering vulnerabilities on Android devices.'
+    packageDescription = 'Modular framework for discovering vulnerabilities on Android devices.'
     packageGroup = 'main'
 
     configurationFile('/etc/bash_completion.d/dtf.bash')
