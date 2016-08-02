@@ -55,21 +55,18 @@ task makeDeb(type:Deb) {
 
     /* Library Files */
     from('python-dtf/build/usr/local/lib') {
-        createDirectoryEntry = true
         fileMode 0644
         into '/usr/local/lib'
     }
 
     /* Launcher */
     from('python-dtf/build/usr/local/bin') {
-        createDirectoryEntry = true
         fileMode 0755
         into '/usr/local/bin'
     }
 
     /* Bash Completition */
     from('python-dtf/build/etc') {
-        createDirectoryEntry = true
         fileType CONFIG
         fileMode 0644
         into '/etc'
