@@ -1,0 +1,14 @@
+dtf-library(7) -- dtf library documentation
+===========================================
+
+## DESCRIPTION
+A dtf-library(7) is a collection of python files used by a dtf-module(7). A dtf-library(7) is installed using dtf-pm(1).
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.
+
+## SEE ALSO
+dtf-pm(1), dtf-local(1), dtf-binary(7), dtf-module(7), dtf-package(7)

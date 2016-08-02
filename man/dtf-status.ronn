@@ -1,0 +1,19 @@
+dtf-status(1) -- Determine if a project device is connected
+===========================================================
+
+## SYNOPSIS
+dtf status
+
+## DESCRIPTION  
+dtf-status(1) prints whether or not a project device is connected.
+
+## EXAMPLES
+dtf-status(1) does not take any arguments, and does not have any subcommands. To print the status of a connected device:
+    $ cd my_project
+    $ dtf status
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.

@@ -1,0 +1,45 @@
+dtf-client(1) -- Interact with dtfClient on device
+==================================================
+
+## SYNOPSIS
+dtf client [subcommand] [<args>]
+
+Subcommands:
+    download   Download a file using dtfClient.
+    execute    Execute a command using dtfClient.
+    install    Install the dtf client on device.
+    status     Print the install status of the client.
+    remove     Uninstall the dtf client.
+    restart    Restart dtfClient's socket service.
+    upload     Upload file using dtfClient.
+
+## DESCRIPTION  
+dtf-client(1) is used to interact with the dtfClient ("com.dtf.client") installed on your project device.
+
+## EXAMPLES
+Determine if a device has the dtfClient application installed:
+    $ dtf client status
+
+Install the dtfClient on a test device:
+    $ dtf client install
+
+Restart any dtfClient services (useful for troubleshooting):
+    $ dtf client restart
+
+Upload a file to the dtfClient's data directory:
+    $ dtf client upload some_file.txt
+
+Download a file from the dtfClient's data directory and rename:
+    $ dtf client download some.db --path ./users.db
+
+Execute a command using the dtfClient:
+    $ dtf client execute ls /mnt/sdcard
+
+Remove the dtfClient application:
+    $ dtf client remove
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.

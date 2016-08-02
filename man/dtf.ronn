@@ -1,0 +1,39 @@
+dtf(1) -- Module framework for discovering vulnerabilities on Android devices
+=============================================================================
+
+## SYNOPSIS
+_dtf_ [module|command] [<args>]
+
+
+## DESCRIPTION  
+dtf(1) is a module framework that enables a user to interact with an Android device and discover vulnerabilities. Some features provided by dtf(1) are:
+
+    1. Package management
+    2. Project property subsystem
+    3. Client application to interface with Android device
+    4. Python APIs to interact with a Android device
+    5. Bindings to incorporate with existing Android tools
+
+## EXAMPLES
+Run the module **apkget** with arguments "-p" and "com.android.mms":
+
+    dtf apkget -p com.android.mms
+
+Run the built-in package manager and list installed modules:
+
+    dtf pm list modules
+
+For examples of built-in commands, see the section [SEE ALSO][].
+
+## ENVIRONMENT VARIABLES
+_GLOG_LEVEL_ - Manually specify a module's logging level. Valid levels are 0 (no logging) - 5 (full).
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## COPYRIGHT
+dtf(1) is copyright (c) 2013-2016, Jake Valletta (@jake_valletta). Released under the Apache License, Version 2.0.
+license.
+
+## SEE ALSO
+dtf-archive(1), dtf-client(1), dtf-init(1), dtf-local(1), dtf-pm(1), dtf-prop(1), dtf-reset(1), dtf-status(1), dtf-project(7), dtf-binary(7), dtf-library(7), dtf-module(7), dtf-package(7)

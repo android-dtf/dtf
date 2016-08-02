@@ -1,0 +1,22 @@
+dtf-reset(1) -- Reset a dtf project's configuration
+===================================================
+
+## SYNOPSIS
+dtf reset
+
+## DESCRIPTION  
+dtf-reset(1) is used to remove the dtf(1) configuration for a given project. It is not reversible.
+
+## EXAMPLES
+dtf-reset(1) does not take any arguments, and does not have any subcommands. To remove the dtf(1) configuration file for the current project:
+
+    $ cd old_project
+    $ dtf reset
+
+Note: this does not remove project data. It only removes data contained in dtf(1) configuration file.
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.

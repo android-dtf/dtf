@@ -1,0 +1,24 @@
+dtf-archive(1) -- Create a ZIP archive for your project
+=======================================================
+
+## SYNOPSIS
+dtf archive [subcommand] [<args>]
+
+Subcommands:
+    create    Archive the current project.
+
+## DESCRIPTION  
+dtf-archive(1) is used to create a ZIP file containing all files for a given dtf(1) project for archiving purposes. By default, it uses the version string set by dtf-init(1).
+
+## EXAMPLES
+Create an archive using the default version string:
+    $ dtf archive create
+
+Create an archive called <my_archive.zip>:
+    $ dtf archive create my_archive.zip
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.

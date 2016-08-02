@@ -1,0 +1,14 @@
+dtf-package(7) -- dtf package documentation
+===========================================
+
+## DESCRIPTION
+A dtf-package(7) is collection of files avaiable to modules. Use with caution. A dtf-package(7) is installed using dtf-pm(1).
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.
+
+## SEE ALSO
+dtf-pm(1), dtf-local(1), dtf-binary(7), dtf-library(7), dtf-module(7)

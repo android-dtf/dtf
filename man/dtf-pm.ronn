@@ -1,0 +1,47 @@
+dtf-pm(1) -- The dtf package manager
+====================================
+
+## SYNOPSIS
+dtf pm [subcommand] [<args>]
+
+Subcommands:
+    delete      Delete an item from main database.
+    export      Export entire main database to dtf ZIP.
+    install     Install a dtf ZIP or single item.
+    list        List all installed items.
+    purge       Purge all installed items, reset DB.
+
+## DESCRIPTION  
+dtf-pm(1) is the global package manager for dtf(1). It is used to install, remove, and export installed content. There are currently 4 types of content: binaries, libraries, modules, and packages. Additional information about these can be found within:
+    dtf-binary(7)
+    dtf-library(7)
+    dtf-module(7)
+    dtf-package(7)
+
+## EXAMPLES
+Installing a single module with auto parsing:
+    $ dtf pm install --single module --name my_module --auto
+
+List all installed modules with verbose information:
+    $ dtf pm list modules -v
+
+Removing a single module:
+    $ dtf pm delete --type module --name my_module
+
+Install a ZIP archive containing content:
+    $ dtf pm install --zip new_content.zip
+
+Export all currently installed content to a ZIP:
+    $ dtf pm export exported.zip
+
+Removing all globally installed content:
+    $ dtf pm purge
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.
+
+## SEE ALSO
+dtf-module(7), dtf-package(7), dtf-library(7), dtf-binary(7)

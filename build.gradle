@@ -18,11 +18,20 @@ def values = versionContents.split('-')
 project.ext.set("buildVersion", values[0])
 project.ext.set("buildRelease", values[1])
 
+String versionString = "dtf-" + values[0] + "-" + values[1]
+
 if ( values.length == 3) {
     project.ext.set("buildBranch", values[2])
+    project.ext.set("versionString", versionString + "." + values[2])
 } else {
     project.ext.set("buildBranch", "")
+    project.ext.set("versionString", versionString)
 }
+
+// Date
+String currentDate = new Date().format( 'yyyy-MM-dd' )
+
+project.ext.set("currentDate", currentDate)
 
 task makeDeb(type:Deb) {
 
@@ -64,6 +73,19 @@ task makeDeb(type:Deb) {
         fileType CONFIG
         fileMode 0644
         into '/etc'
+    }
+
+    /* Man pages */
+    from('man/') {
+        into '/usr/local/man/man1/'
+        fileMode 0644
+        include '**/*.1'
+    }
+
+    from('man/') {
+        into '/usr/local/man/man7/'
+        fileMode 0644
+        include '**/*.7'
     }
 }
 
@@ -159,6 +181,15 @@ task assertClientApk() {
     }
 }
 
+// Make sure man pages exist
+task assertMans() {
+    doLast {
+        if (new File('man').listFiles().count { it.name ==~ /.*[1-9]$/ } == 0) {
+            throw new GradleException('man pages are not processed! Process with generateMans')
+        }
+    }
+}
+
 // Copy the dtfClient APK
 task copyClientApk(type:Copy) {
 
@@ -168,6 +199,25 @@ task copyClientApk(type:Copy) {
 
     into 'python-dtf/included/dtfClient/'
 }
+
+// Run `ronn` on man pages
+task generateMans(type:Exec) {
+
+    workingDir 'man'
+
+    commandLine 'bash', '-c', "ronn ./*.ronn --date=" + project.currentDate + " --organization=" + project.versionString + " --manual=\"dtf Manual\" --roff"
+
+}
+
+// Remove generated man pages
+task cleanMans(type:Delete) {
+
+    delete fileTree('man/') {
+        include '*.1'
+        include '*.7'
+    }
+}
+
 
 // Clean up
 clean {
@@ -208,3 +258,4 @@ tarIncluded.dependsOn doShellCheck
 // Building Debian
 build.dependsOn makeDeb
 makeDeb.dependsOn buildPython
+makeDeb.dependsOn assertMans

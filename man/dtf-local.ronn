@@ -1,0 +1,22 @@
+dtf-local(1) -- Print all local (non-global) modules
+====================================================
+
+## SYNOPSIS
+dtf local
+
+## DESCRIPTION  
+dtf-local(1) prints all local (non-global) modules. Note that a local module will take precedence over a global module.
+
+## EXAMPLES
+dtf-local(1) does not take any arguments, and does not have any subcommands. To print local modules:
+
+    $ cd my_project
+    $ dtf local
+
+Local modules are parsed the same as global modules. The only difference is that local modules exist in the _local_modules/_ directory of a project (they do not need to be installed with dtf-pm(1)). See dtf-project(7) for more information about a dtf(1) project structure.
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.

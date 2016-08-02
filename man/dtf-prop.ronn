@@ -1,0 +1,42 @@
+dtf-prop(1) -- The dtf property manager
+=======================================
+
+## SYNOPSIS
+dtf prop [subcommand] [<args>]
+
+Subcommands:
+    get [sec] [prop]        Get a property.
+    set [sec] [prop] [val]  Set a property.
+    del [sec] [prop]        Delete a property.
+    dump                    Dump current properties.
+    test [sec] [prop]       Test if a value is set.
+
+## DESCRIPTION  
+dtf-prop(1) is used to set and get properties for a dtf(1) project. Properties are stored by section. Currently, two sections are utilized:
+    Info - Information about a device set primarily by dtf(1).
+    Local - Local directory information used by modules.
+
+## EXAMPLES
+Set a property in the section Info called serial:
+    $ dtf prop set Info serial 123456
+
+Check if a property is set (1 = set, 0 = not set):
+    $ dtf prop test Info serial
+
+Get the value of a property:
+    $ dtf prop get Info sdk
+
+Delete a property:
+    $ dtf prop del Info version-string
+
+Dump all properties:
+    $ dtf prop dump
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.
+
+## SEE ALSO
+dtf-project(1)

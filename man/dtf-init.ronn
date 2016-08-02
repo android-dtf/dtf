@@ -1,0 +1,23 @@
+dtf-init(1) -- Initialize a dtf project
+=======================================
+
+## SYNOPSIS
+dtf init
+
+## DESCRIPTION  
+dtf-init(1) creates an dtf(1) project in the current directory. It will install the dtfClient onto a test device, and create a boilerplate directory structure (see dtf-project(7) for more information on what emcompasses a dtf project).
+
+## EXAMPLES
+In order to use dtf(1), you'll need to initialize a project. Before doing so, make sure that USB debugging is enabled on your test device, the device is connected, and your test machine's RSA keys are trusted. Once all of these are met, you can create your project with dtf-init(1):
+
+    $ mkdir new_project
+    $ cd new_project
+    $ dtf init
+
+See dtf-reset(1) deleting a dtf project.
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.
