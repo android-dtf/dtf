@@ -22,6 +22,7 @@ import os.path
 import shlex
 import sys
 import subprocess
+import traceback
 from contextlib import contextmanager
 
 import dtf.core.packagemanager as pm
@@ -106,7 +107,21 @@ def __launch_python_module(path, cmd, args, chdir=True):
                   % requirement)
             return -8
 
-    return mod_inst.run(args)
+    # Global exception handling
+    try:
+        return mod_inst.run(args)
+    except Exception:  # pylint:disable=broad-except
+        try:
+            exc_traceback = sys.exc_info()
+        finally:
+            log.e(TAG, "Unhandled Exception in module!")
+            for line in traceback.format_exception(*exc_traceback)[3:]:
+                line = line.strip("\n")
+                if line == "":
+                    continue
+                print line
+
+        return -10
 
 
 def __launch_bash_module(module_path, args):
