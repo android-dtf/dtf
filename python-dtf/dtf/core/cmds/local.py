@@ -15,12 +15,11 @@
 #
 """Built-in module for listing local modules"""
 
-import dtf.core.utils as utils
-
-from dtf.module import Module
-
 from os import listdir
 from os.path import isfile, join
+
+import dtf.core.utils as utils
+from dtf.module import Module
 
 
 class local(Module):  # pylint: disable=invalid-name

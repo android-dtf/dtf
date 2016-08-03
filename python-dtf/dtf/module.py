@@ -15,8 +15,9 @@
 #
 """dtf Module Template"""
 
-import dtf.logging as log
 import os
+
+import dtf.logging as log
 
 TAG = "dtf-module"
 

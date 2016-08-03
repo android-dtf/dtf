@@ -15,18 +15,18 @@
 #
 """ dtf's package manager """
 
-from dtf.module import Module
-import dtf.globals
-import dtf.logging as log
-import dtf.core.packagemanager as packagemanager
-
-from argparse import ArgumentParser
-from lxml import etree
-
 import os
 import os.path
 import tempfile
 import zipfile
+from argparse import ArgumentParser
+
+from lxml import etree
+
+from dtf.module import Module
+import dtf.globals
+import dtf.logging as log
+import dtf.core.packagemanager as packagemanager
 
 TAG = "pm"
 
@@ -331,8 +331,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
                     for file_name in files:
                         file_path = os.path.join(root, file_name)
                         rel_path = os.path.relpath(
-                                            os.path.join(root, file_name),
-                                            item.install_name)
+                            os.path.join(root, file_name), item.install_name)
                         zip_path = os.path.join(item.local_name, rel_path)
 
                         log.d(TAG, "Adding '%s' as '%s'"

@@ -15,20 +15,19 @@
 #
 """Internal Package Manager"""
 
-import dtf.globals
-import dtf.logging as log
-
-from os import chmod, remove, makedirs, mkdir
+import imp
+import os
+import os.path
+import re
+import sqlite3
 from shutil import copy, rmtree
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 
-import imp
-import os.path
-import re
-import sqlite3
-
 from lxml import etree
+
+import dtf.globals
+import dtf.logging as log
 
 # Eventually this will be changed
 # pylint: disable=too-many-instance-attributes
@@ -153,11 +152,11 @@ def copy_zip_file(zip_f, local_name, install_name, install_dir):
 
     copy(temp_f.name, install_path)
 
-    chmod(install_path, 0755)
+    os.chmod(install_path, 0755)
 
     temp_f.close()
 
-    remove(temp_f.name)
+    os.remove(temp_f.name)
 
     log.d(TAG, "Copy complete!")
 
@@ -174,7 +173,7 @@ def copy_zip_tree(zip_f, local_name, install_name, install_dir):
     rmtree(install_path, ignore_errors=True)
 
     # Make the new directory.
-    makedirs(install_path)
+    os.makedirs(install_path)
 
     for file_f in zip_f.namelist():
         # Do everything in the [local_name] dir, but not the root.
@@ -186,7 +185,7 @@ def copy_zip_tree(zip_f, local_name, install_name, install_dir):
             # If it's a directory, make it.
             if file_f.endswith('/'):
                 log.d(TAG, "Making dir %s" % install_path + new_f)
-                makedirs(install_path + new_f)
+                os.makedirs(install_path + new_f)
 
             # Otherwise, we need to unzip to that new path.
             else:
@@ -209,7 +208,7 @@ def copy_file(local_name, install_name, install_dir):
     log.d(TAG, "Copying '%s' to '%s'..." % (local_name, install_path))
     copy(local_name, install_path)
 
-    chmod(install_path, 0755)
+    os.chmod(install_path, 0755)
 
     log.d(TAG, "Copy complete!")
 
@@ -226,7 +225,7 @@ def copy_tree(local_name, install_name, install_dir):
     rmtree(install_path, ignore_errors=True)
 
     # Make the new directory.
-    makedirs(install_path)
+    os.makedirs(install_path)
 
     for root, dirs, files in os.walk(local_name):
 
@@ -235,7 +234,7 @@ def copy_tree(local_name, install_name, install_dir):
             for local_dir in [os.path.join(root, name) for name in dirs]:
                 new_dir = local_dir.replace(local_name+'/', '', 1)
                 log.d(TAG, "Making dir  %s" % (install_path + new_dir))
-                makedirs(install_path + new_dir)
+                os.makedirs(install_path + new_dir)
         if len(files) != 0:
             for local_file in [os.path.join(root, name) for name in files]:
                 new_file = local_file.replace(local_name+'/', '', 1)
@@ -251,7 +250,7 @@ def delete_file(file_path):
     """Delete a file"""
 
     try:
-        remove(file_path)
+        os.remove(file_path)
         return 0
     except OSError:
         log.w(TAG, "There was an OSError when removing the file '%s'"
@@ -405,7 +404,7 @@ def parse_python_module(module_path, name):
     # Remove the compiled file name
     compiled_python_file = "%sc" % module_path
     if os.path.isfile(compiled_python_file):
-        remove(compiled_python_file)
+        os.remove(compiled_python_file)
 
     return item
 
@@ -713,10 +712,7 @@ def __prompt_install(local_item, installed_item):
     print "Do you want to install this module? [y/N]",
     resp = raw_input()
 
-    if resp.lower() == "y":
-        return True
-    else:
-        return False
+    return bool(resp.lower() == "y")
 
 
 def __prompt_delete(installed_item):
@@ -729,10 +725,8 @@ def __prompt_delete(installed_item):
     print ""
     print "Are you sure you want to delete this item (NO UNDO)? [y/N]",
     resp = raw_input()
-    if resp.lower() == "y":
-        return True
-    else:
-        return False
+
+    return bool(resp.lower() == "y")
 
 
 def __load_item(item):
@@ -781,10 +775,7 @@ def __item_installed(name, item_type):
 
     cur.execute(sql)
 
-    if cur.fetchone() is not None:
-        return True
-    else:
-        return False
+    return bool(cur.fetchone() is not None)
 
 
 def __process_zip_items(zip_file, items, force):
@@ -1493,17 +1484,17 @@ def create_data_dirs():
     if not os.path.isdir(DTF_DATA_DIR):
 
         try:
-            mkdir(DTF_DATA_DIR)
+            os.mkdir(DTF_DATA_DIR)
         except OSError:
             log.e(TAG, "Unable to create dtf data directory!")
             return -6
 
     # Now the subdirectories. Be less strict about errors for these.
     try:
-        mkdir(DTF_MODULES_DIR)
-        mkdir(DTF_PACKAGES_DIR)
-        mkdir(DTF_BINARIES_DIR)
-        mkdir(DTF_LIBRARIES_DIR)
+        os.mkdir(DTF_MODULES_DIR)
+        os.mkdir(DTF_PACKAGES_DIR)
+        os.mkdir(DTF_BINARIES_DIR)
+        os.mkdir(DTF_LIBRARIES_DIR)
     except OSError:
         pass
 

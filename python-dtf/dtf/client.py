@@ -15,12 +15,12 @@
 #
 """API for interacting with dtfClient application"""
 
+import os
+import socket
+import struct
+
 from dtf.adb import DtfAdb
 import dtf.logging as log
-
-import struct
-import socket
-import os
 
 
 CMD_DOWNLOAD = 'd'

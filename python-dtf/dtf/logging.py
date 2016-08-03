@@ -14,9 +14,11 @@
 # limitations under the License.
 #
 """dtf logging framework"""
-from colored import fg, attr
-from time import localtime, strftime
+
 from sys import stdout
+from time import localtime, strftime
+
+from colored import fg, attr
 
 import dtf.core.utils as utils
 

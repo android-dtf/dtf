@@ -152,10 +152,7 @@ class DtfAdb(object):
 
         self.shell_command("ls %s" % file_name)
 
-        if self.stdout[0] == file_name:
-            return True
-        else:
-            return False
+        return bool(self.stdout[0] == file_name)
 
     def is_dir(self, dir_name):
 

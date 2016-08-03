@@ -15,10 +15,10 @@
 #
 """Global dtf locations"""
 
-import dtf.core.utils as utils
-
 import ConfigParser
 import os.path
+
+import dtf.core.utils as utils
 
 DTF_DATA_DIR = utils.get_dtf_data_dir()
 DTF_BINARIES_DIR = DTF_DATA_DIR + "/binaries/"

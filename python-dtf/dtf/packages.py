@@ -15,13 +15,6 @@
 #
 """dtf public package querying"""
 
-import dtf.core.packagemanager as pm
-import dtf.core.utils as utils
-import dtf.logging as log
-import dtf.properties as prop
-from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
-                         DTF_MODULES_DIR, DTF_DB, DTF_INCLUDED_DIR)
-
 import imp
 import cStringIO
 import os
@@ -30,6 +23,13 @@ import shlex
 import sys
 import subprocess
 from contextlib import contextmanager
+
+import dtf.core.packagemanager as pm
+import dtf.core.utils as utils
+import dtf.logging as log
+import dtf.properties as prop
+from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
+                         DTF_MODULES_DIR, DTF_DB, DTF_INCLUDED_DIR)
 
 TAG = "dtf-packages"
 

@@ -15,21 +15,19 @@
 #
 """Built-in module for client on device """
 
-from dtf.module import Module
 
+import os.path
+from argparse import ArgumentParser
+
+import dtf.logging as log
+import dtf.properties as prop
+from dtf.module import Module
+from dtf.constants import DTF_CLIENT
+from dtf.globals import get_generic_global
 from dtf.adb import DtfAdb
 from dtf.client import (DtfClient, RESP_OK, RESP_NO_READ, RESP_ERROR,
                         RESP_NO_WRITE, RESP_EXISTS, RESP_NO_EXIST,
                         ERR_SOCK)
-
-import dtf.logging as log
-import dtf.properties as prop
-
-from dtf.constants import DTF_CLIENT
-from dtf.globals import get_generic_global
-from argparse import ArgumentParser
-
-import os.path
 
 DEFAULT_UPLOAD_PATH = '/data/data/com.dtf.client'
 

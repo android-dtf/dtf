@@ -24,7 +24,6 @@ import dtf.constants as constants
 import dtf.core.utils as utils
 import dtf.packages as pkg
 import dtf.logging as log
-
 from dtf.globals import DTF_INCLUDED_DIR
 
 # Check for version before anything
@@ -102,10 +101,7 @@ def find_built_in_module(cmd):
 
     """Determine if the command is a built in module"""
 
-    if cmd in BUILT_IN_LIST:
-        return True
-    else:
-        return False
+    return bool(cmd in BUILT_IN_LIST)
 
 
 def check_dependencies():

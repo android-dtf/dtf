@@ -33,8 +33,9 @@ Contributing & Building
 -----------------------
 If you're interested in building your own instance of `dtf`, you'll need a couple of dependences:
 
-    $ sudo apt-get install pylint lintian python2.7 openjdk-8-jdk python-pip devscripts shellcheck
+    $ sudo apt-get install lintian python2.7 openjdk-8-jdk python-pip devscripts shellcheck
     $ sudo pip install flake8
+    $ sudo pip install pylint
 
 ### Building the dtfClient
 First, you'll need to build the dtfClient APK. This is currently performed using the bundled `gradlew` scripts in the 'dtf-client-app' directory. For security reasons, the release keys for the dtfClient are not included in the git repo, so you'll have to generate your own:

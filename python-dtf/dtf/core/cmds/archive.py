@@ -15,13 +15,12 @@
 #
 """Built-in module for archiving a project"""
 
-import dtf.properties as prop
-import dtf.logging as log
-
-from dtf.module import Module
-
 import os
 from subprocess import Popen
+
+import dtf.properties as prop
+import dtf.logging as log
+from dtf.module import Module
 
 
 class archive(Module):  # pylint: disable=invalid-name
