@@ -48,7 +48,6 @@ task makeDeb(type:Deb) {
 
     requires('python')
     requires('python-lxml')
-    requires('xz-utils')
     requires('sqlite3')
 
     into 'build/'
