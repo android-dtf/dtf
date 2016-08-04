@@ -72,6 +72,22 @@ task makeDeb(type:Deb) {
         into '/etc'
     }
 
+    /* dtf Bindings */
+    from('dtf-binding/') {
+        fileMode 0755
+        into '/usr/local/bin'
+    }
+
+    /* Binder Links */
+    link('/usr/local/bin/dtf_aapt', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_abe', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_apktool', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_axmlprinter2', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_baksmali', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_dex2jar', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_shell', '/usr/local/bin/dtfbinder', 0755)
+    link('/usr/local/bin/dtf_smali', '/usr/local/bin/dtfbinder', 0755)
+
     /* Man pages */
     from('man/') {
         into '/usr/local/man/man1/'
@@ -124,19 +140,31 @@ task doLint(type:Exec) {
 }
 
 // Run checkbashisms
-task doCheckBashisms(type:Exec) {
-
-    workingDir 'python-dtf/included'
-
-    commandLine 'bash', '-c', 'checkbashisms -f ./*.sh'
+task doCheckBashisms {
+    doLast {
+      exec {
+        workingDir 'python-dtf/included'
+        commandLine 'bash', '-c', 'checkbashisms -f ./*.sh'
+      }
+      exec {
+        workingDir 'dtf-binding'
+        commandLine 'bash', '-c', 'checkbashisms -f ./dtfbinder'
+      }
+    }
 }
 
 // Run shellcheck
-task doShellCheck(type:Exec) {
-
-    workingDir 'python-dtf/included'
-
-    commandLine 'bash', '-c', 'shellcheck ./*.sh'
+task doShellCheck {
+    doLast {
+      exec {
+        workingDir 'python-dtf/included'
+        commandLine 'bash', '-c', 'shellcheck ./*.sh'
+      }
+      exec {
+        workingDir 'dtf-binding'
+        commandLine 'bash', '-c', 'shellcheck ./dtfbinder'
+      }
+    }
 }
 
 task deleteIncludedTar(type:Delete) {

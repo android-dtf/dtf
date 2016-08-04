@@ -1,0 +1,199 @@
+#!/bin/sh
+# Android Device Testing Framework ("dtf")
+# Copyright 2013-2016 Jake Valletta (@jake_valletta)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Central point for dtf bindings
+
+launch_shell()
+{
+    ANDROID_SERIAL=$(dtf prop get Info serial) adb shell "$@"
+
+    return 0
+}
+
+launch_aapt()
+{
+    aapt_file=$(dtf binding dtf_aapt)
+    if [ ! -r "$aapt_file" ]; then
+        echo "dtf_aapt: can't find $aapt_file"
+        return 1
+    fi
+
+    $aapt_file "$@"
+    return $?
+}
+
+
+launch_abe()
+{
+    jarfile=$(dtf binding dtf_abe)
+    if [ ! -r "$jarfile" ]; then
+        echo "dtf_abe: can't find $jarfile"
+        return 1
+    fi
+
+    javaOpts="-Xmx256M"
+
+    while expr "x$1" : 'x-J' >/dev/null; do
+        opt=$(expr "$1" : '-J\(.*\)')
+        javaOpts="${javaOpts} -${opt}"
+        shift
+    done
+
+    jarpath="$jarfile"
+
+    java "$javaOpts" -jar "$jarpath" "$@"
+
+    return $?
+}
+
+launch_apktool()
+{
+    jarfile=$(dtf binding dtf_apktool)
+    if [ ! -r "$jarfile" ]; then
+        echo "dtf_apktool: can't find $jarfile"
+        return 1
+    fi
+
+    javaOpts="-Xmx256M"
+
+    while expr "x$1" : 'x-J' >/dev/null; do
+        opt=$(expr "$1" : '-J\(.*\)')
+        javaOpts="${javaOpts} -${opt}"
+        shift
+    done
+
+    jarpath="$jarfile"
+
+    java "$javaOpts" -jar "$jarpath" "$@"
+
+    return $?
+}
+
+launch_axmlprinter2()
+{
+    jarfile=$(dtf binding dtf_axmlprinter2)
+    if [ ! -r "$jarfile" ]; then
+        echo "dtf_axmlprinter2: can't find $jarfile"
+        return 1
+    fi
+
+    javaOpts="-Xmx256M"
+
+    while expr "x$1" : 'x-J' >/dev/null; do
+        opt=$(expr "$1" : '-J\(.*\)')
+        javaOpts="${javaOpts} -${opt}"
+        shift
+    done
+
+    jarpath="$jarfile"
+
+    java "$javaOpts" -jar "$jarpath" "$@"
+
+    return $?
+}
+
+launch_baksmali()
+{
+    jarfile=$(dtf binding dtf_baksmali)
+    if [ ! -r "$jarfile" ]; then
+        echo "dtf_baksmali: can't find $jarfile"
+        return 1
+    fi
+
+    javaOpts="-Xmx256M"
+
+    while expr "x$1" : 'x-J' >/dev/null; do
+        opt=$(expr "$1" : '-J\(.*\)')
+        javaOpts="${javaOpts} -${opt}"
+        shift
+    done
+
+    jarpath="$jarfile"
+
+    java "$javaOpts" -jar "$jarpath" "$@"
+    return $?
+}
+
+launch_dex2jar()
+{
+    _classpath="."
+    for k in "$(dtf binding dtf_dex2jar)"/lib/*.jar
+    do
+        _classpath="${_classpath}:${k}"
+    done
+
+    java -Xms512m -Xmx1024m -classpath "${_classpath}" "com.googlecode.dex2jar.tools.Dex2jarCmd" "$@"
+
+    return $?
+}
+
+launch_smali()
+{
+    jarfile=$(dtf binding dtf_smali)
+    if [ ! -r "$jarfile" ]; then
+        echo "dtf_smali: can't find $jarfile"
+        return 1
+    fi
+
+    javaOpts="-Xmx256M"
+
+    while expr "x$1" : 'x-J' >/dev/null; do
+        opt=$(expr "$1" : '-J\(.*\)')
+        javaOpts="${javaOpts} -${opt}"
+        shift
+    done
+
+    jarpath="$jarfile"
+
+    java "$javaOpts" -jar "$jarpath" "$@"
+
+    return $?
+}
+
+# Main
+calling_bind=$(basename "$0")
+
+case $calling_bind in
+    dtf_shell)
+        launch_shell "$@"
+        return 0 ;;
+    dtf_aapt)
+        launch_aapt "$@"
+        return $? ;;
+    dtf_abe)
+        launch_abe "$@"
+        return $? ;;
+    dtf_apktool)
+        launch_apktool "$@"
+        return $? ;;
+    dtf_axmlprinter2)
+        launch_axmlprinter2 "$@"
+        return $? ;;
+    dtf_baksmali)
+        launch_baksmali "$@"
+        return $? ;;
+    dtf_dex2jar)
+        launch_dex2jar "$@"
+        return $? ;;
+    dtf_smali)
+        launch_smali "$@"
+        return $? ;;
+    # Don't call directly!
+    dtfbinder) echo "Don't call binder directly!";;
+
+    # Other...
+    *) echo "Binding not found!" ;;
+esac

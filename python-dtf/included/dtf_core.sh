@@ -26,16 +26,6 @@ DTF_INCLUDED=${DTF_DIR}/included
 
 export DTF_BINS DTF_LIBS DTF_MODULES DTF_PACKAGES DTF_INCLUDED
 
-# Additional sourcing. Move this eventually?
-. ${DTF_INCLUDED}/dtf_aapt.sh
-. ${DTF_INCLUDED}/dtf_abe.sh
-. ${DTF_INCLUDED}/dtf_apktool.sh
-. ${DTF_INCLUDED}/dtf_baksmali.sh
-. ${DTF_INCLUDED}/dtf_dex2jar.sh
-. ${DTF_INCLUDED}/dtf_shell.sh
-. ${DTF_INCLUDED}/dtf_smali.sh
-. ${DTF_INCLUDED}/dtf_axmlprinter2.sh
-
 # API Levels for quick references.
 export API_1=1
 export API_2=2
