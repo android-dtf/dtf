@@ -1,0 +1,67 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module logging</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>logging</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/repos/dtf1.3/python-dtf/dtf/logging.py">/repos/dtf1.3/python-dtf/dtf/logging.py</a></font></td></tr></table>
+    <p><tt>dtf&nbsp;logging&nbsp;framework</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dtf.core.utils.html">dtf.core.utils</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-d"><strong>d</strong></a>(tag, message)</dt><dd><tt>Print&nbsp;a&nbsp;debugging&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-d_ml"><strong>d_ml</strong></a>(tag, messages)</dt><dd><tt>Print&nbsp;a&nbsp;multi-line&nbsp;debugging&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-e"><strong>e</strong></a>(tag, message)</dt><dd><tt>Print&nbsp;an&nbsp;error&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-e_ml"><strong>e_ml</strong></a>(tag, messages)</dt><dd><tt>Print&nbsp;a&nbsp;multi-line&nbsp;error&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-i"><strong>i</strong></a>(tag, message)</dt><dd><tt>Print&nbsp;an&nbsp;informational&nbsp;message&nbsp;(non-debug)</tt></dd></dl>
+ <dl><dt><a name="-i_ml"><strong>i_ml</strong></a>(tag, messages)</dt><dd><tt>Print&nbsp;a&nbsp;multi-line&nbsp;informational&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-localtime"><strong>localtime</strong></a>(...)</dt><dd><tt><a href="#-localtime">localtime</a>([seconds])&nbsp;-&gt;&nbsp;(tm_year,tm_mon,tm_mday,tm_hour,tm_min,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tm_sec,tm_wday,tm_yday,tm_isdst)<br>
+&nbsp;<br>
+Convert&nbsp;seconds&nbsp;since&nbsp;the&nbsp;Epoch&nbsp;to&nbsp;a&nbsp;time&nbsp;tuple&nbsp;expressing&nbsp;local&nbsp;time.<br>
+When&nbsp;'seconds'&nbsp;is&nbsp;not&nbsp;passed&nbsp;in,&nbsp;convert&nbsp;the&nbsp;current&nbsp;time&nbsp;instead.</tt></dd></dl>
+ <dl><dt><a name="-strftime"><strong>strftime</strong></a>(...)</dt><dd><tt><a href="#-strftime">strftime</a>(format[,&nbsp;tuple])&nbsp;-&gt;&nbsp;string<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;time&nbsp;tuple&nbsp;to&nbsp;a&nbsp;string&nbsp;according&nbsp;to&nbsp;a&nbsp;format&nbsp;specification.<br>
+See&nbsp;the&nbsp;library&nbsp;reference&nbsp;manual&nbsp;for&nbsp;formatting&nbsp;codes.&nbsp;When&nbsp;the&nbsp;time&nbsp;tuple<br>
+is&nbsp;not&nbsp;present,&nbsp;current&nbsp;time&nbsp;as&nbsp;returned&nbsp;by&nbsp;<a href="#-localtime">localtime</a>()&nbsp;is&nbsp;used.</tt></dd></dl>
+ <dl><dt><a name="-v"><strong>v</strong></a>(tag, message)</dt><dd><tt>Print&nbsp;a&nbsp;verbose&nbsp;message&nbsp;(non-debug)</tt></dd></dl>
+ <dl><dt><a name="-v_ml"><strong>v_ml</strong></a>(tag, messages)</dt><dd><tt>Print&nbsp;a&nbsp;multi-line&nbsp;verbose&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-w"><strong>w</strong></a>(tag, message)</dt><dd><tt>Print&nbsp;a&nbsp;warning&nbsp;message</tt></dd></dl>
+ <dl><dt><a name="-w_ml"><strong>w_ml</strong></a>(tag, messages)</dt><dd><tt>Print&nbsp;a&nbsp;multi-lne&nbsp;warning&nbsp;message</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>COLOR_DEB</strong> = '<font color="#c040c0">\x1b</font>[38;5;163m'<br>
+<strong>COLOR_ERR</strong> = '<font color="#c040c0">\x1b</font>[38;5;160m'<br>
+<strong>COLOR_INFO</strong> = '<font color="#c040c0">\x1b</font>[38;5;40m'<br>
+<strong>COLOR_VERB</strong> = '<font color="#c040c0">\x1b</font>[38;5;45m'<br>
+<strong>COLOR_WARN</strong> = '<font color="#c040c0">\x1b</font>[38;5;166m'<br>
+<strong>LOG_FILE</strong> = None<br>
+<strong>LOG_FILE_NAME</strong> = '.dtflog'<br>
+<strong>LOG_LEVEL_FILE</strong> = 4<br>
+<strong>LOG_LEVEL_STDOUT</strong> = 4<br>
+<strong>TOP</strong> = None<br>
+<strong>stdout</strong> = &lt;open file '&lt;stdout&gt;', mode 'w'&gt;</td></tr></table>
+</body></html>

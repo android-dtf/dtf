@@ -1,0 +1,110 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module adb</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>adb</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/repos/dtf1.3/python-dtf/dtf/adb.py">/repos/dtf1.3/python-dtf/dtf/adb.py</a></font></td></tr></table>
+    <p><tt>Python&nbsp;helper&nbsp;for&nbsp;using&nbsp;`adb`</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="__builtin__.html#object">__builtin__.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="adb.html#DtfAdb">DtfAdb</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DtfAdb">class <strong>DtfAdb</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Python&nbsp;wrapper&nbsp;class&nbsp;for&nbsp;`adb`<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DtfAdb-__init__"><strong>__init__</strong></a>(self, no_serial<font color="#909090">=False</font>)</dt><dd><tt>Object&nbsp;initialization</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-add_forward"><strong>add_forward</strong></a>(self, local, remote)</dt><dd><tt>Add&nbsp;an&nbsp;adb&nbsp;forward&nbsp;rule</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-busybox"><strong>busybox</strong></a>(self, cmd)</dt><dd><tt>Execute&nbsp;a&nbsp;busybox&nbsp;command&nbsp;on&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-get_devices"><strong>get_devices</strong></a>(self)</dt><dd><tt>List&nbsp;all&nbsp;connected&nbsp;devices</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-get_errors"><strong>get_errors</strong></a>(self)</dt><dd><tt>Read&nbsp;error&nbsp;stream</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-get_output"><strong>get_output</strong></a>(self)</dt><dd><tt>Read&nbsp;output&nbsp;stream</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-install"><strong>install</strong></a>(self, apk_path)</dt><dd><tt>Install&nbsp;an&nbsp;APK&nbsp;on&nbsp;a&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-is_dir"><strong>is_dir</strong></a>(self, dir_name)</dt><dd><tt>Check&nbsp;if&nbsp;a&nbsp;directory&nbsp;exists&nbsp;on&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-is_file"><strong>is_file</strong></a>(self, file_name)</dt><dd><tt>Check&nbsp;if&nbsp;a&nbsp;file&nbsp;exists&nbsp;on&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-is_installed"><strong>is_installed</strong></a>(self, app_name)</dt><dd><tt>Check&nbsp;if&nbsp;an&nbsp;application&nbsp;is&nbsp;installed&nbsp;on&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-kill_server"><strong>kill_server</strong></a>(self)</dt><dd><tt>Kill&nbsp;the&nbsp;adb&nbsp;daemon</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-pull"><strong>pull</strong></a>(self, file_name, local<font color="#909090">='./'</font>)</dt><dd><tt>Pull&nbsp;file&nbsp;off&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-push"><strong>push</strong></a>(self, local_file_name, upload_path)</dt><dd><tt>Push&nbsp;a&nbsp;file&nbsp;to&nbsp;a&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-remove_forward"><strong>remove_forward</strong></a>(self, local)</dt><dd><tt>Remove&nbsp;a&nbsp;adb&nbsp;forward&nbsp;rule</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-run_as"><strong>run_as</strong></a>(self, user, cmd)</dt><dd><tt>Run&nbsp;as&nbsp;a&nbsp;user</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-shell_command"><strong>shell_command</strong></a>(self, cmd)</dt><dd><tt>Execute&nbsp;a&nbsp;shell&nbsp;command&nbsp;on&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-start_server"><strong>start_server</strong></a>(self)</dt><dd><tt>Start&nbsp;the&nbsp;adb&nbsp;daemon</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-uninstall"><strong>uninstall</strong></a>(self, app_name)</dt><dd><tt>Uninstall&nbsp;an&nbsp;application&nbsp;on&nbsp;a&nbsp;device</tt></dd></dl>
+
+<dl><dt><a name="DtfAdb-wait_for_device"><strong>wait_for_device</strong></a>(self)</dt><dd><tt>Block&nbsp;until&nbsp;device&nbsp;is&nbsp;found</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>no_serial</strong> = False</dl>
+
+<dl><dt><strong>returncode</strong> = ''</dl>
+
+<dl><dt><strong>serial</strong> = ''</dl>
+
+<dl><dt><strong>stderr</strong> = None</dl>
+
+<dl><dt><strong>stdout</strong> = None</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>ADB_BINARY</strong> = 'adb'<br>
+<strong>DTF_CLIENT</strong> = 'com.dtf.client'<br>
+<strong>PIPE</strong> = -1<br>
+<strong>STATUS_BOOTLOADER</strong> = 'bootloader'<br>
+<strong>STATUS_DEVICE</strong> = 'device'<br>
+<strong>STATUS_OFFLINE</strong> = 'offline'</td></tr></table>
+</body></html>

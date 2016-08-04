@@ -113,13 +113,13 @@ task buildPython(type:Exec) {
 }
 
 // Task to generate documentation
-task genDocs(type:Exec) {
+task genApiDocs(type:Exec) {
 
-    mkdir('python-dtf/api-docs')
+    mkdir('api-docs')
 
-    workingDir 'python-dtf/api-docs'
+    workingDir 'api-docs'
 
-    commandLine 'bash', '-c', 'pydoc -w ../dtf/*.py'
+    commandLine 'bash', '-c', 'pydoc -w ../python-dtf/dtf/*.py'
 }
 
 // Flake8 the Code
@@ -242,6 +242,11 @@ task cleanMans(type:Delete) {
     }
 }
 
+// Remove generated API docs
+task cleanApiDocs(type:Delete) {
+
+    delete 'api-docs'
+}
 
 // Clean up
 clean {
@@ -250,7 +255,6 @@ clean {
     delete 'python-dtf/build'
     delete 'python-dtf/dist'
     delete "python-dtf/dtf.egg-info"
-    delete 'python-dtf/api-docs'
     delete 'python-dtf/dtf/included.tar'
     delete 'python-dtf/dtf/VERSION'
     delete 'python-dtf/included/globals.ini'
@@ -272,7 +276,7 @@ generateGlobals.dependsOn copyClientApk
 copyClientApk.dependsOn assertClientApk
 
 // Documentation requires valid Python
-genDocs.dependsOn buildPython
+genApiDocs.dependsOn buildPython
 
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar
