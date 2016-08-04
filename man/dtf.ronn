@@ -36,4 +36,4 @@ dtf(1) is copyright (c) 2013-2016, Jake Valletta (@jake_valletta). Released unde
 license.
 
 ## SEE ALSO
-dtf-archive(1), dtf-client(1), dtf-init(1), dtf-local(1), dtf-pm(1), dtf-prop(1), dtf-reset(1), dtf-status(1), dtf-project(7), dtf-binary(7), dtf-library(7), dtf-module(7), dtf-package(7)
+dtf-archive(1), dtf-binding(1), dtf-client(1), dtf-init(1), dtf-local(1), dtf-pm(1), dtf-prop(1), dtf-reset(1), dtf-status(1), dtf-project(7), dtf-binary(7), dtf-library(7), dtf-module(7), dtf-package(7)

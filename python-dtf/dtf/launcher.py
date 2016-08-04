@@ -59,6 +59,7 @@ def usage_full():
     print 'Usage: dtf [module|command] <arguments>'
     print '   Built-in Commands:'
     print '    archive     Archive your dtf project files.'
+    print '    binding     Print dtf helper bindings.'
     print '    client      Install/remove the dtf client.'
     print '    help        Prints this help screen.'
     print '    init        Initializes a project.'
@@ -172,7 +173,7 @@ def main():
     elif command_name == 'pm':
         return pkg.launch_builtin_module('pm', sys.argv, chdir=False)
 
-    elif command_name in ['init', 'source']:
+    elif command_name in ['init', 'source', 'binding']:
         return pkg.launch_builtin_module(command_name, sys.argv)
 
     # Ok, now we need to get to the top of the project directory.

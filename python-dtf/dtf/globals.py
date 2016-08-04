@@ -44,6 +44,13 @@ def get_binding(dtf_binding):
     return os.path.expanduser(get_generic_global("Bindings", dtf_binding))
 
 
+def get_all_bindings():
+
+    """Get all bindings"""
+
+    return __get_section("Bindings")
+
+
 def get_generic_global(section, prop):
 
     """Generic getter for getting a property"""
@@ -62,3 +69,19 @@ def get_generic_global(section, prop):
         raise GlobalPropertyError("Section not found: %s" % section)
     except ConfigParser.NoOptionError:
         raise GlobalPropertyError("Property not found: %s" % prop)
+
+
+def __get_section(section):
+
+    """Private helper to get all section values"""
+
+    if section is None:
+        raise GlobalPropertyError("Section cannot be null!")
+
+    global_conf = ConfigParser.ConfigParser()
+    global_conf.read(DTF_GLOBAL_CONFIG)
+
+    if not global_conf.has_section(section):
+        raise GlobalPropertyError("Section not found: %s" % section)
+
+    return global_conf.items(section)
