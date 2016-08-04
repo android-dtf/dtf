@@ -34,7 +34,7 @@ if sys.version_info < (2, 6, 0):
 TAG = "dtf"
 
 BUILT_IN_LIST = ['archive', 'client', 'local', 'prop', 'reset',
-                 'source', 'status']
+                 'status']
 
 
 def usage():
@@ -67,7 +67,6 @@ def usage_full():
     print '    pm          The dtf package manager.'
     print '    prop        The dtf property manager.'
     print '    reset       Removes the dtf config from current directory.'
-    print '    source      Used for sourcing additional commands.'
     print '    status      Determine if project device is attached.'
     print '    version     Print version number.'
 
@@ -173,7 +172,7 @@ def main():
     elif command_name == 'pm':
         return pkg.launch_builtin_module('pm', sys.argv, chdir=False)
 
-    elif command_name in ['init', 'source', 'binding']:
+    elif command_name in ['init', 'binding']:
         return pkg.launch_builtin_module(command_name, sys.argv)
 
     # Ok, now we need to get to the top of the project directory.
