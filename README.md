@@ -14,7 +14,7 @@ Installing & Using
 
 You can use another OS if you'd like, but your mileage will vary. To help, the following packages are required:
 
-- JRE 1.7 or 1.8
+- JRE 1.8
 - Python 2.7 or higher
 - sqlite3
 - adb

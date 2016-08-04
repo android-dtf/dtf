@@ -87,11 +87,11 @@ fi
 
 apt-get -qqy install libncurses5:i386 libstdc++6:i386 zlib1g:i386 || exit 7
 
-echo "[+] Checking for valid python (2.6+)..."
+echo "[+] Checking for valid python (2.7+)..."
 py_ver=$(python --version  2>&1|head -n1)
 py_sub_ver=$(echo $py_ver | awk  '{ string=substr($0, 1, 10); print string; }' )
 
-if [ "$py_sub_ver" = "Python 2.6" -o "$py_sub_ver" = "Python 2.7" ]; then
+if [ "$py_sub_ver" = "Python 2.7" ]; then
     echo "[+] Python installation detected."
 else
     echo "[+] Python not detected, installing 2.7..."
@@ -104,17 +104,7 @@ apt-get -qqy install python-pip || exit 9
 echo "[+] Getting pip modules..."
 pip install colored --upgrade || exit 10
 
-echo "[+] Checking for Java (openjdk) 1.7..."
-apt-get -qqy install openjdk-7-jdk || exit 11
+echo "[+] Checking for Java (openjdk) 1.8..."
+apt-get -qqy install openjdk-8-jdk || exit 11
 
-echo "[+] Confirming true bash shell.."
-
-shell=$(readlink -f $(which sh)|grep -o '....$')
-if [ "$shell" = "bash" ]; then
-    echo "[+] Bash detected."
-else
-    echo -n "Your shell is not currently bash. At the prompt, select '<NO>' to use bash. (press enter key). "
-    read _
-    dpkg-reconfigure dash
-fi
 echo "[+] Dependency installation complete. Have fun!"
