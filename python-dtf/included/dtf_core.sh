@@ -32,7 +32,6 @@ export DTF_BINS DTF_LIBS DTF_MODULES DTF_PACKAGES DTF_INCLUDED
 . ${DTF_INCLUDED}/dtf_apktool.sh
 . ${DTF_INCLUDED}/dtf_baksmali.sh
 . ${DTF_INCLUDED}/dtf_dex2jar.sh
-. ${DTF_INCLUDED}/dtf_drozer.sh
 . ${DTF_INCLUDED}/dtf_shell.sh
 . ${DTF_INCLUDED}/dtf_smali.sh
 . ${DTF_INCLUDED}/dtf_axmlprinter2.sh

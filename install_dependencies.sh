@@ -75,7 +75,7 @@ apt-get -qqy update || exit 6
 
 # General stuff
 echo "[+] Installing general purpose tools..."
-apt-get -qqy install gdebi-core xz-utils sqlite3 build-essential || exit 3
+apt-get -qqy install xz-utils sqlite3 build-essential || exit 3
 
 # Android stuff
 if [ `which adb` ]; then
@@ -106,17 +106,6 @@ pip install colored --upgrade || exit 10
 
 echo "[+] Checking for Java (openjdk) 1.7..."
 apt-get -qqy install openjdk-7-jdk || exit 11
-
-echo "[+] Checking for Drozer..."
-
-if [ `which drozer` ]; then
-    echo "[+] Drozer already installed!"
-else
-    echo "[+] Getting drozer .deb and installing..."
-    wget -O drozer.deb https://www.mwrinfosecurity.com/system/assets/931/original/drozer_2.3.4.deb
-    gdebi --option=APT::Get::force-yes=1,APT::Get::Assume-Yes=1 -n -q drozer.deb
-    rm drozer.deb 2>/dev/null
-fi
 
 echo "[+] Confirming true bash shell.."
 
