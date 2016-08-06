@@ -73,6 +73,7 @@ setup(
     entry_points={
         'console_scripts': [
             'dtf = dtf.launcher:main',
+            'dtf_check = dtf.checker:main',
         ],
     },
 

@@ -1,0 +1,33 @@
+dtf-check(1) -- Check a dtf Module for errors and style
+=======================================================
+
+## SYNOPSIS
+dtf check -s -a [<file_name>]
+
+## DESCRIPTION  
+dtf-check(1) checks a dtf-module(7) for syntax and style weaknesses. Those who wish to contribute to dtf(1) should use this utility to ensure they are introducing robust and readadble code. Since dtf-check(1) uses the same functions used by dtf(1) to load modules, it ensures the specified module:
+    - Will be detected as a python or bash module
+    - Will pass all autoparse checks
+    - Contains only best practice values in autoparse
+    - Will pass `pylint` and `flake8` checks (optional)
+
+## EXAMPLES
+dtf-check(1) takes a **file_name** argument:
+
+    $ dtf_check mynewmodule
+
+To run dtf-check(1) will all checks, use the all (**-a**) argument:
+
+    $ dtf_check -a mynewmodule
+
+If you want to treat warnings as errors (recommended), use the strict (**-s**) argument:
+
+    $ dtf_check -sa mynewmodule
+
+For more information on creating modules, see dtf-module(7).
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.
