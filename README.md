@@ -20,6 +20,7 @@ You can use another OS if you'd like, but your mileage will vary. To help, the f
 - adb
 - Python pip 
 - 'colored' pip module
+- 'lxml' python module
 
 Using dtf
 ---------
