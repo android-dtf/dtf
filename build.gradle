@@ -56,6 +56,7 @@ task makeDeb(type:Deb) {
 
     /* Library Files */
     from('python-dtf/build/usr/local/lib') {
+        createDirectoryEntry = true
         fileMode 0644
         into '/usr/local/lib'
     }
