@@ -18,6 +18,7 @@
 from hashlib import md5
 import os
 import os.path
+import stat
 from site import getsitepackages
 
 CONFIG_FILE_NAME = '.dtfini'
@@ -100,3 +101,10 @@ def which(program):
                 return exe_file
 
     return None
+
+
+def is_executable(file_name):
+
+    """Check if a file can be executed"""
+
+    return bool(stat.S_IXUSR & os.stat(file_name)[stat.ST_MODE])

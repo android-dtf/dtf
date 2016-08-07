@@ -128,6 +128,11 @@ def __launch_bash_module(module_path, args):
 
     """Launch a bash module by path"""
 
+    # First, make sure we can even execute the file.
+    if not utils.is_executable(module_path):
+        log.e(TAG, "Module is marked executable!")
+        return -6
+
     cmd = list()
 
     # Build the command string

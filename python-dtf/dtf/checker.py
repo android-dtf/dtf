@@ -139,7 +139,12 @@ def do_bash_checks(file_name, module_name, all_checks, strict_checks):
 
     """Run app bash checks"""
 
-    # First attempt to auto parse
+    # First attempt to execute.
+    if not utils.is_executable(file_name):
+        log.e(TAG, "[FAIL] Module is not marked executable!")
+        return -1
+
+    # Next attempt to auto parse
     item = pm.parse_bash_module(file_name, module_name)
 
     if item is None:
