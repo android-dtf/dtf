@@ -107,9 +107,11 @@ def __launch_python_module(path, cmd, args, chdir=True):
                   % requirement)
             return -8
 
+    rtn = 0
+
     # Global exception handling
     try:
-        return mod_inst.run(args)
+        rtn = mod_inst.run(args)
     except Exception:  # pylint:disable=broad-except
         try:
             exc_traceback = sys.exc_info()
@@ -121,7 +123,12 @@ def __launch_python_module(path, cmd, args, chdir=True):
                     continue
                 print line
 
-        return -10
+        rtn = -10
+    except KeyboardInterrupt:
+        log.e(TAG, "Python module forcibly killed!")
+        rtn = -11
+
+    return rtn
 
 
 def __launch_bash_module(module_path, args):
@@ -154,19 +161,30 @@ def __launch_bash_module(module_path, args):
     serial = prop.get_prop('Info', 'serial')
     new_env['ANDROID_SERIAL'] = serial
 
+    # Global exception handling
     try:
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=new_env)
-    except OSError:
-        log.e(TAG, "Unable to execute '%s'. Are the permission flags correct?"
-              % module_path)
+        lines_iterator = iter(popen.stdout.readline, b"")
+
+        for line in lines_iterator:
+            sys.stdout.write(line)
+
+        return popen.returncode
+
+    except Exception:  # pylint:disable=broad-except
+        try:
+            exc_traceback = sys.exc_info()
+        finally:
+            log.e(TAG, "Unhandled Exception in module!")
+            for line in traceback.format_exception(*exc_traceback)[3:]:
+                line = line.strip("\n")
+                if line == "":
+                    continue
+                print line
         return -5
-
-    lines_iterator = iter(popen.stdout.readline, b"")
-
-    for line in lines_iterator:
-        sys.stdout.write(line)
-
-    return popen.returncode
+    except KeyboardInterrupt:
+        log.e(TAG, "Bash module forcibly killed!")
+        return -6
 # End Internal
 
 
