@@ -46,6 +46,8 @@ task makeDeb(type:Deb) {
 
     configurationFile('/etc/bash_completion.d/dtf.bash')
 
+    postUninstall file('deb-scripts/postuninstall')
+
     requires('python')
     requires('python-lxml')
     requires('sqlite3')
