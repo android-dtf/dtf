@@ -57,6 +57,8 @@ def get_prop(section, prop):
 
     config.read(CONFIG_FILE_NAME)
 
+    section = section.capitalize()
+
     # Caller needs to check return if he/she cares what the issue was.
     try:
         rtn = config.get(section, prop)
@@ -76,6 +78,8 @@ def set_prop(section, prop, value):
 
     config = ConfigParser.ConfigParser()
     config.read(CONFIG_FILE_NAME)
+
+    section = section.capitalize()
 
     # Add section if it doesnt exist
     if not config.has_section(section):
@@ -97,6 +101,8 @@ def del_prop(section, prop):
 
     config = ConfigParser.ConfigParser()
     config.read(CONFIG_FILE_NAME)
+
+    section = section.capitalize()
 
     rtn = None
 
@@ -128,6 +134,8 @@ def test_prop(section, prop):
 
     config = ConfigParser.ConfigParser()
     config.read(CONFIG_FILE_NAME)
+
+    section = section.capitalize()
 
     try:
         config.get(section, prop)
