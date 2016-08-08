@@ -54,7 +54,7 @@ Once you've built the dtfClient, you can now build the rest of the project, whic
     $ ./gradlew clean build
 
 ### Creating Content
-The `dtf` `man` pages are a great place to start. The `man` pages for `dtf-module(7)`, `dtf-binary(7)`, `dtf-library(7)` and `dtf-package(7)` will provide additional insight on the structure of `dtf` content. If you're creating a module, ensure that it passes all the checks with `dtf_check`. More information can be found in the `man` pages for dtf-check(1). To check your new module:
+The `dtf` `man` pages are a great place to start. The `man` pages for `dtf-module(7)`, `dtf-binary(7)`, `dtf-library(7)` and `dtf-package(7)` will provide additional insight on the structure of `dtf` content. If you're creating a module, ensure that it passes all the checks with `dtf_check`. More information can be found in the `man` pages for `dtf-check(1)`. To check your new module:
 
     $ dtf_check -sa my_cool_module
 
