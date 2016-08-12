@@ -23,6 +23,14 @@ launch_shell()
     return 0
 }
 
+launch_busybox()
+{
+    busybox=$(dtf prop get Info busybox)
+    serial=$(dtf prop get Info serial)
+
+    adb -s "${serial}" shell run-as com.dtf.client "${busybox}" "$@"
+}
+
 launch_aapt()
 {
     aapt_file=$(dtf binding dtf_aapt)
@@ -169,6 +177,9 @@ calling_bind=$(basename "$0")
 case $calling_bind in
     dtf_shell)
         launch_shell "$@"
+        return 0 ;;
+    dtf_busybox)
+        launch_busybox "$@"
         return 0 ;;
     dtf_aapt)
         launch_aapt "$@"

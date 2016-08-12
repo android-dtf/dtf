@@ -89,15 +89,6 @@ dtf_device_connected ()
     return 1
 }
 
-# Execute a busybox command (requies client)
-dtf_busybox ()
-{
-    busybox=$(dtf prop get Info busybox)
-    serial=$(dtf prop get Info serial)
-
-    adb -s "${serial}" shell run-as com.dtf.client "${busybox}" "$@"
-}
-
 # Check if a module is installed.
 dtf_has_module ()
 {
