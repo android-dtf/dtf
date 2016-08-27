@@ -19,11 +19,6 @@
 # Taken from: https://gist.github.com/bcap/5682077#file-terminal-control-sh
 # Terminal output control (http://www.termsys.demon.co.uk/vtansi.htm)
 
-TC='\e['
-Rst="${TC}0m"     # Reset all coloring and style
-
-# ##########################
-
 
 # Feel free to override these in your module.
 LOG_FILE=.dtflog
@@ -43,11 +38,13 @@ fi
 #  0, 1, 2, 3, 4, 5
 #########################
 
-COLOR_ERROR="${TC}38;5;160m" #d70000
-COLOR_WARN="${TC}38;5;166m" #d75f00
-COLOR_INFO="${TC}38;5;040m" #00d700
-COLOR_VERB="${TC}38;5;045m" #00d7ff
-COLOR_DEB="${TC}38;5;163m" #d700af
+COLOR_ERROR=$(tput setaf 1)
+COLOR_WARN=$(tput setaf 3)
+COLOR_INFO=$(tput setaf 2)
+COLOR_VERB=$(tput setaf 6)
+COLOR_DEB=$(tput setaf 5)
+COLOR_RST=$(tput sgr0)
+
 
 # Internal low-level logger
 _log()
@@ -64,7 +61,7 @@ _log()
     fi
 
     if [ "${LOG_TO_STDOUT}" -eq "1" ]; then
-        printf "%s%s %s - %s%s\n" "${color}" "${date}" "${app}" "${message}" "${Rst}"
+        printf "%s %s - %s\n" "${color}${date}" "${app}" "${message}${COLOR_RST}"
     fi
 }
 
@@ -74,7 +71,7 @@ log_e()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 1 ]; then
         caller=$(basename "${0}")
-        _log ${COLOR_ERROR} "${caller}/E" "$@"
+        _log "${COLOR_ERROR}" "${caller}/E" "$@"
     fi
 }
 
@@ -84,7 +81,7 @@ log_w()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 2 ]; then
         caller=$(basename "${0}")
-        _log ${COLOR_WARN} "${caller}/W" "$@"
+        _log "${COLOR_WARN}" "${caller}/W" "$@"
     fi
 }
 
@@ -94,7 +91,7 @@ log_i()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 3 ]; then
         caller=$(basename "${0}")
-        _log ${COLOR_INFO} "${caller}/I" "$@"
+        _log "${COLOR_INFO}" "${caller}/I" "$@"
     fi
 }
 
@@ -104,7 +101,7 @@ log_v()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 4 ]; then
         caller=$(basename "${0}")
-        _log ${COLOR_VERB} "${caller}/V" "$@"
+        _log "${COLOR_VERB}" "${caller}/V" "$@"
     fi
 }
 
@@ -114,6 +111,6 @@ log_d()
     LOG_LEVEL=$GLOG_LEVEL
     if [ "${LOG_LEVEL}" -ge 5 ]; then
         caller=$(basename "${0}")
-        _log ${COLOR_DEB} "${caller}/D" "$@"
+        _log "${COLOR_DEB}" "${caller}/D" "$@"
     fi
 }
