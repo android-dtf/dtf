@@ -31,11 +31,11 @@ LOG_FILE_NAME = '.dtflog'
 LOG_FILE = None
 
 # Terminal Coloring
-COLOR_ERR = fg('#d70000')
-COLOR_WARN = fg('#d75f00')
-COLOR_INFO = fg('#00d700')
-COLOR_VERB = fg('#00d7ff')
-COLOR_DEB = fg('#d700af')
+COLOR_ERR = fg(1)
+COLOR_WARN = fg(3)
+COLOR_INFO = fg(2)
+COLOR_VERB = fg(6)
+COLOR_DEB = fg(5)
 
 # Open file on module import
 TOP = utils.get_project_root()
