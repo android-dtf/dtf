@@ -22,6 +22,13 @@ You can use another OS if you'd like, but your mileage will vary. To help, the f
 - 'colored' pip module
 - 'lxml' python module
 
+### Upgrading from 1.3.0
+If you previously installed `dtf` version 1.3.0, you can use the uninstall script to ensure there are no conflicts:
+
+    $ sudo ./uninstall_1_3.sh
+
+Note that `dtf` version 1.3.1 *does not* require any changes to a user's PATH, so you should remove path changes related to `dtf`.
+
 Using dtf
 ---------
 For details on getting started with `dtf`, check out the documentation over at the www.thecobraden.com/projects/dtf/.
