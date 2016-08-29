@@ -1,0 +1,11 @@
+[Info]
+serial = 1234567890123456
+kernel = Linux version 3.10.73-g8eaa82a (android-build@vpba27.mtv.corp.google.com) (gcc version 4.9.x-google 20140827 (prerelease) (GCC) ) #1 SMP PREEMPT Sat Mar 26 01:36:22 UTC 2016
+sdk = 23
+path = /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+bootclasspath-jars = /system/framework/core-libart.jar:/system/framework/conscrypt.jar:/system/framework/okhttp.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/apache-xml.jar:/system/framework/org.apache.http.legacy.boot.jar
+version-string = google-bullhead_MTC19T
+cpu-bits = 64
+vmtype = ART
+seandroid-state = Enforcing
+busybox = /data/data/com.dtf.client/files/busybox

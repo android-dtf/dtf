@@ -141,6 +141,13 @@ task doLint(type:Exec) {
     commandLine 'pylint', './dtf', '--rcfile=./pylint.config'
 }
 
+// Run pytest suite
+task doPytests(type:Exec) {
+
+    workingDir 'python-dtf'
+    commandLine 'python', 'setup.py', 'test'
+}
+
 // Run checkbashisms
 task doCheckBashisms {
     doLast {
@@ -266,7 +273,6 @@ clean {
     }
 }
 
-// doTests will make sure the code passes all tests
 doPythonTests.dependsOn doLint
 doPythonTests.dependsOn doFlake
 
@@ -280,6 +286,9 @@ copyClientApk.dependsOn assertClientApk
 
 // Documentation requires valid Python
 genApiDocs.dependsOn buildPython
+
+// Pytests requires valid Python
+doPytests.dependsOn buildPython
 
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar
