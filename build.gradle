@@ -23,6 +23,7 @@ String versionString = "dtf-" + values[0] + "-" + values[1]
 if ( values.length == 3) {
     project.ext.set("buildBranch", values[2])
     project.ext.set("versionString", versionString + "." + values[2])
+
 } else {
     project.ext.set("buildBranch", "")
     project.ext.set("versionString", versionString)
@@ -33,6 +34,8 @@ String currentDate = new Date().format( 'yyyy-MM-dd' )
 
 project.ext.set("currentDate", currentDate)
 
+
+// Task Definitions
 task makeDeb(type:Deb) {
 
     packageName = 'android-dtf'
@@ -111,7 +114,6 @@ task doPythonTests() {}
 task buildPython(type:Exec) {
 
     workingDir 'python-dtf'
-
     commandLine 'python', 'setup.py', 'bdist_dumb'
 }
 
@@ -121,7 +123,6 @@ task genApiDocs(type:Exec) {
     mkdir('api-docs')
 
     workingDir 'api-docs'
-
     commandLine 'bash', '-c', 'pydoc -w ../python-dtf/dtf/*.py'
 }
 
@@ -129,7 +130,6 @@ task genApiDocs(type:Exec) {
 task doFlake(type:Exec) {
 
     workingDir 'python-dtf'
-
     commandLine 'flake8', './dtf'
 }
 
@@ -137,7 +137,6 @@ task doFlake(type:Exec) {
 task doLint(type:Exec) {
 
     workingDir 'python-dtf'
-
     commandLine 'pylint', './dtf', '--rcfile=./pylint.config'
 }
 
@@ -239,8 +238,12 @@ task generateMans(type:Exec) {
 
     workingDir 'man'
 
-    commandLine 'bash', '-c', "ronn ./*.ronn --date=" + project.currentDate + " --organization=" + project.versionString + " --manual=\"dtf Manual\" --roff"
+    String commandString = new String("ronn ./*.ronn --date="
+                                + project.currentDate
+                                + " --organization=" + project.versionString
+                                + " --manual=\"dtf Manual\" --roff")
 
+    commandLine 'bash', '-c', commandString
 }
 
 // Remove generated man pages
@@ -272,6 +275,8 @@ clean {
         include '*.apk'
     }
 }
+
+// Task Dependencies
 
 doPythonTests.dependsOn doLint
 doPythonTests.dependsOn doFlake
