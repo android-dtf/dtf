@@ -1,0 +1,11 @@
+[run]
+
+branch = True
+
+source =
+    dtf/adb.py
+    dtf/client.py
+    dtf/logging.py
+    dtf/packages.py
+    dtf/properties.py
+    dtf/globals.py

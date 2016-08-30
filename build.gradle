@@ -147,6 +147,13 @@ task doPytests(type:Exec) {
     commandLine 'python', 'setup.py', 'test'
 }
 
+// Generate Coverage information
+task doCoverage(type:Exec) {
+
+    workingDir 'python-dtf'
+    commandLine 'sh', 'generate_coverage.sh'
+}
+
 // Run checkbashisms
 task doCheckBashisms {
     doLast {

@@ -26,3 +26,7 @@ var/
 *.egg
 .gradle
 
+# Coverage stuff
+.coverage
+.cache
+htmlcov/
