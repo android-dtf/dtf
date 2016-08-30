@@ -80,14 +80,25 @@ contributors
   - yyjdelete <yyjdelete@gmail.com>
 *******************************************************************************
 
-Various portions of the compile code are taken from the Android4ME project, 
-written and copyrighted by Dmitry Skiba, released under the following Apache 
+Various portions of the compiled code are taken from the Red Naga project, 
+written and copyrighted by Tim Strazzere, released under the following Apache 
 License, Version 2.0:
 
 *******************************************************************************
-axmlprinter2 - Prints XML document from binary XML file (with correct namespace
-handing & attribute formatting).
-Copyright 2008 Android4ME
+Copyright (c) 2015 Red Naga - Tim 'diff' Strazzere
+Copyright (c) 2008 Android4ME
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 *******************************************************************************
 
 A compiled version of `aapt` is taken from the Android Open Source Project
