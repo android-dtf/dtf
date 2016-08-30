@@ -49,14 +49,30 @@ def __upsearch(file_name, dir_name):
 TOP = __upsearch(CONFIG_FILE_NAME, getcwd())
 
 
+def __load_config():
+
+    """Load the current project configuration"""
+
+    config = ConfigParser.ConfigParser()
+    config.read(CONFIG_FILE_NAME)
+
+    return config
+
+
+def __update_config(config):
+
+    """Update config file"""
+
+    prop_f = open(CONFIG_FILE_NAME, 'w')
+    config.write(prop_f)
+    prop_f.close()
+
+
 def get_prop(section, prop):
 
     """Get a property value"""
 
-    config = ConfigParser.ConfigParser()
-
-    config.read(CONFIG_FILE_NAME)
-
+    config = __load_config()
     section = section.capitalize()
 
     # Caller needs to check return if he/she cares what the issue was.
@@ -76,9 +92,7 @@ def set_prop(section, prop, value):
 
     """Set a property"""
 
-    config = ConfigParser.ConfigParser()
-    config.read(CONFIG_FILE_NAME)
-
+    config = __load_config()
     section = section.capitalize()
 
     # Add section if it doesnt exist
@@ -88,9 +102,7 @@ def set_prop(section, prop, value):
     # Set the new parameter
     config.set(section, prop, value)
 
-    prop_f = open(CONFIG_FILE_NAME, 'w')
-    config.write(prop_f)
-    prop_f.close()
+    __update_config(config)
 
     return 0
 
@@ -99,9 +111,7 @@ def del_prop(section, prop):
 
     """Delete a property"""
 
-    config = ConfigParser.ConfigParser()
-    config.read(CONFIG_FILE_NAME)
-
+    config = __load_config()
     section = section.capitalize()
 
     rtn = None
@@ -121,9 +131,7 @@ def del_prop(section, prop):
     if len(config.items(section)) == 0:
         config.remove_section(section)
 
-    prop_f = open(CONFIG_FILE_NAME, 'w')
-    config.write(prop_f)
-    prop_f.close()
+    __update_config(config)
 
     return 0
 
@@ -132,18 +140,16 @@ def test_prop(section, prop):
 
     """Test if a property is set or not"""
 
-    config = ConfigParser.ConfigParser()
-    config.read(CONFIG_FILE_NAME)
-
+    config = __load_config()
     section = section.capitalize()
+    rtn = 0
 
     try:
         config.get(section, prop)
-        return 1
+        rtn = 1
     except ConfigParser.NoSectionError:
-        return 0
+        rtn = 0
     except ConfigParser.NoOptionError:
-        return 0
+        rtn = 0
 
-    # Some other error?
-    return 0
+    return rtn
