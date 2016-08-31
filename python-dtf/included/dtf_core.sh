@@ -68,7 +68,8 @@ upsearch () {
 }
 
 # Top of the project.
-export TOP=$(upsearch .dtfini)
+export TOP
+TOP=$(upsearch .dtfini)
 
 # Change back to the launch directory
 dtf_reset_dir() {
