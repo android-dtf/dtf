@@ -37,6 +37,7 @@ class Module(object):  # pylint: disable=too-few-public-methods
     about = "A basic dtf module."
 
     requires = []
+    min_sdk = 0
 
     __self__ = ''
 

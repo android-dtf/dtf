@@ -99,13 +99,9 @@ def __launch_python_module(path, cmd, args, chdir=True):
         log.e(TAG, "Unable to find class '%s' in module!" % cmd)
         return -6
 
-    # Make sure requirements are met
-    for requirement in mod_inst.requires:
-
-        if utils.which(requirement) is None:
-            log.e(TAG, "Unable to execute! Unmet dependency: %s"
-                  % requirement)
-            return -8
+    if __do_python_prelaunch_checks(mod_inst) != 0:
+        log.e(TAG, "Module prelaunch checks failed.")
+        return -8
 
     rtn = 0
 
@@ -185,6 +181,29 @@ def __launch_bash_module(module_path, args):
     except KeyboardInterrupt:
         log.e(TAG, "Bash module forcibly killed!")
         return -6
+
+
+def __do_python_prelaunch_checks(mod_inst):
+
+    """Do pre-launch checks"""
+
+    # Make sure requirements are met
+    for requirement in mod_inst.requires:
+
+        if utils.which(requirement) is None:
+            log.e(TAG, "Unable to execute! Unmet dependency: %s"
+                  % requirement)
+            return -1
+
+    # Check for a minimum SDK
+    sdk = int(prop.get_prop('Info', 'sdk'))
+    min_sdk = int(mod_inst.min_sdk)
+
+    if min_sdk != 0 and sdk < min_sdk:
+        log.e(TAG, "This module requires SDK %d or higher!" % min_sdk)
+        return -1
+
+    return 0
 # End Internal
 
 
