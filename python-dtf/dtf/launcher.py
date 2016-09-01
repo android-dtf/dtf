@@ -87,7 +87,7 @@ def unpack_included():
 
     """Unzip the included TAR"""
 
-    os.mkdir(DTF_INCLUDED_DIR)
+    utils.mkdir_recursive(DTF_INCLUDED_DIR)
 
     tar_path = "%s/included.tar" % (os.path.split(__file__)[0])
 
@@ -170,10 +170,12 @@ def main():
     # Almost all commands with dtf require you to be in a project directory,
     # but some don't. Check for those next.
     elif command_name == 'pm':
-        return pkg.launch_builtin_module('pm', sys.argv, chdir=False)
+        return pkg.launch_builtin_module('pm', sys.argv, chdir=False,
+                                         skip_checks=True)
 
     elif command_name in ['init', 'binding']:
-        return pkg.launch_builtin_module(command_name, sys.argv)
+        return pkg.launch_builtin_module(command_name, sys.argv,
+                                         skip_checks=True)
 
     # Ok, now we need to get to the top of the project directory.
     project_root = utils.get_project_root()

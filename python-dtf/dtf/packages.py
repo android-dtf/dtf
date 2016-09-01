@@ -68,7 +68,7 @@ def __update_path():
     return 0
 
 
-def __launch_python_module(path, cmd, args, chdir=True):
+def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
 
     """Launch a python module by path"""
 
@@ -99,7 +99,7 @@ def __launch_python_module(path, cmd, args, chdir=True):
         log.e(TAG, "Unable to find class '%s' in module!" % cmd)
         return -6
 
-    if __do_python_prelaunch_checks(mod_inst) != 0:
+    if not skip_checks and __do_python_prelaunch_checks(mod_inst) != 0:
         log.e(TAG, "Module prelaunch checks failed.")
         return -8
 
@@ -208,13 +208,14 @@ def __do_python_prelaunch_checks(mod_inst):
 
 
 # Launching stuff
-def launch_builtin_module(cmd, args, chdir=True):
+def launch_builtin_module(cmd, args, chdir=True, skip_checks=False):
 
     """Launch a dtf built-in python command"""
 
     launch_path = "%s/core/cmds/%s.py" % (utils.get_pydtf_dir(), cmd)
 
-    return __launch_python_module(launch_path, cmd, args, chdir=chdir)
+    return __launch_python_module(launch_path, cmd, args, chdir=chdir,
+                                  skip_checks=skip_checks)
 
 
 def launch_local_module(root, cmd, args):
