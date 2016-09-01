@@ -16,6 +16,7 @@
 """ dtf Utilities """
 
 from hashlib import md5
+import errno
 import os
 import os.path
 import stat
@@ -108,3 +109,16 @@ def is_executable(file_name):
     """Check if a file can be executed"""
 
     return bool(stat.S_IXUSR & os.stat(file_name)[stat.ST_MODE])
+
+
+def mkdir_recursive(path):
+
+    """Recursively create a directory"""
+
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
