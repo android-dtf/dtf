@@ -38,7 +38,7 @@ _dtf()
 
     TOP=$(getroot)
 
-    CORE="archive client help init local modules pm prop reset shell status"
+    CORE="archive binding client help init local modules pm prop reset status version"
     MODULES=$(sqlite3 "${MAIN_DB}" "select name from modules" 2>/dev/null|tr '\n' ' ')
     LOCAL_MODULES=$(ls "${TOP}/local_modules" 2>/dev/null)
 
