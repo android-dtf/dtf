@@ -18,9 +18,11 @@
 from sys import stdout
 from time import localtime, strftime
 
-from colored import fg, attr
-
 import dtf.core.utils as utils
+import dtf.colors as colors
+
+from colored import attr
+
 
 # Can override just like the shell
 LOG_LEVEL_FILE = 4    # By default, log E-V
@@ -29,13 +31,6 @@ LOG_LEVEL_STDOUT = 4  # By default, log E-V
 # Internals ###########################################################
 LOG_FILE_NAME = '.dtflog'
 LOG_FILE = None
-
-# Terminal Coloring
-COLOR_ERR = fg(1)
-COLOR_WARN = fg(3)
-COLOR_INFO = fg(2)
-COLOR_VERB = fg(6)
-COLOR_DEB = fg(5)
 
 # Open file on module import
 TOP = utils.get_project_root()
@@ -87,7 +82,7 @@ def e(tag, message):  # pylint: disable=invalid-name
 
     date = __get_date()
     if LOG_LEVEL_STDOUT >= 1:
-        __log_to_stdout(COLOR_ERR, date, tag+"/E", message)
+        __log_to_stdout(colors.COLOR_ERR, date, tag+"/E", message)
     if LOG_LEVEL_FILE >= 1:
         __log_to_file(date, tag+"/E", message)
 
@@ -98,7 +93,7 @@ def w(tag, message):  # pylint: disable=invalid-name
 
     date = __get_date()
     if LOG_LEVEL_STDOUT >= 2:
-        __log_to_stdout(COLOR_WARN, date, tag+"/W", message)
+        __log_to_stdout(colors.COLOR_WARN, date, tag+"/W", message)
     if LOG_LEVEL_FILE >= 2:
         __log_to_file(date, tag+"/W", message)
 
@@ -109,7 +104,7 @@ def i(tag, message):  # pylint: disable=invalid-name
 
     date = __get_date()
     if LOG_LEVEL_STDOUT >= 3:
-        __log_to_stdout(COLOR_INFO, date, tag+"/I", message)
+        __log_to_stdout(colors.COLOR_INFO, date, tag+"/I", message)
     if LOG_LEVEL_FILE >= 3:
         __log_to_file(date, tag+"/I", message)
 
@@ -120,7 +115,7 @@ def v(tag, message):  # pylint: disable=invalid-name
 
     date = __get_date()
     if LOG_LEVEL_STDOUT >= 4:
-        __log_to_stdout(COLOR_VERB, date, tag+"/V", message)
+        __log_to_stdout(colors.COLOR_VERB, date, tag+"/V", message)
     if LOG_LEVEL_FILE >= 4:
         __log_to_file(date, tag+"/V", message)
 
@@ -131,7 +126,7 @@ def d(tag, message):  # pylint: disable=invalid-name
 
     date = __get_date()
     if LOG_LEVEL_STDOUT >= 5:
-        __log_to_stdout(COLOR_DEB, date, tag+"/D", message)
+        __log_to_stdout(colors.COLOR_DEB, date, tag+"/D", message)
     if LOG_LEVEL_FILE >= 5:
         __log_to_file(date, tag+"/D", message)
 

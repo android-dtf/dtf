@@ -4,6 +4,7 @@ branch = True
 
 source =
     dtf/adb.py
+    dtf/colors.py
     dtf/client.py
     dtf/logging.py
     dtf/packages.py
