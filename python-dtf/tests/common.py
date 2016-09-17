@@ -19,6 +19,7 @@ import os
 import shutil
 
 DTF_CONFIG = '.dtfini'
+DTF_LOG_FILE = '.dtflog'
 
 
 def deploy_config(file_name):
@@ -29,6 +30,9 @@ def deploy_config(file_name):
 
     shutil.copy(config_name, DTF_CONFIG)
 
+    # Create a log file.
+    open(DTF_LOG_FILE, 'w').close()
+
 
 def deploy_config_raw(contents):
 
@@ -37,9 +41,12 @@ def deploy_config_raw(contents):
     with open(DTF_CONFIG, 'w') as conf_f:
         conf_f.write(contents)
 
+    # Create a log file.
+    open(DTF_LOG_FILE, 'w').close()
 
 def undeploy():
 
     """Delete the test config"""
 
     os.remove(DTF_CONFIG)
+    os.remove(DTF_LOG_FILE)
