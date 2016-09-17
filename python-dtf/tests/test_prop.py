@@ -265,7 +265,6 @@ def test_test_invalid_property():
     return 0
 
 
-
 def test_test_property_casing():
 
     """Test a prop with alternating casing"""
