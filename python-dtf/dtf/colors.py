@@ -17,6 +17,8 @@
 
 from colored import fg, attr
 
+import dtf.globals as glbl
+
 COLOR_ERR = fg(1)
 COLOR_WARN = fg(3)
 COLOR_INFO = fg(2)
@@ -24,36 +26,58 @@ COLOR_VERB = fg(6)
 COLOR_DEB = fg(5)
 
 
+def __use_colors():
+
+    """Check if colors should be used"""
+
+    return bool(glbl.get_generic_global('Config', 'use_colors') == '1')
+
+
 def error(message):
 
     """Color format a message for errors"""
 
-    return "%s%s%s" % (COLOR_ERR, message, attr(0))
+    if __use_colors():
+        return "%s%s%s" % (COLOR_ERR, message, attr(0))
+    else:
+        return message
 
 
 def warning(message):
 
     """Color format a message for warnings"""
 
-    return "%s%s%s" % (COLOR_WARN, message, attr(0))
+    if __use_colors():
+        return "%s%s%s" % (COLOR_WARN, message, attr(0))
+    else:
+        return message
 
 
 def info(message):
 
     """Color format a message for informational messages"""
 
-    return "%s%s%s" % (COLOR_INFO, message, attr(0))
+    if __use_colors():
+        return "%s%s%s" % (COLOR_INFO, message, attr(0))
+    else:
+        return message
 
 
 def verbose(message):
 
     """Color format a message for verbose messages"""
 
-    return "%s%s%s" % (COLOR_VERB, message, attr(0))
+    if __use_colors():
+        return "%s%s%s" % (COLOR_VERB, message, attr(0))
+    else:
+        return message
 
 
 def debug(message):
 
     """Color format a message for debugging"""
 
-    return "%s%s%s" % (COLOR_DEB, message, attr(0))
+    if __use_colors():
+        return "%s%s%s" % (COLOR_DEB, message, attr(0))
+    else:
+        return message

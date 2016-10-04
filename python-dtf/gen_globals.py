@@ -51,6 +51,9 @@ def main():
     if do_bindings_section(parser) != 0:
         return -1
 
+    if do_config_section(parser) != 0:
+        return -1
+
     # Write it out
     with open(OUTPUT_FILE, 'wb') as configfile:
         parser.write(configfile)
@@ -77,6 +80,17 @@ def bind_file_in_dir(local, prefix):
 
     return full_out
 
+
+def do_config_section(parser):
+
+    """Populate the config section"""
+
+    parser.add_section('Config')
+
+    # Color is enabled by default
+    parser.set('Config', 'use_colors', '1')
+
+    return 0
 
 def do_client_section(parser):
 
