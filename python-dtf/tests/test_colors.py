@@ -56,3 +56,9 @@ def test_debug():
     """Log an debug message"""
 
     print "This message is a %s" % colors.debug("debug message.")
+
+def test_bold():
+
+    """Log a bolded message"""
+
+    print "This message is %s" % colors.bold("important!")

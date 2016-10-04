@@ -81,3 +81,13 @@ def debug(message):
         return "%s%s%s" % (COLOR_DEB, message, attr(0))
     else:
         return message
+
+
+def bold(message):
+
+    """Format a bold message"""
+
+    if __use_colors():
+        return "%s%s%s" % (attr('bold'), message, attr(0))
+    else:
+        return message
