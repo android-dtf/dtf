@@ -58,8 +58,11 @@ class DtfAdb(object):
 
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 
-        self.stdout = proc.stdout.read().split("\r\n")
-        self.stderr = proc.stderr.read().split("\r\n")
+        tmp_out = proc.stdout.read().replace("\r", '')
+        tmp_err = proc.stderr.read().replace("\r", '')
+
+        self.stdout = tmp_out.split("\n")
+        self.stderr = tmp_err.split("\n")
 
         proc.terminate()
 
