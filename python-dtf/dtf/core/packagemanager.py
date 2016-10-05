@@ -1045,7 +1045,7 @@ def __install_zip_binary(zip_file, item, force_mode):
                     log.d(TAG, "User would like to install")
                     rtn = __do_zip_binary_install(zip_file, item)
                 else:
-                    log.i(TAG, "Binary installation skipped.")
+                    log.w(TAG, "Binary installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1088,7 +1088,7 @@ def __install_zip_library(zip_file, item, force_mode):
                     log.d(TAG, "User would like to install")
                     rtn = __do_zip_library_install(zip_file, item)
                 else:
-                    log.i(TAG, "Library installation skipped.")
+                    log.w(TAG, "Library installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1131,7 +1131,7 @@ def __install_zip_module(zip_file, item, force_mode):
                     log.d(TAG, "User would like to install")
                     rtn = __do_zip_module_install(zip_file, item)
                 else:
-                    log.i(TAG, "Module installation skipped.")
+                    log.w(TAG, "Module installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1174,7 +1174,7 @@ def __install_zip_package(zip_file, item, force_mode):
                     log.d(TAG, "User would like to install")
                     rtn = __do_zip_package_install(zip_file, item)
                 else:
-                    log.i(TAG, "Package installation skipped.")
+                    log.w(TAG, "Package installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1524,7 +1524,7 @@ def install_single_binary(item, force=False):
                     log.d(TAG, "User would like to install")
                     rtn = __do_single_binary_install(item)
                 else:
-                    log.i(TAG, "Binary installation skipped.")
+                    log.w(TAG, "Binary installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1561,7 +1561,7 @@ def install_single_library(item, force=False):
                     log.d(TAG, "User would like to install")
                     rtn = __do_single_library_install(item)
                 else:
-                    log.i(TAG, "Library installation skipped.")
+                    log.w(TAG, "Library installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1598,7 +1598,7 @@ def install_single_module(item, force=False):
                     log.d(TAG, "User would like to install")
                     rtn = __do_single_module_install(item)
                 else:
-                    log.i(TAG, "Module installation skipped.")
+                    log.w(TAG, "Module installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
@@ -1635,7 +1635,7 @@ def install_single_package(item, force=False):
                     log.d(TAG, "User would like to install")
                     rtn = __do_single_package_install(item)
                 else:
-                    log.i(TAG, "Package installation skipped.")
+                    log.w(TAG, "Package installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
