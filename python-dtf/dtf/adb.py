@@ -15,6 +15,10 @@
 #
 """Python helper for using `adb`"""
 
+import os
+import os.path
+import tempfile
+import shutil
 from subprocess import Popen, PIPE
 
 from dtf.properties import get_prop
@@ -32,6 +36,7 @@ class DtfAdb(object):
     """Python wrapper class for `adb`"""
 
     serial = ''
+    pre_1_0_36 = False
     no_serial = False
     stdout = None
     stderr = None
@@ -45,6 +50,30 @@ class DtfAdb(object):
 
         if not self.no_serial:
             self.serial = get_prop("Info", "serial")
+
+        # Determine if we are the new version of adb
+        self.pre_1_0_36 = bool(self.__is_old_adb_version())
+
+    def __is_old_adb_version(self):
+
+        """Determine if adb is the new version"""
+
+        self.__run_command("")
+
+        try:
+            version_line = self.get_errors()[0]
+            version = version_line.split()[-1]
+            split_version = version.split(".")
+
+            if split_version[0] == "1" and split_version[1] == "0":
+
+                if int(split_version[2]) < 36:
+                    return True
+
+            return False
+
+        except IndexError:
+            return False
 
     def __run_command(self, in_cmd):
 
@@ -98,10 +127,7 @@ class DtfAdb(object):
 
         device_list = list()
 
-        try:
-            output = self.get_output()[0].split('\n')
-        except ValueError:
-            return device_list
+        output = self.get_output()
 
         # Remove the "List of devices..."
         output.pop(0)
@@ -128,7 +154,28 @@ class DtfAdb(object):
 
         """Pull file off device"""
 
-        self.__run_command("pull %s %s" % (file_name, local))
+        if self.pre_1_0_36:
+            self.__run_command("pull %s %s" % (file_name, local))
+
+        else:
+            self.__run_command("pull %s %s" % (file_name, local))
+
+    def pull_dir(self, dir_name, local="./"):
+
+        """Pull a directory off device"""
+
+        if self.pre_1_0_36:
+            self.__run_command("pull %s %s" % (dir_name, local))
+
+        else:
+            temp_pull = tempfile.mkdtemp()
+            base = os.path.basename(dir_name.rstrip("/"))
+
+            self.__run_command("pull %s %s" % (dir_name, temp_pull))
+            full_tmp = "%s/%s" % (temp_pull, base)
+
+            shutil.copytree(full_tmp, local)
+            shutil.rmtree(temp_pull)
 
     def push(self, local_file_name, upload_path):
 
