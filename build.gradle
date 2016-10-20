@@ -151,7 +151,7 @@ task doPytests(type:Exec) {
 task doCoverage(type:Exec) {
 
     workingDir 'python-dtf'
-    commandLine 'sh', 'generate_coverage.sh'
+    commandLine 'bash', '-c', 'nosetests --cover-erase --with-cov --cover-package dtf -v tests'
 }
 
 // Run checkbashisms
