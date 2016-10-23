@@ -20,7 +20,6 @@ import errno
 import os
 import os.path
 import stat
-from site import getsitepackages
 
 CONFIG_FILE_NAME = '.dtfini'
 
@@ -49,7 +48,7 @@ def get_pydtf_dir():
 
     """Return the location of the dtf dist-packages directory."""
 
-    return getsitepackages()[0] + '/dtf'
+    return os.path.dirname(os.path.split(os.path.abspath(__file__))[0])
 
 
 def get_dtf_data_dir():
