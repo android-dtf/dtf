@@ -1,6 +1,11 @@
 """Main dtf Module"""
 
-from pkg_resources import get_distribution
+import pkg_resources
 
+# Here we use the installed version as version number. For tests,
+# this may not exist so we just fake it and return unknown.
 # pylint: disable=maybe-no-member
-__version__ = get_distribution('dtf').version
+try:
+    __version__ = pkg_resources.get_distribution('dtf').version
+except pkg_resources.DistributionNotFound:
+    __version__ = "???"
