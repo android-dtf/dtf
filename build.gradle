@@ -212,15 +212,6 @@ task generateGlobals(type:Exec) {
     commandLine './gen_globals.py'
 }
 
-// Make sure dtfClient APK exists
-task assertClientApk() {
-    doLast {
-        if (!new File('dtf-client-app/app/build/outputs/apk').exists()) {
-            throw new GradleException('dtfClient APK is not found. Are you sure you built the project?')
-        }
-    }
-}
-
 // Make sure man pages exist
 task assertMans() {
     doLast {
@@ -230,15 +221,40 @@ task assertMans() {
     }
 }
 
-// Copy the dtfClient APK
-task copyClientApk(type:Copy) {
+// Copy the dtfClient APK (Release)
+task copyReleaseApk(type:Copy) {
 
     from('dtf-client-app/app/build/outputs/apk/') {
-        include '*.apk'
-        exclude '*-unaligned.apk'
+        include '*-release.apk'
     }
 
     into 'python-dtf/included/dtfClient/'
+}
+
+// Copy the dtfClient APK (Debug)
+task copyDebugApk(type:Copy) {
+
+    from('dtf-client-app/app/build/outputs/apk/') {
+        include '*-debug.apk'
+    }
+
+    into 'python-dtf/included/dtfClient/'
+}
+
+// Build dtfClient APK
+task buildReleaseApk(type:GradleBuild) {
+    buildFile = 'dtf-client-app/build.gradle'
+    tasks = ['assembleRelease']
+}
+
+task buildDebugApk(type:GradleBuild) {
+    buildFile = 'dtf-client-app/build.gradle'
+    tasks = ['assembleDebug']
+}
+
+task cleanApk(type:GradleBuild) {
+    buildFile = 'dtf-client-app/build.gradle'
+    tasks = ['clean']
 }
 
 // Run `ronn` on man pages
@@ -269,6 +285,9 @@ task cleanApiDocs(type:Delete) {
     delete 'api-docs'
 }
 
+// Generate a release
+task release() {}
+
 // Clean up
 clean {
 
@@ -283,6 +302,7 @@ clean {
         include '*.apk'
     }
 }
+clean.dependsOn("cleanApk")
 
 // Task Dependencies
 
@@ -294,8 +314,6 @@ buildPython.dependsOn doPythonTests
 buildPython.dependsOn tarIncluded
 buildPython.dependsOn copyVersion
 tarIncluded.dependsOn generateGlobals
-generateGlobals.dependsOn copyClientApk
-copyClientApk.dependsOn assertClientApk
 
 // Documentation requires valid Python
 genApiDocs.dependsOn buildPython
@@ -309,6 +327,16 @@ tarIncluded.dependsOn doCheckBashisms
 tarIncluded.dependsOn doShellCheck
 
 // Building Debian
-build.dependsOn makeDeb
 makeDeb.dependsOn buildPython
 makeDeb.dependsOn assertMans
+
+// We support two builds:
+// + Debug - Called by running "build"
+// + Release - Called by running "release"
+release.dependsOn copyReleaseApk
+copyReleaseApk.dependsOn buildReleaseApk
+release.dependsOn makeDeb
+
+build.dependsOn copyDebugApk
+copyDebugApk.dependsOn buildDebugApk
+build.dependsOn makeDeb
