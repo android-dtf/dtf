@@ -234,7 +234,8 @@ task assertMans() {
 task copyClientApk(type:Copy) {
 
     from('dtf-client-app/app/build/outputs/apk/') {
-        include '*-release.apk'
+        include '*.apk'
+        exclude '*-unaligned.apk'
     }
 
     into 'python-dtf/included/dtfClient/'
