@@ -238,13 +238,13 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
                                 description='List installed components.')
         parser.add_argument('-v', dest='verbose', action='store_const',
                             const=True, default=False,
-                            help="Force deletion of component.")
-        parser.add_argument('d_filter', type=str, nargs='?',
-                            help='An optional filter.')
+                            help="Show additional details about components.")
+        parser.add_argument('type', type=str, nargs='?',
+                            help='Show only requested type.')
 
         parsed_args = parser.parse_args(args)
 
-        d_filter = parsed_args.d_filter
+        d_filter = parsed_args.type
         verbose = parsed_args.verbose
 
         if d_filter is not None:
