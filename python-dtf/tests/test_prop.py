@@ -172,7 +172,7 @@ def test_del_empty_config():
 
 def test_del_property():
 
-    """Attempts to dleete a valid property"""
+    """Attempts to delete a valid property"""
 
     contents = ("[Info]\n"
                 "sdk = 23")
