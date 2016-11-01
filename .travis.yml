@@ -3,7 +3,7 @@ python:
   - "2.7"
 
 before_install:
-- echo "http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+- echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
 - sudo apt-get -qq update
 - sudo apt-get install -y gradle lintian devscripts shellcheck
 - sudo apt-get install -y oracle-java8-set-default
