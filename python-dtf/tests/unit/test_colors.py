@@ -15,10 +15,8 @@
 #
 """pytest for using dtf coloring"""
 
-import common
-import pytest
-
 import dtf.colors as colors
+import dtf.testutils as testutils
 
 TAG = 'test_colors'
 

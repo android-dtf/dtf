@@ -1,3 +1,18 @@
+// Current Supported Commands:
+//
+// Build Related:
+//   clean build - Generate a debug .deb
+//   clean release - Generate a release-ready .deb
+//
+// Test Related:
+//   doCoverage - Run all unit + integration tests with coverage
+//
+// Other:
+//   cleanMans - Remove man pages
+//   generateMans - Create man pages
+//   genApiDocs - Generate API documentation
+
+
 buildscript {
   repositories {
     maven {
@@ -151,7 +166,7 @@ task doPytests(type:Exec) {
 task doCoverage(type:Exec) {
 
     workingDir 'python-dtf'
-    commandLine 'bash', '-c', 'nosetests --cover-erase --with-cov --cover-package dtf -v tests'
+    commandLine 'sh', 'generate_coverage.sh'
 }
 
 // Run checkbashisms
@@ -319,7 +334,7 @@ tarIncluded.dependsOn generateGlobals
 genApiDocs.dependsOn buildPython
 
 // Pytests requires valid Python
-doPytests.dependsOn buildPython
+doCoverage.dependsOn buildPython
 
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar

@@ -26,6 +26,14 @@ import dtf.packages as pkg
 import dtf.logging as log
 from dtf.globals import DTF_INCLUDED_DIR
 
+# Coverage is used for tests.
+try:
+    import coverage
+except ImportError:
+    pass
+else:
+    coverage.process_startup()
+
 # Check for version before anything
 if sys.version_info < (2, 6, 0):
     sys.stderr.write("dtf requires python version 2.6 or higher!")

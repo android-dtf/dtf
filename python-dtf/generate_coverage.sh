@@ -1,6 +1,6 @@
 #!/bin/sh
 # Android Device Testing Framework ("dtf")
-# Copyright 2013-2015 Jake Valletta (@jake_valletta)
+# Copyright 2013-2016 Jake Valletta (@jake_valletta)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,19 @@
 #
 # Generate coverage information
 
+export COVERAGE_PROCESS_START=.coveragerc
+
+# Remove old data
 coverage erase
-rm -rf htmlcov 2>/dev/null
 
-coverage run setup.py test
+# Need this to test local install
+python setup.py develop --user
 
-coverage html
+coverage run --concurrency=multiprocessing -m py.test tests/
+
+# Combine and show
+coverage combine
 coverage report
+
+# Make sure to unset this
+python setup.py develop --user --uninstall

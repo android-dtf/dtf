@@ -15,9 +15,10 @@
 #
 """pytest for using dtf property manager"""
 
-import dtf.properties as prop
-import common
 import pytest
+
+import dtf.properties as prop
+import dtf.testutils as testutils
 
 
 # prop_set() tests
@@ -29,12 +30,12 @@ def test_set_new_property():
     contents = ("[info]\n"
                 "real = not_real")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     prop.set_prop('info', 'sdk', value)
     assert prop.get_prop('info', 'sdk') == value
 
-    common.undeploy()
+    testutils.undeploy()
 
 
 def test_set_new_section_property():
@@ -42,12 +43,12 @@ def test_set_new_section_property():
     """Set a property that has no section (yet)"""
 
     value = '1'
-    common.deploy_config_raw("")
+    testutils.deploy_config_raw("")
 
     prop.set_prop('info', 'sdk', value)
     assert prop.get_prop('info', 'sdk') == value
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -61,12 +62,12 @@ def test_set_existing_property():
     contents = ("[Info]\n"
                 "sdk = old")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     prop.set_prop('info', 'sdk', value)
     assert prop.get_prop('info', 'sdk') == value
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -76,14 +77,14 @@ def test_set_property_casing():
     """Set a prop and try to retrieve with casing"""
 
     sdk = '1'
-    common.deploy_config_raw("")
+    testutils.deploy_config_raw("")
 
     prop.set_prop('INFO', 'sdk', sdk)
     assert prop.get_prop('info', 'sdk') == sdk
     assert prop.get_prop('Info', 'sdk') == sdk
     assert prop.get_prop('INFO', 'sdk') == sdk
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -93,12 +94,12 @@ def test_get_empty_config():
 
     """Attempts to get a property without a valid config"""
 
-    common.deploy_config_raw("")
+    testutils.deploy_config_raw("")
 
     with pytest.raises(prop.PropertyError):
         prop.get_prop('info', 'sdk')
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -111,11 +112,11 @@ def test_get_property():
     contents = ("[Info]\n"
                 "sdk = %s" % sdk)
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     assert prop.get_prop('info', 'sdk') == sdk
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -127,12 +128,12 @@ def test_get_property_no_option():
     contents = ("[Info]\n"
                 "vmtype = arm64")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     with pytest.raises(prop.PropertyError):
         prop.get_prop('info', 'sdk')
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -145,13 +146,13 @@ def test_get_property_casing():
     contents = ("[Info]\n"
                 "sdk = %s" % sdk)
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     assert prop.get_prop('info', 'sdk') == sdk
     assert prop.get_prop('Info', 'sdk') == sdk
     assert prop.get_prop('INFO', 'sdk') == sdk
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -161,11 +162,11 @@ def test_del_empty_config():
 
     """Attempts to delete a property without a valid config"""
 
-    common.deploy_config_raw("")
+    testutils.deploy_config_raw("")
 
     assert prop.del_prop('info', 'sdk') != 0
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -177,11 +178,11 @@ def test_del_property():
     contents = ("[Info]\n"
                 "sdk = 23")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     prop.del_prop('info', 'sdk')
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -193,11 +194,11 @@ def test_del_property_invalid():
     contents = ("[Info]\n"
                 "vmtype = 64")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     assert prop.del_prop('info', 'sdk') != 0
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -210,11 +211,11 @@ def test_del_property_casing():
     contents = ("[Info]\n"
                 "sdk = %s" % sdk)
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     prop.del_prop('info', 'sdk')
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -224,11 +225,11 @@ def test_test_empty_config():
 
     """Test a property without a valid config"""
 
-    common.deploy_config_raw("")
+    testutils.deploy_config_raw("")
 
     assert prop.test_prop('info', 'sdk') == 0
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -240,11 +241,11 @@ def test_test_property():
     contents = ("[Info]\n"
                 "sdk = 23")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     assert prop.test_prop('info', 'sdk') == 1
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -256,11 +257,11 @@ def test_test_invalid_property():
     contents = ("[Info]\n"
                 "vmtype = arm64")
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     assert prop.test_prop('info', 'sdk') == 0
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0
 
@@ -273,10 +274,10 @@ def test_test_property_casing():
     contents = ("[Info]\n"
                 "sdk = %s" % sdk)
 
-    common.deploy_config_raw(contents)
+    testutils.deploy_config_raw(contents)
 
     assert prop.test_prop('info', 'sdk') == 1
 
-    common.undeploy()
+    testutils.undeploy()
 
     return 0

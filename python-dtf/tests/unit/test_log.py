@@ -15,19 +15,18 @@
 #
 """pytest for using dtf logging"""
 
-import common
+import dtf.testutils as testutils
 import pytest
 
 TAG = 'test_log'
 
-
 # We actually need a log file to exist to populate TOP
-common.deploy_config_raw("")
+testutils.deploy_config_raw("")
 
 import dtf.logging as log
 
 # We can undeploy imediately after
-common.undeploy()
+testutils.undeploy()
 
 # General Tests
 def test_no_config():
