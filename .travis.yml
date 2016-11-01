@@ -1,0 +1,16 @@
+language: python
+python:
+  - "2.7"
+
+before_install:
+- sudo apt-get -qq update
+- sudo apt-get install -y gradle lindian devscripts shellcheck
+- sudo apt-get install -y oracle-java8-set-default
+
+install: pip install -r "requirements.txt"
+
+script: gradle doCoverage
+
+branches:
+  only:
+  - dev
