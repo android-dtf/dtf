@@ -10,7 +10,6 @@
 // Other:
 //   cleanMans - Remove man pages
 //   generateMans - Create man pages
-//   genApiDocs - Generate API documentation
 
 
 buildscript {
@@ -129,15 +128,6 @@ task buildPython(type:Exec) {
 
     workingDir 'python-dtf'
     commandLine 'python', 'setup.py', 'bdist_dumb'
-}
-
-// Task to generate documentation
-task genApiDocs(type:Exec) {
-
-    mkdir('api-docs')
-
-    workingDir 'api-docs'
-    commandLine 'bash', '-c', 'pydoc -w ../python-dtf/dtf/*.py'
 }
 
 // Flake8 the Code
@@ -328,9 +318,6 @@ buildPython.dependsOn doPythonTests
 buildPython.dependsOn tarIncluded
 buildPython.dependsOn copyVersion
 tarIncluded.dependsOn generateGlobals
-
-// Documentation requires valid Python
-genApiDocs.dependsOn buildPython
 
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar
