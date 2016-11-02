@@ -19,7 +19,9 @@ before_install:
 # We also need to grab the build tools.
 - echo y | android update sdk --all --filter platform-tools,build-tools-23.0.3,android-23,extra-android-m2repository --no-ui --force
 
-install: pip install -r "requirements.txt"
+install:
+- pip install -r "requirements.txt"
+- pip install setuptools==28.7.1
 
 script: ./gradlew useDebugApk doCoverage
 
