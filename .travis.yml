@@ -3,10 +3,20 @@ python:
   - "2.7"
 
 before_install:
+# apt-get packages first.
 - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
 - sudo apt-get -qq update
 - sudo apt-get install -y gradle lintian devscripts shellcheck
 - sudo apt-get install -y oracle-java8-set-default
+
+# We need to manually grab the SDK
+- wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+- tar xzf android-sdk_r24.4.1-linux.tgz
+- export ANDROID_HOME=${PWD}/android-sdk-linux
+- export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+
+# We also need to grab the build tools.
+- android update sdk --filter platform-tools --no-ui --force
 
 install: pip install -r "requirements.txt"
 
