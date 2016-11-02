@@ -63,7 +63,7 @@ setup(
               "dtf.core",
               "dtf.core.cmds"],
 
-    install_requires=['colored'],
+    install_requires=['colored', 'lxml'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
 

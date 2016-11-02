@@ -29,3 +29,6 @@ var/
 # Coverage
 .coverage
 .cache
+
+# virtualenv stuff
+venv/

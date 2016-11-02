@@ -67,7 +67,6 @@ task makeDeb(type:Deb) {
     postUninstall file('deb-scripts/postuninstall')
 
     requires('python')
-    requires('python-lxml')
     requires('sqlite3')
 
     into 'build/'

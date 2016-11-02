@@ -22,7 +22,7 @@ export COVERAGE_PROCESS_START=.coveragerc
 coverage erase
 
 # Need this to test local install
-sudo python setup.py develop
+python setup.py develop
 
 coverage run --concurrency=multiprocessing -m py.test tests/
 
@@ -31,4 +31,4 @@ coverage combine
 coverage report
 
 # Make sure to unset this
-sudo python setup.py develop --uninstall
+python setup.py develop --uninstall

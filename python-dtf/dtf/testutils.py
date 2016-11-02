@@ -64,9 +64,7 @@ def dtf(command):
 
     env = os.environ.copy()
 
-    print os.getcwd()
-
-    full_command = "python build/usr/local/bin/dtf %s" % (command)
+    full_command = "dtf %s" % (command)
 
     process = Popen(full_command, stdout=PIPE, stderr=PIPE, stdin=PIPE,
                     shell=True, env=env)

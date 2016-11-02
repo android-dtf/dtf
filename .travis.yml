@@ -28,3 +28,6 @@ script: ./gradlew useDebugApk doCoverage
 branches:
   only:
   - dev
+
+git:
+  depth: 5
