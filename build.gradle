@@ -237,7 +237,7 @@ task assertMans() {
 }
 
 // Copy the dtfClient APK (Release)
-task copyReleaseApk(type:Copy) {
+task useReleaseApk(type:Copy) {
 
     from('dtf-client-app/app/build/outputs/apk/') {
         include '*-release.apk'
@@ -247,7 +247,7 @@ task copyReleaseApk(type:Copy) {
 }
 
 // Copy the dtfClient APK (Debug)
-task copyDebugApk(type:Copy) {
+task useDebugApk(type:Copy) {
 
     from('dtf-client-app/app/build/outputs/apk/') {
         include '*-debug.apk'
@@ -333,9 +333,6 @@ tarIncluded.dependsOn generateGlobals
 // Documentation requires valid Python
 genApiDocs.dependsOn buildPython
 
-// Pytests requires valid Python
-doCoverage.dependsOn buildPython
-
 // Bundling
 tarIncluded.dependsOn deleteIncludedTar
 tarIncluded.dependsOn doCheckBashisms
@@ -348,10 +345,13 @@ makeDeb.dependsOn assertMans
 // We support two builds:
 // + Debug - Called by running "build"
 // + Release - Called by running "release"
-release.dependsOn copyReleaseApk
-copyReleaseApk.dependsOn buildReleaseApk
+release.dependsOn useReleaseApk
+useReleaseApk.dependsOn buildReleaseApk
 release.dependsOn makeDeb
 
-build.dependsOn copyDebugApk
-copyDebugApk.dependsOn buildDebugApk
+build.dependsOn useDebugApk
+useDebugApk.dependsOn buildDebugApk
 build.dependsOn makeDeb
+
+// Used to run coverage tests
+doCoverage.dependsOn buildPython
