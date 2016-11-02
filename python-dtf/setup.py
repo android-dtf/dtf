@@ -65,7 +65,6 @@ setup(
 
     install_requires=['colored', 'lxml'],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
 
     data_files=[
         ('/etc/bash_completion.d',
