@@ -1,5 +1,7 @@
+colored
 coverage
 flake8
+lxml
 pylint
 pytest
 pytest-runner
