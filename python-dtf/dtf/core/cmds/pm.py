@@ -45,6 +45,10 @@ TYPE_PACKAGE = packagemanager.TYPE_PACKAGE
 # No log to file.
 log.LOG_LEVEL_FILE = 0
 
+LIST_QUIET = 0
+LIST_DEFAULT = 1
+LIST_VERBOSE = 2
+
 
 class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
@@ -239,6 +243,9 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         parser.add_argument('-v', dest='verbose', action='store_const',
                             const=True, default=False,
                             help="Show additional details about components.")
+        parser.add_argument('-q', dest='quiet', action='store_const',
+                            const=True, default=False,
+                            help="Show only names of components.")
         parser.add_argument('type', type=str, nargs='?',
                             help='Show only requested type.')
 
@@ -246,26 +253,38 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         d_filter = parsed_args.type
         verbose = parsed_args.verbose
+        quiet = parsed_args.quiet
+
+        if verbose and quiet:
+            log.e(TAG, "Unable to be verbose and quiet!")
+            return -1
+
+        if verbose:
+            verbosity = LIST_VERBOSE
+        elif quiet:
+            verbosity = LIST_QUIET
+        else:
+            verbosity = LIST_DEFAULT
 
         if d_filter is not None:
 
             if d_filter == "binaries":
-                self.print_installed_binaries(verbose)
+                self.print_installed_binaries(verbosity)
             elif d_filter == "libraries":
-                self.print_installed_libraries(verbose)
+                self.print_installed_libraries(verbosity)
             elif d_filter == "modules":
-                self.print_installed_modules(verbose)
+                self.print_installed_modules(verbosity)
             elif d_filter == "packages":
-                self.print_installed_packages(verbose)
+                self.print_installed_packages(verbosity)
             else:
                 log.e(TAG, "Unknown filter specified : %s" % d_filter)
                 rtn = -3
 
         else:
-            self.print_installed_binaries(verbose)
-            self.print_installed_libraries(verbose)
-            self.print_installed_modules(verbose)
-            self.print_installed_packages(verbose)
+            self.print_installed_binaries(verbosity)
+            self.print_installed_libraries(verbosity)
+            self.print_installed_modules(verbosity)
+            self.print_installed_packages(verbosity)
 
         return rtn
 
@@ -550,80 +569,115 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         return items
 
-    def print_installed_binaries(self, verbose):
+    def print_installed_binaries(self, verbosity):
 
         """Print installed binaries"""
 
+        binary_list = packagemanager.get_binaries()
+
+        # If we are trying to be quiet, just print each item.
+        if verbosity == LIST_QUIET:
+            for binary in binary_list:
+                print binary.name
+            return
+
+        # Otherwise, iterate over and print more
         print "Installed Binaries"
 
-        for binary in packagemanager.get_binaries():
+        for binary in binary_list:
 
             # Format version
             version = self.format_version(binary.minor_version,
                                           binary.major_version)
 
             print "\t%s (%s)" % (binary.name, version)
-            if verbose:
+            if verbosity == LIST_VERBOSE:
                 print "\t   About: %s" % binary.about
                 print "\t   Author: %s" % binary.author
                 print "\t   Health: %s" % binary.health
 
         return 0
 
-    def print_installed_libraries(self, verbose):
+    def print_installed_libraries(self, verbosity):
 
         """Print installed libraries"""
+        library_list = packagemanager.get_libraries()
 
+        # If we are trying to be quiet, just print each item.
+        if verbosity == LIST_QUIET:
+            for library in library_list:
+                print library.name
+            return
+
+        # Otherwise, iterate over and print more
         print "Installed Libraries"
 
-        for library in packagemanager.get_libraries():
+        for library in library_list:
 
             # Format version
             version = self.format_version(library.minor_version,
                                           library.major_version)
 
             print "\t%s (%s)" % (library.name, version)
-            if verbose:
+            if verbosity == LIST_VERBOSE:
                 print "\t   About: %s" % library.about
                 print "\t   Author: %s" % library.author
                 print "\t   Health: %s" % library.health
 
         return 0
 
-    def print_installed_modules(self, verbose):
+    def print_installed_modules(self, verbosity):
 
         """Print installed modules"""
 
+        module_list = packagemanager.get_modules()
+
+        # If we are trying to be quiet, just print each item.
+        if verbosity == LIST_QUIET:
+            for module in module_list:
+                print module.name
+            return
+
+        # Otherwise, iterate over and print more
         print "Installed Modules"
 
-        for module in packagemanager.get_modules():
+        for module in module_list:
 
             # Format version
             version = self.format_version(module.minor_version,
                                           module.major_version)
 
             print "\t%s (%s)" % (module.name, version)
-            if verbose:
+            if verbosity == LIST_VERBOSE:
                 print "\t   About: %s" % module.about
                 print "\t   Author: %s" % module.author
                 print "\t   Health: %s" % module.health
 
         return 0
 
-    def print_installed_packages(self, verbose):
+    def print_installed_packages(self, verbosity):
 
         """Print installed packages"""
 
+        package_list = packagemanager.get_packages()
+
+        # If we are trying to be quiet, just print each item.
+        if verbosity == LIST_QUIET:
+            for package in package_list:
+                print package.name
+            return
+
+        # Otherwise, iterate over and print more
         print "Installed Packages"
 
-        for package in packagemanager.get_packages():
+        for package in package_list:
 
             # Format version
             version = self.format_version(package.minor_version,
                                           package.major_version)
 
             print "\t%s (%s)" % (package.name, version)
-            if verbose:
+            if verbosity == LIST_VERBOSE:
                 print "\t   About: %s" % package.about
                 print "\t   Author: %s" % package.author
                 print "\t   Health: %s" % package.health
