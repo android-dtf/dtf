@@ -16,6 +16,13 @@
 #
 # Generate coverage information
 
+# If we are in travis, we don't need to use virtualenv. For now,
+# locally we need to activate it.
+if [ "$TRAVIS"  != "true" ]; then
+    echo "Activating virtualenv"
+    . venv/bin/activate
+fi
+
 export COVERAGE_PROCESS_START=.coveragerc
 
 # Remove old data
@@ -32,3 +39,7 @@ coverage report
 
 # Make sure to unset this
 python setup.py develop --uninstall
+
+if [ "$TRAVIS"  != "true" ]; then
+    deactivate
+fi
