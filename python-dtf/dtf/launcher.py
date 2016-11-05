@@ -78,7 +78,7 @@ def usage_full():
     print '    status      Determine if project device is attached.'
     print '    version     Print version number.'
 
-    return -1
+    return 0
 
 
 def is_first_run():
