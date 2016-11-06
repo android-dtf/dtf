@@ -25,8 +25,11 @@ fi
 
 export COVERAGE_PROCESS_START=.coveragerc
 
-# Remove old data
+# Remove old coverage data
 coverage erase
+
+# Just incase, remove any .dtf* stuff.
+rm .dtfini .dtflog 2>dev/null
 
 # Need this to test local install
 python setup.py develop
