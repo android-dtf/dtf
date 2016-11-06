@@ -29,6 +29,14 @@ def test_no_args():
     assert(rtn.return_code == 0)
 
 
+def test_quiet_verbose():
+
+    """Try and fail to print verbose + quiet"""
+
+    rtn = testutils.dtf("pm list -vq")
+    assert(rtn.return_code == 255)
+
+
 def test_binaries():
 
     """List only binaries"""
@@ -37,6 +45,9 @@ def test_binaries():
     assert(rtn.return_code == 0)
 
     rtn = testutils.dtf("pm list binaries -v")
+    assert(rtn.return_code == 0)
+
+    rtn = testutils.dtf("pm list binaries -q")
     assert(rtn.return_code == 0)
 
 
@@ -50,6 +61,9 @@ def test_libraries():
     rtn = testutils.dtf("pm list libraries -v")
     assert(rtn.return_code == 0)
 
+    rtn = testutils.dtf("pm list libraries -q")
+    assert(rtn.return_code == 0)
+
 
 def test_modules():
 
@@ -61,6 +75,9 @@ def test_modules():
     rtn = testutils.dtf("pm list modules -v")
     assert(rtn.return_code == 0)
 
+    rtn = testutils.dtf("pm list modules -q")
+    assert(rtn.return_code == 0)
+
 
 def test_packages():
 
@@ -70,4 +87,7 @@ def test_packages():
     assert(rtn.return_code == 0)
 
     rtn = testutils.dtf("pm list packages -v")
+    assert(rtn.return_code == 0)
+
+    rtn = testutils.dtf("pm list packages -q")
     assert(rtn.return_code == 0)
