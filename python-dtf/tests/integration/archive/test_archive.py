@@ -72,3 +72,23 @@ def test_no_name():
     assert(os.path.isfile(zip_name))
 
     os.remove(zip_name)
+
+def test_named():
+
+    """Attempt to create an archive using custom name"""
+
+    version_string = "android-17_XTS"
+    zip_name = "%s.zip" % version_string
+    contents = ("[Info]\n"
+                "sdk = 23\n")
+
+    testutils.deploy_config_raw(contents)
+
+    rtn = testutils.dtf("archive create %s" % zip_name)
+
+    testutils.undeploy()
+
+    assert(rtn.return_code == 0)
+    assert(os.path.isfile(zip_name))
+
+    os.remove(zip_name)

@@ -58,7 +58,7 @@ def test_non_project():
     """Attempt to run a built-in without a .dtfini"""
 
     rtn = testutils.dtf("archive")
-    assert(rtn.return_code == 248)
+    assert(rtn.return_code == 253)
 
 
 def test_python_precheck_sdk_missing():
@@ -68,6 +68,9 @@ def test_python_precheck_sdk_missing():
     testutils.deploy_config_raw("")
 
     rtn = testutils.dtf("archive")
+
+    testutils.undeploy()
+
     assert(rtn.return_code == 248)
 
 
@@ -78,4 +81,7 @@ def test_python_load_imp_exception():
     testutils.deploy_config_raw("")
 
     rtn = testutils.dtf("status")
+
+    testutils.undeploy()
+
     assert(rtn.return_code == 247)
