@@ -16,7 +16,6 @@ You can use another OS if you'd like, but your mileage will vary. To help, the f
 
 - JRE 1.8
 - Python 2.7 or higher
-- sqlite3
 - adb
 - Python pip 
 - 'colored' pip module

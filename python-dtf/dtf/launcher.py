@@ -121,11 +121,6 @@ def check_dependencies():
         log.e(TAG, "dtf requires `adb` (part of Android SDK)!")
         return -5
 
-    # Check for sqlite3
-    if utils.which("sqlite3") == "":
-        log.e(TAG, "dtf requires `sqlite3`!")
-        return -5
-
     # Check for Java
     if utils.which("java") != "":
 
