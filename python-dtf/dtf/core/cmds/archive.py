@@ -16,7 +16,7 @@
 """Built-in module for archiving a project"""
 
 import os
-from subprocess import Popen
+import zipfile
 
 import dtf.properties as prop
 import dtf.logging as log
@@ -40,20 +40,26 @@ class archive(Module):  # pylint: disable=invalid-name
 
         return 0
 
-    @classmethod
-    def make_zip(cls, zip_name):
+    def make_zip(self, zip_name):
 
         """Make a ZIP file"""
 
-        null_f = open(os.devnull, 'w')
-        cmd = ['zip', '-r', zip_name, '.']
+        zip_f = None
 
-        proc = Popen(cmd, stdout=null_f, stderr=null_f, shell=False)
+        try:
+            zip_f = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
+        except RuntimeError:
+            log.e(self.name, "ZIP_DEFLATE not available!")
+            return -1
 
-        proc.wait()
-        null_f.close()
+        # pylint: disable=unused-variable
+        for root, dirs, files in os.walk(os.getcwd()):
+            for file_to_add in files:
+                zip_f.write(os.path.join(root, file_to_add))
 
-        return proc.returncode
+        zip_f.close()
+
+        return 0
 
     def do_create(self, args):
 
