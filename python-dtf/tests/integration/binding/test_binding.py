@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Integration tests for the general launcher"""
+"""Integration tests for the bindings"""
 
 import dtf.testutils as testutils
 
@@ -24,3 +24,25 @@ def test_no_args():
 
     rtn = testutils.dtf("binding")
     assert(rtn.return_code == 0)
+
+
+def test_doesnt_exist():
+
+    """Attempt to get a binding that doesn't exist"""
+
+    rtn = testutils.dtf("binding NON")
+    assert(rtn.return_code == 255)
+
+
+def test_valid_bindings():
+
+    """Test all valid bindings"""
+
+    binding_list = ['dtf_aapt', 'dtf_abe', 'dtf_apktool',
+                    'dtf_axmlprinter2', 'dtf_baksmali',
+                    'dtf_smali', 'dtf_dex2jar']
+
+    for binding in binding_list:
+
+        rtn = testutils.dtf("binding %s" % binding)
+        assert(rtn.return_code == 0)

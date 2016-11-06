@@ -52,3 +52,30 @@ def test_help():
 
     rtn = testutils.dtf("help")
     assert(rtn.return_code == 0)
+
+def test_non_project():
+
+    """Attempt to run a built-in without a .dtfini"""
+
+    rtn = testutils.dtf("archive")
+    assert(rtn.return_code == 248)
+
+
+def test_python_precheck_sdk_missing():
+
+    """Attempt to run python module with missing SDK"""
+
+    testutils.deploy_config_raw("")
+
+    rtn = testutils.dtf("archive")
+    assert(rtn.return_code == 248)
+
+
+def test_python_load_imp_exception():
+
+    """Attempt to run builtin and fail to parse load_imp"""
+
+    testutils.deploy_config_raw("")
+
+    rtn = testutils.dtf("status")
+    assert(rtn.return_code == 247)
