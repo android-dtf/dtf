@@ -85,7 +85,13 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
         return -7
 
     # If we got here, we try to load as a python module.
-    module = imp.load_source(cmd, path)
+    try:
+        module = imp.load_source(cmd, path)
+    except:  # pylint:disable=bare-except
+        msg = sys.exc_info()[0]
+        log.e(TAG, "An Exception occured while calling load_source()")
+        log.e(TAG, "Exception: %s" % msg)
+        return -9
 
     if module is None:
         log.e(TAG, "Error launching module '%s'." % cmd)
@@ -196,7 +202,12 @@ def __do_python_prelaunch_checks(mod_inst):
             return -1
 
     # Check for a minimum SDK
-    sdk = int(prop.get_prop('Info', 'sdk'))
+    try:
+        sdk = int(prop.get_prop('Info', 'sdk'))
+    except prop.PropertyError:
+        log.e(TAG, "Unable to get SDK, is this project corrupt?")
+        return -1
+
     min_sdk = int(mod_inst.min_sdk)
 
     if min_sdk != 0 and sdk < min_sdk:
