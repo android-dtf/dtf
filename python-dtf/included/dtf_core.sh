@@ -93,79 +93,47 @@ dtf_device_connected ()
 # Check if a module is installed.
 dtf_has_module ()
 {
-    dtf_db=${DTF_DIR}/main.db
     module_name=$1
 
-    sql="SELECT m.id
-         FROM modules m
-         WHERE m.name='${module_name}'
-         LIMIT 1"
-
-    rtn=$(sqlite3 ${dtf_db} "${sql}")
-
-    if [ -z "$rtn" ]; then
-        return 1
-    else
+    if dtf pm list modules -q |grep "\b${module_name}$" > /dev/null; then
         return 0
+    else
+        return 1
     fi
 }
 
 # Check if a binary is installed.
 dtf_has_binary ()
 {
-    dtf_db=${DTF_DIR}/main.db
     binary_name=$1
 
-    sql="SELECT b.id
-         FROM binaries b
-         WHERE b.name='${binary_name}'
-         LIMIT 1"
-
-    rtn=$(sqlite3 ${dtf_db} "${sql}")
-
-    if [ -z "$rtn" ]; then
-        return 1
-    else
+    if dtf pm list binaries -q |grep "\b${binary_name}$" > /dev/null; then
         return 0
+    else
+        return 1
     fi
 }
 
 # Check if a library is installed.
 dtf_has_library ()
 {
-    dtf_db=${DTF_DIR}/main.db
     library_name=$1
 
-    sql="SELECT l.id
-         FROM libraries l
-         WHERE l.name='${library_name}'
-         LIMIT 1"
-
-    rtn=$(sqlite3 ${dtf_db} "${sql}")
-
-    if [ -z "$rtn" ]; then
-        return 1
-    else
+    if dtf pm list libraries -q |grep "\b${library_name}$" > /dev/null; then
         return 0
+    else
+        return 1
     fi
 }
 
 # Check if a package is installed.
 dtf_has_package ()
 {
-    dtf_db=${DTF_DIR}/main.db
     package_name=$1
 
-    sql="SELECT p.id
-         FROM packages p
-         WHERE p.name='${package_name}'
-         LIMIT 1"
-
-    rtn=$(sqlite3 ${dtf_db} "${sql}")
-
-    if [ -z "$rtn" ]; then
-        return 1
-    else
+    if dtf pm list packages -q |grep "\b${package_name}$" > /dev/null; then
         return 0
+    else
+        return 1
     fi
 }
