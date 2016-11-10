@@ -19,8 +19,11 @@ import json
 import os
 import shutil
 import sys
+import ConfigParser
 
 from subprocess import Popen, PIPE
+
+import dtf.constants as constants
 
 DTF_CONFIG = '.dtfini'
 DTF_LOG_FILE = '.dtflog'
@@ -44,6 +47,18 @@ class Result(object):  # pylint: disable=too-few-public-methods
         """JSONify output"""
 
         return json.loads(self.stdout)
+
+
+def get_default_config(api=constants.API_MAX):
+
+    """Factory for creating a config"""
+
+    config = ConfigParser.RawConfigParser()
+
+    config.add_section('Info')
+    config.set('Info', 'sdk', api)
+
+    return config
 
 
 # Taken from awscli/testutils.py
@@ -79,7 +94,7 @@ def dtf(command):
                   stderr.decode(stdout_encoding))
 
 
-def deploy_config(file_name):
+def deploy_config_file(file_name):
 
     """Deploy project config from file"""
 
@@ -93,10 +108,21 @@ def deploy_config(file_name):
 
 def deploy_config_raw(contents):
 
-    """Deply a project from a string"""
+    """Deploy a project from a string"""
 
     with open(DTF_CONFIG, 'w') as conf_f:
         conf_f.write(contents)
+
+    # Create a log file.
+    open(DTF_LOG_FILE, 'w').close()
+
+
+def deploy_config(cfg):
+
+    """Deploy actual ConfigParser object"""
+
+    with open(DTF_CONFIG, 'w') as conf_f:
+        cfg.write(conf_f)
 
     # Create a log file.
     open(DTF_LOG_FILE, 'w').close()
