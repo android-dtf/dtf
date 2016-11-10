@@ -69,6 +69,8 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         print "    purge       Purge all installed items, reset DB."
         print ""
 
+        return 0
+
     def do_install(self, args):
 
         """Attempt to install new content"""
