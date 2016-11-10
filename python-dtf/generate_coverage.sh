@@ -34,7 +34,8 @@ rm .dtfini .dtflog 2>dev/null
 # Need this to test local install
 python setup.py develop
 
-coverage run --concurrency=multiprocessing -m py.test tests/
+coverage run --concurrency=multiprocessing -m py.test tests/unit
+coverage run --concurrency=multiprocessing -m py.test tests/integration
 
 # Combine and show
 coverage combine
