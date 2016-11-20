@@ -73,7 +73,7 @@ def get_stdout_encoding():
     return encoding
 
 
-def dtf(command):
+def dtf(command, input_data=None):
 
     """Run a dtf command"""
 
@@ -87,6 +87,10 @@ def dtf(command):
     stdout_encoding = get_stdout_encoding()
 
     kwargs = {}
+
+    if input_data:
+        kwargs = {'input': input_data}
+
     stdout, stderr = process.communicate(**kwargs)
 
     return Result(process.returncode,
@@ -130,7 +134,14 @@ def deploy_config(cfg):
 
 def undeploy():
 
-    """Delete the test config"""
+    """Delete the test project"""
 
-    os.remove(DTF_CONFIG)
-    os.remove(DTF_LOG_FILE)
+    try:
+        os.remove(DTF_CONFIG)
+    except OSError:
+        pass
+
+    try:
+        os.remove(DTF_LOG_FILE)
+    except OSError:
+        pass
