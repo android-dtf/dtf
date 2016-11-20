@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Integration tests for the "pm" utility"""
+"""Integration tests for the "pm list" utility"""
 
 import dtf.testutils as testutils
 

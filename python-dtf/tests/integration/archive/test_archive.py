@@ -24,12 +24,23 @@ def test_no_args():
 
     """Run with not args"""
 
-    contents = ("[Info]\n"
-                "sdk = 23")
 
-    testutils.deploy_config_raw(contents)
+    testutils.deploy_config(testutils.get_default_config())
 
     rtn = testutils.dtf("archive")
+
+    testutils.undeploy()
+
+    assert(rtn.return_code == 0)
+
+
+def test_not_subcommand():
+
+    """Try to call invalid sub command"""
+
+    testutils.deploy_config(testutils.get_default_config())
+
+    rtn = testutils.dtf("archive NOT_EXIST")
 
     testutils.undeploy()
 
@@ -40,10 +51,7 @@ def test_help():
 
     """Force the usage"""
 
-    contents = ("[Info]\n"
-                "sdk = 23")
-
-    testutils.deploy_config_raw(contents)
+    testutils.deploy_config(testutils.get_default_config())
 
     rtn = testutils.dtf("archive -h")
 
@@ -56,13 +64,13 @@ def test_no_name():
 
     """Attempt create an archive using builtin name"""
 
+    config = testutils.get_default_config()
+
     version_string = "android-17_XTS"
     zip_name = "%s.zip" % version_string
-    contents = ("[Info]\n"
-                "sdk = 23\n"
-                "version-string = %s" % version_string)
+    config.set("Info", "version-string", version_string)
 
-    testutils.deploy_config_raw(contents)
+    testutils.deploy_config(config)
 
     rtn = testutils.dtf("archive create")
 
@@ -79,10 +87,8 @@ def test_named():
 
     version_string = "android-17_XTS"
     zip_name = "%s.zip" % version_string
-    contents = ("[Info]\n"
-                "sdk = 23\n")
 
-    testutils.deploy_config_raw(contents)
+    testutils.deploy_config(testutils.get_default_config())
 
     rtn = testutils.dtf("archive create %s" % zip_name)
 
