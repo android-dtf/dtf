@@ -24,9 +24,11 @@ import ConfigParser
 from subprocess import Popen, PIPE
 
 import dtf.constants as constants
+import dtf.core.utils as utils
 
-DTF_CONFIG = '.dtfini'
+DTF_CONFIG = utils.CONFIG_FILE_NAME
 DTF_LOG_FILE = '.dtflog'
+LOCAL_MODULES_DIRECTORY = utils.LOCAL_MODULES_DIRECTORY
 
 
 class Result(object):  # pylint: disable=too-few-public-methods

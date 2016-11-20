@@ -30,10 +30,6 @@ import dtf.packages as pkg
 
 TAG = 'init'
 
-REPORTS_DIRECTORY = 'reports'
-DBS_DIRECTORY = '.dbs'
-LOCAL_MODULES_DIRECTORY = 'local_modules'
-
 TYPE_DALVIK = 'Dalvik'
 TYPE_ART = 'ART'
 
@@ -216,9 +212,9 @@ class init(Module):  # pylint: disable=invalid-name
 
         """Create all directories associated with a dtf project"""
 
-        mkdir(REPORTS_DIRECTORY)
-        mkdir(DBS_DIRECTORY)
-        mkdir(LOCAL_MODULES_DIRECTORY)
+        mkdir(utils.REPORTS_DIRECTORY)
+        mkdir(utils.DBS_DIRECTORY)
+        mkdir(utils.LOCAL_MODULES_DIRECTORY)
 
         return 0
 
@@ -338,8 +334,8 @@ class init(Module):  # pylint: disable=invalid-name
         self.make_project_directories()
 
         # Set directory related properties
-        set_prop('Local', 'reports-dir', REPORTS_DIRECTORY)
-        set_prop('Local', 'db-dir', DBS_DIRECTORY)
+        set_prop('Local', 'reports-dir', utils.REPORTS_DIRECTORY)
+        set_prop('Local', 'db-dir', utils.DBS_DIRECTORY)
 
         # Invoke client installation
         rtn = pkg.launch_builtin_module('client', ['install'])

@@ -28,6 +28,7 @@ from lxml import etree
 
 import dtf.globals
 import dtf.logging as log
+import dtf.core.utils as utils
 
 # Eventually this will be changed
 # pylint: disable=too-many-instance-attributes
@@ -685,7 +686,8 @@ def find_local_module(root, name):
 
     """Determine if a local module exists"""
 
-    local_module_path = "%s/local_modules/%s" % (root, name)
+    local_module_path = "%s/%s/%s" % (root,
+                                      utils.LOCAL_MODULES_DIRECTORY, name)
 
     if os.path.isfile(local_module_path):
         return 1

@@ -22,6 +22,9 @@ import os.path
 import stat
 
 CONFIG_FILE_NAME = '.dtfini'
+REPORTS_DIRECTORY = 'reports'
+DBS_DIRECTORY = '.dbs'
+LOCAL_MODULES_DIRECTORY = 'local_modules'
 
 
 def __upsearch(file_name, dir_name):

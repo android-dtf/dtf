@@ -29,9 +29,10 @@ class local(Module):  # pylint: disable=invalid-name
     @classmethod
     def get_locals(cls):
 
-        """List 'local_modules' directory"""
+        """List local modules directory"""
 
-        local_path = "%s/local_modules" % utils.get_project_root()
+        local_path = "%s/%s" % (utils.get_project_root(),
+                                utils.LOCAL_MODULES_DIRECTORY)
 
         return [f for f in listdir(local_path) if isfile(join(local_path, f))]
 

@@ -233,7 +233,7 @@ def launch_local_module(root, cmd, args):
 
     """Launch a local module"""
 
-    module_path = "%s/local_modules/%s" % (root, cmd)
+    module_path = "%s/%s/%s" % (root, utils.LOCAL_MODULES_DIRECTORY, cmd)
 
     # If we are dealing with a bash script, just run and exit.
     if pm.is_bash_module(module_path):
