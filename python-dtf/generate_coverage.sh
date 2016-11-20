@@ -29,13 +29,28 @@ export COVERAGE_PROCESS_START=.coveragerc
 coverage erase
 
 # Just incase, remove any .dtf* stuff.
-rm .dtfini .dtflog 2>dev/null
+rm .dtfini .dtflog 2>/dev/null
 
 # Need this to test local install
 python setup.py develop
 
+
+# Run the unit tests.
 coverage run --concurrency=multiprocessing -m py.test tests/unit
+
+# Run the integration tests.
+# We need to make sure there is no .dtf, but for local testing,
+# I'd rather not have my stuff blown away. Move it, then move back.
+if [ -e ~/.dtf ]; then
+    mv ~/.dtf ~/.dtf_bk
+fi
 coverage run --concurrency=multiprocessing -m py.test tests/integration
+
+# Move it back
+if [ -e ~/.dtf_bk ]; then
+    rm -rf ~/.dtf
+    mv ~/.dtf_bk ~/.dtf
+fi
 
 # Combine and show
 coverage combine
