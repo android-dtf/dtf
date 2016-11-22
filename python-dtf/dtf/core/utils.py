@@ -19,9 +19,12 @@ from hashlib import md5
 import errno
 import os
 import os.path
+import shutil
 import stat
 
 CONFIG_FILE_NAME = '.dtfini'
+LOG_FILE_NAME = '.dtflog'
+
 REPORTS_DIRECTORY = 'reports'
 DBS_DIRECTORY = '.dbs'
 LOCAL_MODULES_DIRECTORY = 'local_modules'
@@ -124,3 +127,36 @@ def mkdir_recursive(path):
             pass
         else:
             raise
+
+
+# http://stackoverflow.com/questions/1158076/implement-touch-using-python
+def touch(file_name, times=None):
+
+    """Touch a file"""
+
+    with open(file_name, 'a'):
+        os.utime(file_name, times)
+
+
+def delete_file(file_name):
+
+    """Delete a file (show errors optional)"""
+
+    try:
+        os.remove(file_name)
+    except OSError:
+        pass
+
+    return 0
+
+
+def delete_tree(directory_name):
+
+    """Delete a directory recursively"""
+
+    try:
+        shutil.rmtree(directory_name)
+    except OSError:
+        pass
+
+    return 0

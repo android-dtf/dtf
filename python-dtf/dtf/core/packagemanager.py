@@ -246,31 +246,6 @@ def copy_tree(local_name, install_name, install_dir):
     return 0
 
 
-def delete_file(file_path):
-
-    """Delete a file"""
-
-    try:
-        os.remove(file_path)
-        return 0
-    except OSError:
-        log.w(TAG, "There was an OSError when removing the file '%s'"
-              % file_path)
-        return 0
-
-
-def delete_tree(directory_path):
-
-    """Delete a directory recursively"""
-
-    try:
-        rmtree(directory_path)
-        return 0
-    except OSError:
-        log.w(TAG, "OSError when removing the tree at '%s'" % directory_path)
-        return 0
-
-
 def get_xml_attrib(element, attrib, default=None):
 
     """Attempt to retrieve XML attribute"""
@@ -1306,7 +1281,7 @@ def __do_binary_delete(item):
 
     file_path = DTF_BINARIES_DIR + item.install_name
 
-    if delete_file(file_path) != 0:
+    if utils.delete_file(file_path) != 0:
         log.e(TAG, "Error removing binary file! Continuing.")
 
     conn = sqlite3.connect(DTF_DB)
@@ -1319,7 +1294,7 @@ def __do_binary_delete(item):
     cur.execute(sql)
     conn.commit()
 
-    return cur.rowcount
+    return 0
 
 
 def __do_library_delete(item):
@@ -1328,7 +1303,7 @@ def __do_library_delete(item):
 
     file_path = DTF_LIBRARIES_DIR + item.install_name
 
-    if delete_tree(file_path) != 0:
+    if utils.delete_tree(file_path) != 0:
         log.e(TAG, "Error removing tree! Continuing.")
 
     conn = sqlite3.connect(DTF_DB)
@@ -1341,7 +1316,7 @@ def __do_library_delete(item):
     cur.execute(sql)
     conn.commit()
 
-    return cur.rowcount
+    return 0
 
 
 def __do_module_delete(item):
@@ -1350,7 +1325,7 @@ def __do_module_delete(item):
 
     file_path = DTF_MODULES_DIR + item.install_name
 
-    if delete_file(file_path) != 0:
+    if utils.delete_file(file_path) != 0:
         log.e(TAG, "Error removing module file! Continuing.")
 
     conn = sqlite3.connect(DTF_DB)
@@ -1363,7 +1338,7 @@ def __do_module_delete(item):
     cur.execute(sql)
     conn.commit()
 
-    return cur.rowcount
+    return 0
 
 
 def __do_package_delete(item):
@@ -1372,7 +1347,7 @@ def __do_package_delete(item):
 
     file_path = DTF_PACKAGES_DIR + item.install_name
 
-    if delete_tree(file_path) != 0:
+    if utils.delete_tree(file_path) != 0:
         log.e(TAG, "Error removing tree! Continuing.")
 
     conn = sqlite3.connect(DTF_DB)
@@ -1385,7 +1360,7 @@ def __do_package_delete(item):
     cur.execute(sql)
     conn.commit()
 
-    return cur.rowcount
+    return 0
 # End INTERNAL #####################################################
 
 
@@ -1855,7 +1830,7 @@ def purge():
         full_path = DTF_BINARIES_DIR + install_name
         log.d(TAG, "Removing binary '%s'" % binary_name)
 
-        if delete_file(full_path) != 0:
+        if utils.delete_file(full_path) != 0:
             log.e(TAG, "Error removing binary file! Continuing.")
 
     # Remove Libraries
@@ -1869,7 +1844,7 @@ def purge():
         full_path = DTF_LIBRARIES_DIR + install_name
         log.d(TAG, "Removing library '%s'" % library_name)
 
-        if delete_tree(full_path) != 0:
+        if utils.delete_tree(full_path) != 0:
             log.e(TAG, "Error removing library! Continuing.")
 
     # Remove Modules
@@ -1883,7 +1858,7 @@ def purge():
         full_path = DTF_MODULES_DIR + install_name
         log.d(TAG, "Removing module '%s'" % module_name)
 
-        if delete_file(full_path) != 0:
+        if utils.delete_file(full_path) != 0:
             log.e(TAG, "Error removing module file! Continuing.")
 
     # Remove Packages
@@ -1897,7 +1872,7 @@ def purge():
         full_path = DTF_PACKAGES_DIR + install_name
         log.d(TAG, "Removing package '%s'" % package_name)
 
-        if delete_tree(full_path) != 0:
+        if utils.delete_tree(full_path) != 0:
             log.e(TAG, "Error removing package! Continuing.")
 
     # Drop the DB.

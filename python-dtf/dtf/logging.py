@@ -29,13 +29,12 @@ LOG_LEVEL_FILE = 4    # By default, log E-V
 LOG_LEVEL_STDOUT = 4  # By default, log E-V
 
 # Internals ###########################################################
-LOG_FILE_NAME = '.dtflog'
 LOG_FILE = None
 
 # Open file on module import
 TOP = utils.get_project_root()
 if TOP is not None:
-    LOG_FILE = open(LOG_FILE_NAME, 'a')
+    LOG_FILE = open(utils.LOG_FILE_NAME, 'a')
 
 
 def __get_date():

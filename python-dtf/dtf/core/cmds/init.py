@@ -39,15 +39,6 @@ SEANDROID_ENFORCING = "Enforcing"
 SEANDROID_OFF = "Off"
 
 
-# http://stackoverflow.com/questions/1158076/implement-touch-using-python
-def touch(file_name, times=None):
-
-    """Touch a file"""
-
-    with open(file_name, 'a'):
-        os.utime(file_name, times)
-
-
 def rmfile(file_name):
 
     """Delete a file (that may or may not exist)"""
@@ -98,7 +89,7 @@ class init(Module):  # pylint: disable=invalid-name
 
         log.w(TAG, "Exiting dtf initialization!")
         rmfile(utils.CONFIG_FILE_NAME)
-        rmfile(log.LOG_FILE_NAME)
+        rmfile(utils.LOG_FILE_NAME)
 
         exit(-4)
 
@@ -265,7 +256,7 @@ class init(Module):  # pylint: disable=invalid-name
 
         log.d(TAG, "Preparing device: %s" % device_serial)
 
-        touch(utils.CONFIG_FILE_NAME)
+        utils.touch(utils.CONFIG_FILE_NAME)
 
         set_prop('Info', 'serial', device_serial)
 
