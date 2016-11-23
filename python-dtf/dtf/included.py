@@ -97,13 +97,6 @@ def baksmali(cmd):
     return stdout, stderr, rtn
 
 
-def dex2jar():
-
-    """dex2jar wrapper"""
-
-    raise NotImplementedError
-
-
 def axmlprinter2(manifest_file_name, out_file_name):
 
     """axmlprinter2 wrapper"""
