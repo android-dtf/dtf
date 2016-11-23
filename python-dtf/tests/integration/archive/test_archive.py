@@ -15,86 +15,69 @@
 #
 """Integration tests for archiving"""
 
+import dtf.testutils as testutils
+import dtf.core.utils as utils
+
 import os.path
 
-import dtf.testutils as testutils
+class ArchiveTests(testutils.BasicIntegrationTest):
+
+    """Wraper for integration tests"""
+
+    def test_no_args(self):
+
+        """Run with not args"""
+
+        rtn = self.run_cmd("archive")
+
+        assert(rtn.return_code == 0)
 
 
-def test_no_args():
+    def test_not_subcommand(self):
 
-    """Run with not args"""
+        """Try to call invalid sub command"""
 
+        rtn = self.run_cmd("archive NOT_EXIST")
 
-    testutils.deploy_config(testutils.get_default_config())
+        assert(rtn.return_code == 0)
 
-    rtn = testutils.dtf("archive")
+    def test_help(self):
 
-    testutils.undeploy()
+        """Force the usage"""
 
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("archive -h")
 
+        assert(rtn.return_code == 0)
 
-def test_not_subcommand():
+    def test_no_name(self):
 
-    """Try to call invalid sub command"""
+        """Attempt create an archive using builtin name"""
 
-    testutils.deploy_config(testutils.get_default_config())
+        config = testutils.get_default_config()
 
-    rtn = testutils.dtf("archive NOT_EXIST")
+        version_string = "android-17_XTS"
+        zip_name = "%s.zip" % version_string
+        config.set("Info", "version-string", version_string)
 
-    testutils.undeploy()
+        self.update_config(config)
 
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("archive create")
 
+        assert(rtn.return_code == 0)
+        assert(os.path.isfile(zip_name))
 
-def test_help():
+        utils.delete_file(zip_name)
 
-    """Force the usage"""
+    def test_named(self):
 
-    testutils.deploy_config(testutils.get_default_config())
+        """Attempt to create an archive using custom name"""
 
-    rtn = testutils.dtf("archive -h")
+        version_string = "android-17_XTS"
+        zip_name = "%s.zip" % version_string
 
-    testutils.undeploy()
+        rtn = self.run_cmd("archive create %s" % zip_name)
 
-    assert(rtn.return_code == 0)
+        assert(rtn.return_code == 0)
+        assert(os.path.isfile(zip_name))
 
-
-def test_no_name():
-
-    """Attempt create an archive using builtin name"""
-
-    config = testutils.get_default_config()
-
-    version_string = "android-17_XTS"
-    zip_name = "%s.zip" % version_string
-    config.set("Info", "version-string", version_string)
-
-    testutils.deploy_config(config)
-
-    rtn = testutils.dtf("archive create")
-
-    testutils.undeploy()
-
-    assert(rtn.return_code == 0)
-    assert(os.path.isfile(zip_name))
-
-    os.remove(zip_name)
-
-def test_named():
-
-    """Attempt to create an archive using custom name"""
-
-    version_string = "android-17_XTS"
-    zip_name = "%s.zip" % version_string
-
-    testutils.deploy_config(testutils.get_default_config())
-
-    rtn = testutils.dtf("archive create %s" % zip_name)
-
-    testutils.undeploy()
-
-    assert(rtn.return_code == 0)
-    assert(os.path.isfile(zip_name))
-
-    os.remove(zip_name)
+        utils.delete_file(zip_name)
