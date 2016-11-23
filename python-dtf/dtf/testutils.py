@@ -19,16 +19,25 @@ import json
 import os
 import shutil
 import sys
+import unittest
 import ConfigParser
 
 from subprocess import Popen, PIPE
 
 import dtf.constants as constants
 import dtf.core.utils as utils
+import dtf.globals as gbls
 
 DTF_CONFIG = utils.CONFIG_FILE_NAME
-DTF_LOG_FILE = '.dtflog'
+DTF_LOG_FILE = utils.LOG_FILE_NAME
 LOCAL_MODULES_DIRECTORY = utils.LOCAL_MODULES_DIRECTORY
+REPORTS_DIRECTORY = utils.REPORTS_DIRECTORY
+DTF_DATA_DIR = gbls.DTF_DATA_DIR
+DTF_BINARIES_DIR = gbls.DTF_BINARIES_DIR
+DTF_LIBRARIES_DIR = gbls.DTF_LIBRARIES_DIR
+DTF_MODULES_DIR = gbls.DTF_MODULES_DIR
+DTF_PACKAGES_DIR = gbls.DTF_PACKAGES_DIR
+DTF_DB = gbls.DTF_DB
 
 
 class Result(object):  # pylint: disable=too-few-public-methods
@@ -49,6 +58,97 @@ class Result(object):  # pylint: disable=too-few-public-methods
         """JSONify output"""
 
         return json.loads(self.stdout)
+
+
+class DataFile(object):  # pylint: disable=too-few-public-methods
+
+    """Wrapper for opening using included files"""
+
+    def __init__(self, file_name):
+
+        """Attempt to open file"""
+
+        full_file_name = "tests/data-files/%s" % file_name
+        if not os.path.isfile(full_file_name):
+            raise OSError
+
+        self.full_file_name = full_file_name
+        self.file_handle = open(full_file_name, 'rb')
+
+    def read(self):
+
+        """Read from file handle"""
+
+        return self.file_handle.read()
+
+    def __str__(self):
+
+        """Return full path"""
+
+        return self.full_file_name
+
+
+class BasicIntegrationTest(unittest.TestCase):
+
+    """Basic class for performing dtf integration testing"""
+
+    config = None
+
+    def setUp(self):
+
+        """Setup project with default config"""
+
+        # Set up a default config, and store
+        self.config = get_default_config()
+        self.update_config(self.config)
+
+        # Create directory structure if not there.
+        if not os.path.isdir(DTF_DATA_DIR):
+            os.mkdir(DTF_DATA_DIR)
+            os.mkdir(DTF_BINARIES_DIR)
+            os.mkdir(DTF_LIBRARIES_DIR)
+            os.mkdir(DTF_MODULES_DIR)
+            os.mkdir(DTF_PACKAGES_DIR)
+
+        # Create the rest of the content.
+        utils.touch(DTF_LOG_FILE)
+        os.mkdir(LOCAL_MODULES_DIRECTORY)
+        os.mkdir(REPORTS_DIRECTORY)
+
+    def tearDown(self):
+
+        """Remove mock project"""
+
+        # Remove all content and main.db
+        utils.delete_file(DTF_DB)
+
+        utils.delete_file(DTF_CONFIG)
+        utils.delete_file(DTF_LOG_FILE)
+        utils.delete_tree(LOCAL_MODULES_DIRECTORY)
+        utils.delete_tree(REPORTS_DIRECTORY)
+
+    @classmethod
+    def run_cmd(cls, cmd, input_data=None):
+
+        """Run a dtf command"""
+
+        return dtf(cmd, input_data=input_data)
+
+    @classmethod
+    def update_config_raw(cls, contents):
+
+        """Update config to contents supplied"""
+
+        with open(DTF_CONFIG, 'w') as conf_f:
+            conf_f.write(contents)
+
+    @classmethod
+    def update_config(cls, cfg):
+
+        """Update config to Config object"""
+
+        with open(DTF_CONFIG, 'w') as conf_f:
+            cfg.write(conf_f)
 
 
 def get_default_config(api=constants.API_MAX):
@@ -111,6 +211,8 @@ def deploy_config_file(file_name):
     # Create a log file.
     open(DTF_LOG_FILE, 'w').close()
 
+    os.mkdir(LOCAL_MODULES_DIRECTORY)
+
 
 def deploy_config_raw(contents):
 
@@ -121,6 +223,8 @@ def deploy_config_raw(contents):
 
     # Create a log file.
     open(DTF_LOG_FILE, 'w').close()
+
+    os.mkdir(LOCAL_MODULES_DIRECTORY)
 
 
 def deploy_config(cfg):
@@ -133,17 +237,13 @@ def deploy_config(cfg):
     # Create a log file.
     open(DTF_LOG_FILE, 'w').close()
 
+    os.mkdir(LOCAL_MODULES_DIRECTORY)
+
 
 def undeploy():
 
     """Delete the test project"""
 
-    try:
-        os.remove(DTF_CONFIG)
-    except OSError:
-        pass
-
-    try:
-        os.remove(DTF_LOG_FILE)
-    except OSError:
-        pass
+    utils.delete_file(DTF_CONFIG)
+    utils.delete_file(DTF_LOG_FILE)
+    utils.delete_tree(LOCAL_MODULES_DIRECTORY)
