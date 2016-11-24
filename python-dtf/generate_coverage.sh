@@ -55,6 +55,7 @@ fi
 # Combine and show
 coverage combine
 coverage report
+coverage html
 
 # Make sure to unset this
 python setup.py develop --uninstall

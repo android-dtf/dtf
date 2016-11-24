@@ -29,6 +29,6 @@ var/
 # Coverage
 .coverage
 .cache
-
+htmlcov
 # virtualenv stuff
 venv/
