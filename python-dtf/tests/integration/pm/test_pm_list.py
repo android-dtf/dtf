@@ -17,77 +17,106 @@
 
 import dtf.testutils as testutils
 
+class PmListTests(testutils.BasicIntegrationTest):
 
-def test_no_args():
+    """Wraper for integration tests"""
 
-    """Running list with no args"""
+    def test_no_args(self):
 
-    rtn = testutils.dtf("pm list")
-    assert(rtn.return_code == 0)
+        """Running list with no args"""
 
-    rtn = testutils.dtf("pm list -v")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list")
+        assert(rtn.return_code == 0)
 
-
-def test_quiet_verbose():
-
-    """Try and fail to print verbose + quiet"""
-
-    rtn = testutils.dtf("pm list -vq")
-    assert(rtn.return_code == 255)
+        rtn = self.run_cmd("pm list -v")
+        assert(rtn.return_code == 0)
 
 
-def test_binaries():
+    def test_quiet_verbose(self):
 
-    """List only binaries"""
+        """Try and fail to print verbose + quiet"""
 
-    rtn = testutils.dtf("pm list binaries")
-    assert(rtn.return_code == 0)
-
-    rtn = testutils.dtf("pm list binaries -v")
-    assert(rtn.return_code == 0)
-
-    rtn = testutils.dtf("pm list binaries -q")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list -vq")
+        assert(rtn.return_code == 255)
 
 
-def test_libraries():
+    def test_all_valid(self):
 
-    """List only libraries"""
+        """Print all types, with actual installed content"""
 
-    rtn = testutils.dtf("pm list libraries")
-    assert(rtn.return_code == 0)
+        data_file = testutils.DataFile("integration_pm_valid_zip.zip")
 
-    rtn = testutils.dtf("pm list libraries -v")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm install --zip %s" % str(data_file))
+        assert(rtn.return_code == 0)
 
-    rtn = testutils.dtf("pm list libraries -q")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list")
+        assert(rtn.return_code == 0)
 
+        rtn = self.run_cmd("pm list -v")
+        assert(rtn.return_code == 0)
 
-def test_modules():
-
-    """List only modules"""
-
-    rtn = testutils.dtf("pm list modules")
-    assert(rtn.return_code == 0)
-
-    rtn = testutils.dtf("pm list modules -v")
-    assert(rtn.return_code == 0)
-
-    rtn = testutils.dtf("pm list modules -q")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list -q")
+        assert(rtn.return_code == 0)
 
 
-def test_packages():
+    def test_binaries(self):
 
-    """List only packages"""
+        """List only binaries"""
 
-    rtn = testutils.dtf("pm list packages")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list binaries")
+        assert(rtn.return_code == 0)
 
-    rtn = testutils.dtf("pm list packages -v")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list binaries -v")
+        assert(rtn.return_code == 0)
 
-    rtn = testutils.dtf("pm list packages -q")
-    assert(rtn.return_code == 0)
+        rtn = self.run_cmd("pm list binaries -q")
+        assert(rtn.return_code == 0)
+
+
+    def test_libraries(self):
+
+        """List only libraries"""
+
+        rtn = self.run_cmd("pm list libraries")
+        assert(rtn.return_code == 0)
+
+        rtn = self.run_cmd("pm list libraries -v")
+        assert(rtn.return_code == 0)
+
+        rtn = self.run_cmd("pm list libraries -q")
+        assert(rtn.return_code == 0)
+
+
+    def test_modules(self):
+
+        """List only modules"""
+
+        rtn = self.run_cmd("pm list modules")
+        assert(rtn.return_code == 0)
+
+        rtn = self.run_cmd("pm list modules -v")
+        assert(rtn.return_code == 0)
+
+        rtn = self.run_cmd("pm list modules -q")
+        assert(rtn.return_code == 0)
+
+
+    def test_packages(self):
+
+        """List only packages"""
+
+        rtn = self.run_cmd("pm list packages")
+        assert(rtn.return_code == 0)
+
+        rtn = self.run_cmd("pm list packages -v")
+        assert(rtn.return_code == 0)
+
+        rtn = self.run_cmd("pm list packages -q")
+        assert(rtn.return_code == 0)
+
+    def test_list_invalid(self):
+
+        """List a invalid type"""
+
+        rtn = self.run_cmd("pm list BAD")
+        assert(rtn.return_code == 253)

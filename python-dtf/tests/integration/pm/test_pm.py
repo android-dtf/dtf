@@ -18,17 +18,20 @@
 import dtf.testutils as testutils
 
 
-def test_no_args():
+class PmTests(testutils.BasicIntegrationTest):
 
-    """Running with no args"""
+    """Wraper for integration tests"""
 
-    rtn = testutils.dtf("pm")
-    assert(rtn.return_code == 0)
+    def test_no_args(self):
 
+        """Running with no args"""
 
-def test_not_subcommand():
+        rtn = self.run_cmd("pm")
+        assert(rtn.return_code == 0)
 
-    """Call invalid subcommand"""
+    def test_not_subcommand(self):
 
-    rtn = testutils.dtf("pm NOT_EXIST")
-    assert(rtn.return_code == 0)
+        """Call invalid subcommand"""
+
+        rtn = self.run_cmd("pm NOT_EXIST")
+        assert(rtn.return_code == 0)

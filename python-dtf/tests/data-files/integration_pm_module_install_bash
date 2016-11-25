@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# DTF Core Content
+# Copyright 2013-2015 Jake Valletta (@jake_valletta)
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#@About: Get an APK (optionally with DEX) from device.
+#@Author: Jake Valletta (jakev)
+#@Health: stable
+#@Version: 1.1
+
+. $DTF_CORE
+. $DTF_LOG
+
+usage()
+{
+    echo "Usage apkget OPTIONS <package_name>"
+    echo "       OPTIONS:"
+    echo "            -o    Pull package's ODEX"
+    echo "            -s    Search for package"
+    echo "            -p    Pull package"
+    echo "            -h    Prints this menu"
+    exit 1
+}
+
+if [ $# -lt 1 ] ; then
+    usage
+fi
+
+package=""
+search=""
+odex=""
+
+#Process the arguments
+while getopts hdeo:p:s: opt
+do
+    case "$opt" in
+        h) usage;;
+        o) odex=$OPTARG;;
+        p) package=$OPTARG;;
+        s) search=$OPTARG;;
+        \?) usage;;
+    esac
+done
+
+adb wait-for-device
+
+cd "${LAUNCH_DIR}"
+
+if [ $search ]; then
+    echo "Searching for \"${search}\"..."
+    adb shell "pm list packages"|grep -i "$search"|awk '{print $1}'
+    exit 0
+
+elif [ $package ]; then
+    log_i "Attempting to pull APK for \"${package}\"..."
+    package_path=$(adb shell pm path ${package} | tr -d '\r' |awk -F":" '{print $2}')
+
+    if [ -z $package_path ]; then
+        log_e "No packages match the string \"${package}\""
+        exit 1
+    else
+        log_i "Found match for \"${package}\""
+        adb pull $package_path > /dev/null 2>&1
+        exit 0
+    fi
+
+elif [ $odex ]; then
+
+    log_i "Attempting to pull ODEX for \"${odex}\"..."
+    apk_path=$(adb shell pm path ${odex} | tr -d '\r' |awk -F":" '{print $2}')
+
+    if [ $apk_path ]; then
+        log_i "Found match for \"${odex}\""
+
+        package_path=$(dirname $apk_path)
+        odex_name=$(basename $apk_path| sed 's/\.apk$/.odex/')
+
+        # Need to act differently depending on Dalvik/ART
+        vm_type=$(dtf prop get Info vmtype)
+
+        # Device is using ART/ART64
+        if [[ "$vm_type" == "ART"* ]]; then
+
+            # It's not with checking the bits, as both can exist.
+            log_i "Attempting to pull 32-bit ODEX..."
+            adb pull ${package_path}/arm/${odex_name} > /dev/null 2>&1
+
+            log_i "Attempting to pull 64-bit ODEX..."
+            adb pull ${package_path}/arm64/${odex_name} > /dev/null 2>&1
+
+        # Dalvik, so path is easy.
+        else
+            package_path=$(dirname $apk_path)
+            odex_name=$(basename $apk_path| sed 's/\.apk$/.odex/')
+            log_i "Attempting to pull 32-bit ODEX..."
+            adb pull ${package_path}/${odex_name} > /dev/null 2>&1
+        fi
+    else
+        log_e "No packages match the string \"${odex}\""
+        exit 1
+    fi
+else
+    echo "[ERROR] You must specify -p or -s!"
+    usage
+fi
