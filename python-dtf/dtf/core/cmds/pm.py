@@ -698,7 +698,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         if install_name is None:
             log.d(TAG, "install_name is null, using name...")
-            install_name = name
+            install_name = os.path.basename(name)
         if local_name is None:
             log.d(TAG, "local_name is null, using name...")
             local_name = name
@@ -751,11 +751,11 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         item.type = args.single_type
 
-        if args.health not in packagemanager.VALID_HEALTH_VALUES:
+        if args.single_health not in packagemanager.VALID_HEALTH_VALUES:
             log.e(TAG, "Invalid health specified. Exiting.")
             return None
 
-        item.health = args.health
+        item.health = args.single_health
 
         version = args.single_version
         if version is not None:
@@ -783,7 +783,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         if install_name is None:
             log.d(TAG, "install_name is null, using name...")
-            install_name = args.single_name
+            install_name = os.path.basename(args.single_name)
         if local_name is None:
             log.d(TAG, "local_name is null, using name...")
             local_name = args.single_name
