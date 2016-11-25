@@ -19,7 +19,9 @@ import json
 import os
 import shutil
 import sys
+import tempfile
 import unittest
+import zipfile
 import ConfigParser
 
 from subprocess import Popen, PIPE
@@ -38,6 +40,8 @@ DTF_LIBRARIES_DIR = gbls.DTF_LIBRARIES_DIR
 DTF_MODULES_DIR = gbls.DTF_MODULES_DIR
 DTF_PACKAGES_DIR = gbls.DTF_PACKAGES_DIR
 DTF_DB = gbls.DTF_DB
+
+TEST_TOP = os.getcwd()
 
 
 class Result(object):  # pylint: disable=too-few-public-methods
@@ -68,7 +72,7 @@ class DataFile(object):  # pylint: disable=too-few-public-methods
 
         """Attempt to open file"""
 
-        full_file_name = "tests/data-files/%s" % file_name
+        full_file_name = "%s/tests/data-files/%s" % (TEST_TOP, file_name)
         if not os.path.isfile(full_file_name):
             raise OSError
 
@@ -88,9 +92,44 @@ class DataFile(object):  # pylint: disable=too-few-public-methods
         return self.full_file_name
 
 
-class BasicIntegrationTest(unittest.TestCase):
+class DataZip(object):  # pylint: disable=too-few-public-methods
 
-    """Basic class for performing dtf integration testing"""
+    """Wrapper for opening a zip file of content"""
+
+    def __init__(self, file_name):
+
+        """Open zip to temp dir"""
+
+        full_zip_name = "%s/tests/data-files/%s" % (TEST_TOP, file_name)
+        if not os.path.isfile(full_zip_name):
+            raise OSError
+
+        if not zipfile.is_zipfile(full_zip_name):
+            raise OSError
+        self.zip_f = zipfile.ZipFile(full_zip_name)
+
+        self.temp_dir = tempfile.mkdtemp()
+
+        for name in self.zip_f.namelist():
+            self.zip_f.extract(name, self.temp_dir)
+
+    def close(self):
+
+        """Close the DataZip"""
+
+        self.zip_f.close()
+        utils.delete_tree(self.temp_dir)
+
+    def __str__(self):
+
+        """Return full path"""
+
+        return self.temp_dir
+
+
+class IntegrationTest(unittest.TestCase):
+
+    """Class for performing dtf integration testing"""
 
     config = None
 
@@ -99,7 +138,7 @@ class BasicIntegrationTest(unittest.TestCase):
         """Setup project with default config"""
 
         # Set up a default config, and store
-        self.config = get_default_config()
+        self.config = self.default_config()
         self.update_config(self.config)
 
         # Create directory structure if not there.
@@ -128,11 +167,22 @@ class BasicIntegrationTest(unittest.TestCase):
         utils.delete_tree(REPORTS_DIRECTORY)
 
     @classmethod
+    def default_config(cls):
+
+        """Placeholder for default config"""
+
+        return None
+
+    @classmethod
     def run_cmd(cls, cmd, input_data=None):
 
         """Run a dtf command"""
 
-        return dtf(cmd, input_data=input_data)
+        rtn = dtf(cmd, input_data=input_data)
+
+        print rtn.stdout, rtn.stderr
+
+        return rtn
 
     @classmethod
     def update_config_raw(cls, contents):
@@ -149,6 +199,41 @@ class BasicIntegrationTest(unittest.TestCase):
 
         with open(DTF_CONFIG, 'w') as conf_f:
             cfg.write(conf_f)
+
+
+class BasicIntegrationTest(IntegrationTest):
+
+    """Default test for offline integration test"""
+
+    @classmethod
+    def default_config(cls):
+
+        """Return basic config for offline"""
+
+        config = ConfigParser.RawConfigParser()
+
+        config.add_section('Info')
+        config.set('Info', 'sdk', constants.API_MAX)
+
+        return config
+
+
+class BasicIntegrationDeviceTest(IntegrationTest):
+
+    """Default test for online integration test"""
+
+    @classmethod
+    def default_config(cls):
+
+        """Return basic config for online"""
+
+        config = ConfigParser.RawConfigParser()
+
+        config.add_section('Info')
+        config.set('Info', 'sdk', constants.API_MAX)
+        config.set('Info', 'serial', 'emulator-5554')
+
+        return config
 
 
 def get_default_config(api=constants.API_MAX):
@@ -180,6 +265,8 @@ def dtf(command, input_data=None):
     """Run a dtf command"""
 
     env = os.environ.copy()
+
+    env['GLOG_LEVEL'] = '5'
 
     full_command = "dtf %s" % (command)
 
