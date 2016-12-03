@@ -57,6 +57,7 @@ coverage run -m py.test tests/integration
 # These tests will require an active emulator/device
 # Only run these if we are Travis OR manually request.
 if [ "$TRAVIS" = "true"  -o "$DO_DEVICE_INTEGRATION" = "1" ]; then
+    adb install $(ls included/dtfClient/*.apk)
     coverage run -m py.test tests/integration-device
 fi
 

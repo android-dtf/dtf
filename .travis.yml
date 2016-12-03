@@ -31,9 +31,6 @@ before_script:
 # Wait for emulator
 - ./wait_for_emulator
 
-# Install the dtfClient APK
-- adb install $(ls python-dtf/included/dtfClient/*.apk)
-
 script: ./gradlew useDebugApk doCoverage
 
 branches:
