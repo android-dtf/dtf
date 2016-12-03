@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'findbugs'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         applicationId PACKAGE_NAME
         minSdkVersion 10
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode VERSION_CODE.toInteger()
         versionName VERSION_NAME
     }
@@ -48,7 +48,7 @@ android {
           abortOnError true
     }
 
-    task findBugs(type: FindBugs, dependsOn: assembleDebug) {
+    task findBugs(type: FindBugs, dependsOn: "assembleDebug") {
 
         description 'Run findbugs'
         group 'verification'
@@ -90,8 +90,9 @@ gradle.taskGraph.whenReady { taskGraph ->
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.2.1'
+    compile "com.android.support:support-core-utils:25.0.1"
 }
 
-assembleRelease.dependsOn findBugs
-
+afterEvaluate {
+    assembleRelease.dependsOn findBugs
+}
