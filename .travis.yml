@@ -19,9 +19,20 @@ before_install:
 # We also need to grab the build tools.
 - echo y | android update sdk --all --filter platform-tools,build-tools-23.0.3,android-23,extra-android-m2repository --no-ui --force
 
+# Create and start a AVD
+- echo no | android create avd --force -n test -t android-23 --abi armeabi-v7a
+- emulator -avd test -no-skin -no-audio -no-window &
+
 install:
 - pip install -r "requirements.txt"
 - pip install setuptools==28.7.1
+
+before_script:
+# Wait for emulator
+- ./wait_for_emulator
+
+# Install the dtfClient APK
+- adb install python-dtf/included/dtfClient/*.apk
 
 script: ./gradlew useDebugApk doCoverage
 
