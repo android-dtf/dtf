@@ -29,9 +29,9 @@ install:
 
 before_script:
 # Wait for emulator
+- java -version
+- javac -version
 - ./wait_for_emulator
-- java --version
-- javac --version
 
 script: ./gradlew useDebugApk doCoverage
 
