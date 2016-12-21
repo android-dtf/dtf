@@ -64,8 +64,6 @@ android {
         html.enabled = true
         }
     }
-
-
 }
 
 // Tricks for password prompt
