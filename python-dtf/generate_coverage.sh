@@ -32,7 +32,7 @@ coverage erase
 rm .dtfini .dtflog 2>/dev/null
 
 # Make sure dtf is installed.
-pip install dist/dtf-*.whl
+python setup.py develop
 
 # We need to make sure there is no .dtf, but for local testing,
 # I'd rather not have my stuff blown away. Move it, then move back.
@@ -73,6 +73,8 @@ coverage combine
 
 coverage report
 coverage html
+
+python setup.py develop --uninstall
 
 if [ "$TRAVIS"  != "true" ]; then
     deactivate
