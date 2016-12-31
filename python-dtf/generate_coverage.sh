@@ -31,6 +31,9 @@ coverage erase
 # Just incase, remove any .dtf* stuff.
 rm .dtfini .dtflog 2>/dev/null
 
+# Make sure dtf is installed.
+pip install dist/dtf-*.whl
+
 # We need to make sure there is no .dtf, but for local testing,
 # I'd rather not have my stuff blown away. Move it, then move back.
 if [ -e ~/.dtf ]; then
