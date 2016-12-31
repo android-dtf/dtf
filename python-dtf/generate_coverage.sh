@@ -31,9 +31,6 @@ coverage erase
 # Just incase, remove any .dtf* stuff.
 rm .dtfini .dtflog 2>/dev/null
 
-# Need this to test local install
-python setup.py develop
-
 # We need to make sure there is no .dtf, but for local testing,
 # I'd rather not have my stuff blown away. Move it, then move back.
 if [ -e ~/.dtf ]; then
@@ -58,6 +55,7 @@ coverage run -m py.test tests/integration
 # Only run these if we are Travis OR manually request.
 if [ "$TRAVIS" = "true"  -o "$DO_DEVICE_INTEGRATION" = "1" ]; then
     adb install $(ls included/dtfClient/*.apk)
+    adb shell am startservice -a com.dtf.action.name.INITIALIZE
     coverage run -m py.test tests/integration-device
 fi
 
@@ -72,9 +70,6 @@ coverage combine
 
 coverage report
 coverage html
-
-# Make sure to unset this
-python setup.py develop --uninstall
 
 if [ "$TRAVIS"  != "true" ]; then
     deactivate

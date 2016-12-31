@@ -43,7 +43,7 @@ Contributing & Building
 If you're interested in building your own instance of `dtf`, you'll need a couple of dependences:
 
     $ sudo apt-get install lintian python2.7 openjdk-8-jdk python-pip devscripts shellcheck
-    $ sudo pip install flake8 pylint pytest pytest-runner
+    $ sudo pip install flake8 pylint pytest pytest-runner wheel
 
 You can now build the project, which is currently limited to Debian '.deb' packages. To build `dtf`, run the following command from the project root:
 

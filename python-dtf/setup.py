@@ -66,11 +66,6 @@ setup(
     install_requires=['colored', 'lxml'],
     setup_requires=['pytest-runner'],
 
-    data_files=[
-        ('/etc/bash_completion.d',
-         ['data-files/dtf.bash']),
-    ],
-
     entry_points={
         'console_scripts': [
             'dtf = dtf.launcher:main',
