@@ -194,7 +194,7 @@ class DtfClient(object):
         sock.send(RESP_OK)
         log.d(TAG, "Transfer complete!")
 
-        return 0
+        return RESP_OK
 
     def __do_upload(self, local_file_name, remote_file_name):
 
@@ -270,7 +270,12 @@ class DtfClient(object):
 
         sock.send(CMD_EXECUTE)
 
-        resp_code = sock.recv(1)
+        try:
+            resp_code = sock.recv(1)
+        except OSError:
+            log.e(TAG, "Connection reset trying to read response!")
+            return (response, RESP_ERROR)
+
         if resp_code != RESP_OK:
             log.e(TAG, "Server rejected execute request!")
             return (response, resp_code)
