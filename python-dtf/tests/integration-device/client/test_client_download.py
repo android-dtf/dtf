@@ -13,37 +13,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Integration tests for the "client execute" utility"""
+"""Integration tests for the "client download" utility"""
 
 import dtf.testutils as testutils
+import dtf.core.utils as utils
 
-
-class ClientExecuteTests(testutils.BasicIntegrationDeviceTest):
+class ClientDownloadTests(testutils.BasicIntegrationDeviceTest):
 
     """Wraper for integration tests"""
 
-    def test_no_args(self):
+    def test_download(self):
 
-        """Run execute with no args"""
+        """Do an download"""
 
-        rtn = self.run_cmd("client execute")
-        assert(rtn.return_code == 255)
-        
-    def test_run_ls(self):
+        rtn = self.run_cmd("client download /system/etc/hosts")
 
-        """Run ls command"""
+        utils.delete_file("hosts")
 
-        rtn = self.run_cmd("client execute ls")
         assert(rtn.return_code == 0)
 
-    def test_not_installed(self):
+    def test_download_local_exists(self):
 
-        """Test but not installed"""
+        """Try to download a file that already exists"""
+
+        utils.touch("hosts")
+        rtn = self.run_cmd("client download /system/etc/hosts")
+
+        utils.delete_file("hosts")
+
+        assert(rtn.return_code == 255)
+
+    def test_download_path(self):
+
+        """Do a download to a path"""
+
+        rtn = self.run_cmd("client download --path ./hosts /system/etc/hosts")
+
+        utils.delete_file("hosts")
+
+        assert(rtn.return_code == 0)
+
+    def test_download_not_installed(self):
+
+        """Attempt to download with non-existent APK"""
 
         rtn = self.run_cmd("client remove")
         assert(rtn.return_code == 0)
- 
-        rtn = self.run_cmd("client execute ls")
+
+        rtn = self.run_cmd("client download /system/etc/hosts")
         assert(rtn.return_code == 255)
 
         rtn = self.run_cmd("client install")

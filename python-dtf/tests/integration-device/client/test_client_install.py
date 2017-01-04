@@ -13,38 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Integration tests for the "client execute" utility"""
+"""Integration tests for the "client install" utility"""
 
 import dtf.testutils as testutils
 
 
-class ClientExecuteTests(testutils.BasicIntegrationDeviceTest):
+class ClientInstallTests(testutils.BasicIntegrationDeviceTest):
 
     """Wraper for integration tests"""
 
-    def test_no_args(self):
+    def test_install(self):
 
-        """Run execute with no args"""
-
-        rtn = self.run_cmd("client execute")
-        assert(rtn.return_code == 255)
-        
-    def test_run_ls(self):
-
-        """Run ls command"""
-
-        rtn = self.run_cmd("client execute ls")
-        assert(rtn.return_code == 0)
-
-    def test_not_installed(self):
-
-        """Test but not installed"""
-
-        rtn = self.run_cmd("client remove")
-        assert(rtn.return_code == 0)
- 
-        rtn = self.run_cmd("client execute ls")
-        assert(rtn.return_code == 255)
+        """Do an install"""
 
         rtn = self.run_cmd("client install")
         assert(rtn.return_code == 0)
