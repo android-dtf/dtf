@@ -16,7 +16,6 @@
 """Built-in module for getting the status of a project"""
 
 from dtf.module import Module
-import dtf.properties as prop
 import dtf.adb as DtfAdb
 
 
@@ -31,8 +30,8 @@ class status(Module):  # pylint: disable=invalid-name
         """Main module executor"""
 
         found = False
-        serial = prop.get_prop('Info', 'serial')
 
+        serial = DtfAdb.get_mode_serial()
         devices = self.adb.get_devices()
 
         for device in devices:

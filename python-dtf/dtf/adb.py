@@ -30,7 +30,22 @@ STATUS_DEVICE = 'device'
 STATUS_OFFLINE = 'offline'
 STATUS_BOOTLOADER = 'bootloader'
 
+MODE_USB = 'usb'
+MODE_WIFI = 'wifi'
 
+
+def get_mode_serial():
+
+    """Return the serial dependent on the mode"""
+
+    if get_prop('Client', 'mode') == MODE_USB:
+        return get_prop("Info", "serial")
+    else:
+        return ("%s:%s" % (get_prop('Client', 'ip-addr'),
+                           get_prop('Client', 'port')))
+
+
+# pylint:disable=too-many-public-methods
 class DtfAdb(object):
 
     """Python wrapper class for `adb`"""
@@ -49,7 +64,8 @@ class DtfAdb(object):
         self.no_serial = no_serial
 
         if not self.no_serial:
-            self.serial = get_prop("Info", "serial")
+
+            self.serial = get_mode_serial()
 
         # Determine if we are the new version of adb
         self.pre_1_0_36 = bool(self.__is_old_adb_version())
@@ -269,3 +285,28 @@ class DtfAdb(object):
         """Start the adb daemon"""
 
         self.__run_command("start-server")
+
+    def usb(self):
+
+        """Restart device in USB mode"""
+
+        self.__run_command("usb")
+
+    def tcpip(self, port):
+
+        """Restart device in TCP/IP mode"""
+
+        self.__run_command("tcpip %s" % port)
+
+    def connect(self, ip_addr, port):
+
+        """Connect to IP/port"""
+
+        self.__run_command("connect %s:%s" % (ip_addr, port))
+
+        # Any news is bad news.
+        if self.get_output() != ['']:
+            return None
+
+        print "returning whatever"
+        return 0

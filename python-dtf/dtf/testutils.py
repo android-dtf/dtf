@@ -29,6 +29,7 @@ from subprocess import Popen, PIPE
 import dtf.constants as constants
 import dtf.core.utils as utils
 import dtf.globals as gbls
+import dtf.adb as adb
 
 DTF_CONFIG = utils.CONFIG_FILE_NAME
 DTF_LOG_FILE = utils.LOG_FILE_NAME
@@ -232,6 +233,8 @@ class BasicIntegrationDeviceTest(IntegrationTest):
         config.add_section('Info')
         config.set('Info', 'sdk', constants.API_MAX)
         config.set('Info', 'serial', 'emulator-5554')
+        config.add_section('Client')
+        config.set('Client', 'mode', adb.MODE_USB)
 
         return config
 

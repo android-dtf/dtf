@@ -23,7 +23,7 @@ import time
 
 from dtf.module import Module
 from dtf.properties import set_prop
-import dtf.adb as DtfAdb
+import dtf.adb as adb
 import dtf.core.utils as utils
 import dtf.logging as log
 import dtf.packages as pkg
@@ -260,8 +260,11 @@ class init(Module):  # pylint: disable=invalid-name
 
         set_prop('Info', 'serial', device_serial)
 
+        # Set the client section.
+        set_prop('Client', 'mode', adb.MODE_USB)
+
         # Since we have a serial now, lets create a new DtfAdb instance
-        self.adb = DtfAdb.DtfAdb()
+        self.adb = adb.DtfAdb()
 
         # Kernel
         self.adb.shell_command('cat /proc/version')
@@ -355,7 +358,7 @@ class init(Module):  # pylint: disable=invalid-name
         except KeyError:
             pass
 
-        self.adb = DtfAdb.DtfAdb(no_serial=True)
+        self.adb = adb.DtfAdb(no_serial=True)
 
         log.i(TAG, "Restarting adb...")
         self.adb.kill_server()
@@ -371,7 +374,7 @@ class init(Module):  # pylint: disable=invalid-name
             return -2
 
         # Is this device offline?
-        if init_device['status'] != DtfAdb.STATUS_DEVICE:
+        if init_device['status'] != adb.STATUS_DEVICE:
             log.e(TAG, "Cannot initialize offline/bootloader device!")
             log.e(TAG, "Try either: ")
             log.e(TAG, "    1. Run: adb kill-server && dtf init")

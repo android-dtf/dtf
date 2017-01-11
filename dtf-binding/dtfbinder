@@ -16,9 +16,28 @@
 
 # Central point for dtf bindings
 
+# Helpers
+
+
+
+# This determines the real serial based on the current mode
+get_connection_serial ()
+{
+    mode=$(dtf prop get Client mode)
+
+    if [ "$mode" = "usb" ]; then
+        serial=$(dtf prop get Info serial)
+        echo "$serial"
+    elif [ "$mode" = "wifi" ]; then
+        ip_addr=$(dtf prop get Client ip-addr)
+        port=$(dtf prop get Client port)
+        echo "${ip_addr}:${port}"
+    fi
+}
+
 launch_shell()
 {
-    ANDROID_SERIAL=$(dtf prop get Info serial) adb shell "$@"
+    ANDROID_SERIAL=$(get_connection_serial) adb shell "$@"
 
     return 0
 }
@@ -26,7 +45,7 @@ launch_shell()
 launch_busybox()
 {
     busybox=$(dtf prop get Info busybox)
-    serial=$(dtf prop get Info serial)
+    serial=$(get_connection_serial)
 
     adb -s "${serial}" shell run-as com.dtf.client "${busybox}" "$@"
 }

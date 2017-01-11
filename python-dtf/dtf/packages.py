@@ -25,6 +25,7 @@ import subprocess
 import traceback
 from contextlib import contextmanager
 
+import dtf.adb as adb
 import dtf.core.packagemanager as pm
 import dtf.core.utils as utils
 import dtf.logging as log
@@ -160,7 +161,7 @@ def __launch_bash_module(module_path, args):
     os.chdir(prop.TOP)
 
     # We want the serial to be already set
-    serial = prop.get_prop('Info', 'serial')
+    serial = adb.get_mode_serial()
     new_env['ANDROID_SERIAL'] = serial
 
     # Global exception handling

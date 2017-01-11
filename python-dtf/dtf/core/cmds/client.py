@@ -21,10 +21,11 @@ from argparse import ArgumentParser
 
 import dtf.logging as log
 import dtf.properties as prop
+import dtf.adb as adb
+
 from dtf.module import Module
 from dtf.constants import DTF_CLIENT
 from dtf.globals import get_generic_global
-from dtf.adb import DtfAdb
 from dtf.client import (DtfClient, RESP_OK, RESP_NO_READ, RESP_ERROR,
                         RESP_NO_WRITE, RESP_EXISTS, RESP_NO_EXIST,
                         ERR_SOCK)
@@ -36,7 +37,7 @@ class client(Module):  # pylint: disable=invalid-name
 
     """Module class for dtf client"""
 
-    adb = DtfAdb()
+    adb = adb.DtfAdb()
     client = DtfClient()
 
     @classmethod
@@ -53,6 +54,7 @@ class client(Module):  # pylint: disable=invalid-name
         print "    remove     Uninstall the dtf client."
         print "    restart    Restart dtfClient's socket service."
         print "    upload     Upload file using dtfClient."
+        print "    mode       Configure connection mode."
         print ""
 
         return 0
@@ -272,6 +274,68 @@ class client(Module):  # pylint: disable=invalid-name
                   % resp_code)
             return -1
 
+    def do_mode(self, args):
+
+        """Configure the debugging mode to use"""
+
+        if len(args) < 1:
+            current_mode = prop.get_prop('Client', 'mode')
+            print "Current Mode: %s" % current_mode
+            print ""
+            print "Usage:"
+            print "dtf client mode [usb|wifi <ip:port>]"
+            return -1
+
+        mode = args.pop(0)
+
+        if mode not in [adb.MODE_USB, adb.MODE_WIFI]:
+            log.e(self.name, "Invalid mode!")
+            return -2
+
+        self.adb.wait_for_device()
+
+        # Wifi mode requires IP:Port
+        if mode == adb.MODE_WIFI:
+
+            if len(args) != 1:
+                log.e(self.name, "Wifi mode requires IP address:port!")
+                return -3
+
+            try:
+                ip_address, port = args[0].split(":")
+            except ValueError:
+                log.e(self.name, "Invalid IP address:port!")
+                return -4
+
+            log.i(self.name, "Setting Wifi mode to %s:%s..."
+                  % (ip_address, port))
+
+            # Reconfigure the client
+            try:
+                self.client.set_to_wifi(ip_address, port)
+            except IOError:
+                log.e(self.name, "Unable to set to wifi mode!")
+                log.e(self.name, "Please reconnect your USB device.")
+                return -5
+
+            # Set the properties
+            prop.set_prop('Client', 'mode', adb.MODE_WIFI)
+            prop.set_prop('Client', 'ip-addr', ip_address)
+            prop.set_prop('Client', 'port', port)
+
+        # USB Takes no arguments
+        elif mode == adb.MODE_USB:
+
+            log.i(self.name, "Setting to USB mode...")
+
+            # Reconfigure the client
+            self.client.set_to_usb()
+
+            # Set the properties
+            prop.set_prop('Client', 'mode', adb.MODE_USB)
+
+        return 0
+
     def execute(self, args):
 
         """Main module executor"""
@@ -305,6 +369,9 @@ class client(Module):  # pylint: disable=invalid-name
 
         elif sub_cmd == 'execute':
             rtn = self.do_execute(args)
+
+        elif sub_cmd == 'mode':
+            rtn = self.do_mode(args)
 
         else:
             print "Sub-command '%s' not found!" % sub_cmd

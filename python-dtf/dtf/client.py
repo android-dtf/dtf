@@ -150,7 +150,12 @@ class DtfClient(object):
 
         sock.send(CMD_DOWNLOAD)
 
-        resp_code = sock.recv(1)
+        try:
+            resp_code = sock.recv(1)
+        except OSError:
+            log.e(TAG, "Connection reset trying to read response!")
+            return RESP_ERROR
+
         if resp_code != RESP_OK:
             log.e(TAG, "Server rejected download request!")
             return resp_code
@@ -196,6 +201,7 @@ class DtfClient(object):
 
         return RESP_OK
 
+    # pylint:disable=too-many-return-statements
     def __do_upload(self, local_file_name, remote_file_name):
 
         """Do file upload"""
@@ -213,7 +219,12 @@ class DtfClient(object):
 
         sock.send(CMD_UPLOAD)
 
-        resp_code = sock.recv(1)
+        try:
+            resp_code = sock.recv(1)
+        except OSError:
+            log.e(TAG, "Connection reset trying to read response!")
+            return RESP_ERROR
+
         if resp_code != RESP_OK:
             log.e(TAG, "Server rejected upload request!")
             return resp_code
@@ -353,4 +364,23 @@ class DtfClient(object):
         self.__disable_forward()
 
         return (output, resp_code)
+
+    def set_to_usb(self):
+
+        """Set current connection to USB mode"""
+
+        self.adb.usb()
+
+    def set_to_wifi(self, ip_addr, port):
+
+        """Set current connection to TCP and connect"""
+
+        if ip_addr is None or port is None:
+            log.e(TAG, "IP and port cannot be none!")
+            return None
+
+        self.adb.tcpip(port)
+
+        if self.adb.connect(ip_addr, port) is None:
+            raise IOError
     # End public API
