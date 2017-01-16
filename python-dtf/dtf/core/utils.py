@@ -160,3 +160,22 @@ def delete_tree(directory_name):
         pass
 
     return 0
+
+
+def file_in_zip(zip_f, file_name):
+
+    """Determine if a file exists in a ZIP"""
+
+    try:
+        zip_f.read(file_name)
+        return True
+    except KeyError:
+        return False
+
+
+def directory_in_zip(zip_f, directory_name):
+
+    """Determine if a directory exists in a ZIP"""
+
+    return any(x.startswith("%s/" % directory_name.rstrip("/"))
+               for x in zip_f.namelist())

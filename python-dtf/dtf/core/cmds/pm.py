@@ -17,15 +17,14 @@
 
 import os
 import os.path
-import tempfile
 import zipfile
 from argparse import ArgumentParser
-
-from lxml import etree
 
 from dtf.module import Module
 import dtf.globals
 import dtf.logging as log
+import dtf.core.item
+import dtf.core.manifestparser as mp
 import dtf.core.packagemanager as packagemanager
 
 TAG = "pm"
@@ -37,10 +36,10 @@ DTF_MODULES_DIR = dtf.globals.DTF_MODULES_DIR
 DTF_PACKAGES_DIR = dtf.globals.DTF_PACKAGES_DIR
 DTF_DB = dtf.globals.DTF_DB
 
-TYPE_BINARY = packagemanager.TYPE_BINARY
-TYPE_LIBRARY = packagemanager.TYPE_LIBRARY
-TYPE_MODULE = packagemanager.TYPE_MODULE
-TYPE_PACKAGE = packagemanager.TYPE_PACKAGE
+TYPE_BINARY = dtf.core.item.TYPE_BINARY
+TYPE_LIBRARY = dtf.core.item.TYPE_LIBRARY
+TYPE_MODULE = dtf.core.item.TYPE_MODULE
+TYPE_PACKAGE = dtf.core.item.TYPE_PACKAGE
 
 # No log to file.
 log.LOG_LEVEL_FILE = 0
@@ -204,32 +203,12 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             log.e(TAG, "Nothing to export!")
             return -2
 
-        output_zip = zipfile.ZipFile(output_name, 'w',
-                                     compression=zipfile.ZIP_DEFLATED)
+        export_zip = mp.ExportZip(output_name)
 
-        # Generate the XML
-        export_manifest = tempfile.NamedTemporaryFile()
+        for item in export_items:
+            export_zip.add_item(item)
 
-        rtn = self.generate_export_xml(export_items, export_manifest)
-        if rtn != 0:
-            log.e(TAG, "Unable to generate export manifest!")
-            output_zip.close()
-            return rtn
-
-        # Add the manifest
-        output_zip.write(export_manifest.name, packagemanager.MANIFEST_NAME)
-
-        export_manifest.close()
-
-        # Finally, add the content
-        rtn = self.add_export_content(export_items, output_zip)
-        if rtn != 0:
-            log.e(TAG, "Unable to add content to the export ZIP!")
-            output_zip.close()
-            return rtn
-
-        output_zip.close()
-
+        export_zip.finalize()
         log.i(TAG, "Export completed!")
 
         return rtn
@@ -328,213 +307,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             return "v%s.%s" % (major_version, minor_version)
 
     @classmethod
-    def add_export_content(cls, export_items, export_zip):
-
-        """Add content to our ZIP file"""
-
-        for item in export_items:
-            if item.type == TYPE_LIBRARY or item.type == TYPE_PACKAGE:
-
-                for root, dirs, files in os.walk(item.install_name):
-
-                    for dir_name in dirs:
-                        file_path = os.path.join(root, dir_name)
-                        rel_path = os.path.relpath(
-                            os.path.join(root, dir_name),
-                            item.install_name)
-                        zip_path = os.path.join(item.local_name, rel_path)
-
-                        log.d(TAG, "Adding dir '%s' as '%s'"
-                              % (file_path, zip_path))
-
-                        export_zip.write(file_path, zip_path)
-
-                    for file_name in files:
-                        file_path = os.path.join(root, file_name)
-                        rel_path = os.path.relpath(
-                            os.path.join(root, file_name), item.install_name)
-                        zip_path = os.path.join(item.local_name, rel_path)
-
-                        log.d(TAG, "Adding '%s' as '%s'"
-                              % (file_path, zip_path))
-
-                        export_zip.write(file_path, zip_path)
-            else:
-                log.d(TAG, "Adding '%s' as '%s'"
-                      % (item.install_name, item.local_name))
-
-                export_zip.write(item.install_name, item.local_name)
-
-        return 0
-
-    def generate_export_xml(self, export_items, manifest_f):
-
-        """Create and populate manifest"""
-
-        root = etree.Element('Items')
-
-        # Add binaries
-        self.export_binaries(root, export_items)
-
-        # Add libraries
-        self.export_libraries(root, export_items)
-
-        # Add modules
-        self.export_modules(root, export_items)
-
-        # Add packages
-        self.export_packages(root, export_items)
-
-        # Write it all out
-        export_tree = etree.ElementTree(root)
-        export_tree.write(manifest_f, pretty_print=True)
-        manifest_f.flush()
-
-        return 0
-
-    @classmethod
-    def export_binaries(cls, etree_root, export_items):
-
-        """Export all binaries"""
-
-        # Add binaries
-        bin_items = [item for item in export_items
-                     if item.type == TYPE_BINARY]
-
-        for item in bin_items:
-
-            item_xml = etree.SubElement(etree_root, 'Item')
-            item_xml.attrib['type'] = TYPE_BINARY
-            item_xml.attrib['name'] = item.name
-
-            if item.major_version is None or item.minor_version is None:
-                log.w(TAG, "Skipping version for %s" % item.name)
-            else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
-
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
-
-            if item.author is None:
-                log.w(TAG, "Skipping author for %s" % item.name)
-            else:
-                item_xml.attrib['author'] = item.author
-
-            item_xml.attrib['localName'] = item.local_name
-
-        return
-
-    @classmethod
-    def export_libraries(cls, etree_root, export_items):
-
-        """Export all libraries"""
-
-        lib_items = [item for item in export_items
-                     if item.type == TYPE_LIBRARY]
-
-        for item in lib_items:
-
-            item_xml = etree.SubElement(etree_root, 'Item')
-            item_xml.attrib['type'] = TYPE_LIBRARY
-            item_xml.attrib['name'] = item.name
-
-            if item.major_version is None or item.minor_version is None:
-                log.w(TAG, "Skipping version for %s" % item.name)
-            else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
-
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
-
-            if item.author is None:
-                log.w(TAG, "Skipping author for %s" % item.name)
-            else:
-                item_xml.attrib['author'] = item.author
-
-            item_xml.attrib['localName'] = item.local_name
-
-        return
-
-    @classmethod
-    def export_modules(cls, etree_root, export_items):
-
-        """Export all modules"""
-
-        mod_items = [item for item in export_items
-                     if item.type == TYPE_MODULE]
-
-        for item in mod_items:
-
-            item_xml = etree.SubElement(etree_root, 'Item')
-            item_xml.attrib['type'] = TYPE_MODULE
-            item_xml.attrib['name'] = item.name
-
-            if item.major_version is None or item.minor_version is None:
-                log.w(TAG, "Skipping version for %s" % item.name)
-            else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
-
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
-
-            if item.about is None:
-                log.w(TAG, "Skipping about for %s" % item.name)
-            else:
-                item_xml.attrib['about'] = item.about
-
-            if item.author is None:
-                log.w(TAG, "Skipping author for %s" % item.name)
-            else:
-                item_xml.attrib['author'] = item.author
-
-            item_xml.attrib['localName'] = item.local_name
-
-        return
-
-    @classmethod
-    def export_packages(cls, etree_root, export_items):
-
-        """Export all packages"""
-
-        pkg_items = [item for item in export_items
-                     if item.type == TYPE_PACKAGE]
-
-        for item in pkg_items:
-
-            item_xml = etree.SubElement(etree_root, 'Item')
-            item_xml.attrib['type'] = TYPE_PACKAGE
-            item_xml.attrib['name'] = item.name
-
-            if item.major_version is None or item.minor_version is None:
-                log.w(TAG, "Skipping version for %s" % item.name)
-            else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
-
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
-
-            if item.author is None:
-                log.w(TAG, "Skipping author for %s" % item.name)
-            else:
-                item_xml.attrib['author'] = item.author
-
-            item_xml.attrib['localName'] = item.local_name
-
-        return
-
-    @classmethod
     def generate_export_items(cls):
 
         """Create a list of items"""
@@ -544,29 +316,29 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         # Get all binaries
         for binary in packagemanager.get_binaries():
 
-            binary.local_name = "binaries/%s" % binary.name
-            binary.install_name = "%s/%s" % (DTF_BINARIES_DIR, binary.name)
+            binary.install_name = binary.name
+            binary.local_name = "%s/%s" % (DTF_BINARIES_DIR, binary.name)
             items.append(binary)
 
         # Get all libraries
         for library in packagemanager.get_libraries():
 
-            library.local_name = "libraries/%s" % library.name
-            library.install_name = "%s/%s" % (DTF_LIBRARIES_DIR, library.name)
+            library.install_name = library.name
+            library.local_name = "%s/%s" % (DTF_LIBRARIES_DIR, library.name)
             items.append(library)
 
         # Get all modules
         for module in packagemanager.get_modules():
 
-            module.local_name = "modules/%s" % module.name
-            module.install_name = "%s/%s" % (DTF_MODULES_DIR, module.name)
+            module.install_name = module.name
+            module.local_name = "%s/%s" % (DTF_MODULES_DIR, module.name)
             items.append(module)
 
         # Get all packages
         for package in packagemanager.get_packages():
 
-            package.local_name = "packages/%s" % package.name
-            package.install_name = "%s/%s" % (DTF_PACKAGES_DIR, package.name)
+            package.install_name = package.name
+            package.local_name = "%s/%s" % (DTF_PACKAGES_DIR, package.name)
             items.append(package)
 
         return items
@@ -737,7 +509,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         """Parse args, return Item"""
 
-        item = packagemanager.Item()
+        item = dtf.core.item.Item()
 
         if args.single_name is None:
             log.e(TAG, "No '--name' specified in single item mode. Exiting.")
@@ -745,13 +517,13 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         item.name = args.single_name
 
-        if args.single_type not in packagemanager.VALID_TYPES:
+        if args.single_type not in dtf.core.item.VALID_TYPES:
             log.e(TAG, "Invalid type passed to single. Exiting.")
             return None
 
         item.type = args.single_type
 
-        if args.single_health not in packagemanager.VALID_HEALTH_VALUES:
+        if args.single_health not in dtf.core.item.VALID_HEALTH_VALUES:
             log.e(TAG, "Invalid health specified. Exiting.")
             return None
 

@@ -24,6 +24,7 @@ from argparse import ArgumentParser
 
 import dtf.core.utils as utils
 import dtf.core.packagemanager as pm
+import dtf.core.item
 import dtf.logging as log
 from dtf.globals import DTF_DB, DTF_LIBRARIES_DIR
 
@@ -197,7 +198,7 @@ def do_health_checks(item, strict):
         log.w(TAG, "[WARN] Health is none, this should be set!")
         if strict:
             return -1
-    elif health not in pm.VALID_HEALTH_VALUES:
+    elif health not in dtf.core.item.VALID_HEALTH_VALUES:
         log.e(TAG, "[FAIL] invalid health specified!")
         return -1
     elif health in ['broken', 'deprecated']:

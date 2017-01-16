@@ -21,34 +21,16 @@ import os.path
 import re
 import sqlite3
 from shutil import copy, rmtree
-from tempfile import NamedTemporaryFile
-from zipfile import ZipFile
-
-from lxml import etree
 
 import dtf.globals
 import dtf.logging as log
+import dtf.core.item
+import dtf.core.manifestparser as mp
 import dtf.core.utils as utils
-
-# Eventually this will be changed
-# pylint: disable=too-many-instance-attributes
 
 TAG = "dtf_package_manager"
 
 MANIFEST_NAME = "manifest.xml"
-
-VALID_TYPES = ['binary', 'module', 'library', 'package']
-VALID_HEALTH_VALUES = ['stable',
-                       'working',
-                       'beta',
-                       'deprecated',
-                       'broken',
-                       None]
-
-TYPE_MODULE = "module"
-TYPE_LIBRARY = "library"
-TYPE_BINARY = "binary"
-TYPE_PACKAGE = "package"
 
 DTF_DATA_DIR = dtf.globals.DTF_DATA_DIR
 DTF_BINARIES_DIR = dtf.globals.DTF_BINARIES_DIR
@@ -58,148 +40,7 @@ DTF_PACKAGES_DIR = dtf.globals.DTF_PACKAGES_DIR
 DTF_DB = dtf.globals.DTF_DB
 
 
-class Item(object):  # pylint: disable=too-few-public-methods
-
-    """Class for working with content"""
-
-    install_name = None
-    local_name = None
-    name = None
-    type = type
-    author = None
-    about = None
-    major_version = None
-    minor_version = None
-    health = None
-
-    def __init__(self):
-
-        """Initialize new object"""
-
-        self.install_name = None
-        self.local_name = None
-        self.name = None
-        self.type = None
-        self.author = None
-        self.about = None
-        self.major_version = None
-        self.minor_version = None
-        self.health = None
-
-    def make_version(self):
-
-        """Create version string"""
-
-        if self.major_version is None and self.minor_version is None:
-            return None
-        else:
-            if self.major_version is None:
-                mjr = "0"
-            else:
-                mjr = self.major_version
-
-            if self.minor_version is None:
-                mnr = "0"
-            else:
-                mnr = self.minor_version
-
-            return "%s.%s" % (mjr, mnr)
-
-    def __repr__(self):
-
-        """Tostrig for item"""
-
-        temp = "Name: %s (%s)\n" % (self.name, self.type)
-        if self.type == TYPE_MODULE:
-            temp += "  About: %s\n" % self.about
-        temp += "  Installs as: %s\n" % self.install_name
-        temp += "  Author: %s\n" % self.author
-        temp += "  Version: %s\n" % self.make_version()
-        temp += "  Health: %s" % self.health
-        return temp
-
-
 # Helpers ###################################################
-def file_in_zip(zip_f, file_name):
-
-    """Determine if a file exists in a ZIP"""
-
-    try:
-        zip_f.read(file_name)
-        return True
-    except KeyError:
-        return False
-
-
-def directory_in_zip(zip_f, directory_name):
-
-    """Determine if a directory exists in a ZIP"""
-
-    return any(x.startswith("%s/" % directory_name.rstrip("/"))
-               for x in zip_f.namelist())
-
-
-def copy_zip_file(zip_f, local_name, install_name, install_dir):
-
-    """Copy file in ZIP to directory"""
-
-    install_path = install_dir + install_name
-
-    log.d(TAG, "Copying '%s' to '%s'..." % (local_name, install_path))
-    temp_f = NamedTemporaryFile(mode='w', delete=False)
-
-    temp_f.write(zip_f.read(local_name))
-    temp_f.flush()
-
-    copy(temp_f.name, install_path)
-
-    os.chmod(install_path, 0755)
-
-    temp_f.close()
-
-    os.remove(temp_f.name)
-
-    log.d(TAG, "Copy complete!")
-
-    return 0
-
-
-def copy_zip_tree(zip_f, local_name, install_name, install_dir):
-
-    """Copy directory in ZIP to directory"""
-
-    install_path = install_dir + install_name + '/'
-
-    # We need to remove the first one
-    rmtree(install_path, ignore_errors=True)
-
-    # Make the new directory.
-    os.makedirs(install_path)
-
-    for file_f in zip_f.namelist():
-        # Do everything in the [local_name] dir, but not the root.
-        if file_f.startswith(local_name) and file_f != local_name+'/':
-
-            # First, we need to remove the first element.
-            new_f = file_f.replace(local_name+'/', '', 1)
-
-            # If it's a directory, make it.
-            if file_f.endswith('/'):
-                log.d(TAG, "Making dir %s" % install_path + new_f)
-                os.makedirs(install_path + new_f)
-
-            # Otherwise, we need to unzip to that new path.
-            else:
-                head, tail = os.path.split(new_f)
-                log.d(TAG, "extracting %s to %s"
-                      % (file_f, install_path + head))
-                copy_zip_file(zip_f, file_f, tail, install_path + head + '/')
-
-    log.d(TAG, "Copy complete!")
-
-    return 0
-
-
 def copy_file(local_name, install_name, install_dir):
 
     """Copy a file"""
@@ -246,16 +87,6 @@ def copy_tree(local_name, install_name, install_dir):
     return 0
 
 
-def get_xml_attrib(element, attrib, default=None):
-
-    """Attempt to retrieve XML attribute"""
-
-    try:
-        return element.attrib[attrib]
-    except KeyError:
-        return default
-
-
 def get_dict_attrib(in_dict, key, default=None):
 
     """Attempt to retrieve attribute from dictionary"""
@@ -272,13 +103,13 @@ def get_item_attrib(item, attrib):
 
     item_type = item.type
 
-    if item_type == TYPE_MODULE:
+    if item_type == dtf.core.item.TYPE_MODULE:
         table = "modules"
-    elif item_type == TYPE_LIBRARY:
+    elif item_type == dtf.core.item.TYPE_LIBRARY:
         table = "libraries"
-    elif item_type == TYPE_BINARY:
+    elif item_type == dtf.core.item.TYPE_BINARY:
         table = "binaries"
-    elif item_type == TYPE_PACKAGE:
+    elif item_type == dtf.core.item.TYPE_PACKAGE:
         table = "packages"
     else:
         log.e(TAG, "Unknown type '%s' in getItem Attribute. Returning"
@@ -301,9 +132,8 @@ def get_item_attrib(item, attrib):
     except TypeError:
         return None
 
+
 # End helpers ###############################################
-
-
 def is_bash_module(module_path):
 
     """Check shebang to determine bash"""
@@ -351,8 +181,8 @@ def parse_python_module(module_path, name):
         log.e(TAG, "Unable to find class '%s' in module!" % name)
         return None
 
-    item = Item()
-    item.type = TYPE_MODULE
+    item = dtf.core.item.Item()
+    item.type = dtf.core.item.TYPE_MODULE
     item.name = name
     item.local_name = module_path
     item.install_name = name
@@ -360,7 +190,7 @@ def parse_python_module(module_path, name):
     item.about = mod_inst.about
 
     health = mod_inst.health
-    if health not in VALID_HEALTH_VALUES:
+    if health not in dtf.core.item.VALID_HEALTH_VALUES:
         log.e(TAG, "Invalid health specified. Exiting.")
         return None
 
@@ -406,8 +236,8 @@ def parse_bash_module(module_path, name):
 
         attributes[attribute] = value
 
-    item = Item()
-    item.type = TYPE_MODULE
+    item = dtf.core.item.Item()
+    item.type = dtf.core.item.TYPE_MODULE
     item.name = name
     item.local_name = module_path
     item.install_name = name
@@ -415,7 +245,7 @@ def parse_bash_module(module_path, name):
     item.about = get_dict_attrib(attributes, "About")
 
     health = get_dict_attrib(attributes, "Health")
-    if health not in VALID_HEALTH_VALUES:
+    if health not in dtf.core.item.VALID_HEALTH_VALUES:
         log.e(TAG, "Invalid health specified. Exiting.")
         return None
 
@@ -467,12 +297,12 @@ def get_binaries(name_only=False):
 
         while True:
 
-            item = Item()
+            item = dtf.core.item.Item()
             line = cur.fetchone()
             if line is None:
                 break
 
-            item.type = TYPE_BINARY
+            item.type = dtf.core.item.TYPE_BINARY
             item.name = line[0]
             item.major_version = line[1]
             item.minor_version = line[2]
@@ -515,12 +345,12 @@ def get_libraries(name_only=False):
 
         while True:
 
-            item = Item()
+            item = dtf.core.item.Item()
             line = cur.fetchone()
             if line is None:
                 break
 
-            item.type = TYPE_LIBRARY
+            item.type = dtf.core.item.TYPE_LIBRARY
             item.name = line[0]
             item.major_version = line[1]
             item.minor_version = line[2]
@@ -563,12 +393,12 @@ def get_modules(name_only=False):
 
         while True:
 
-            item = Item()
+            item = dtf.core.item.Item()
             line = cur.fetchone()
             if line is None:
                 break
 
-            item.type = TYPE_MODULE
+            item.type = dtf.core.item.TYPE_MODULE
             item.name = line[0]
             item.major_version = line[1]
             item.minor_version = line[2]
@@ -611,12 +441,12 @@ def get_packages(name_only=False):
 
         while True:
 
-            item = Item()
+            item = dtf.core.item.Item()
             line = cur.fetchone()
             if line is None:
                 break
 
-            item.type = TYPE_PACKAGE
+            item.type = dtf.core.item.TYPE_PACKAGE
             item.name = line[0]
             item.major_version = line[1]
             item.minor_version = line[2]
@@ -633,28 +463,28 @@ def is_binary_installed(name):
 
     """Determine if a binary is installed"""
 
-    return __item_installed(name, TYPE_BINARY)
+    return __item_installed(name, dtf.core.item.TYPE_BINARY)
 
 
 def is_library_installed(name):
 
     """Determine if a library is installed"""
 
-    return __item_installed(name, TYPE_LIBRARY)
+    return __item_installed(name, dtf.core.item.TYPE_LIBRARY)
 
 
 def is_module_installed(name):
 
     """Determine if a module is installed"""
 
-    return __item_installed(name, TYPE_MODULE)
+    return __item_installed(name, dtf.core.item.TYPE_MODULE)
 
 
 def is_package_installed(name):
 
     """Determine if a package is installed"""
 
-    return __item_installed(name, TYPE_PACKAGE)
+    return __item_installed(name, dtf.core.item.TYPE_PACKAGE)
 
 
 def find_local_module(root, name):
@@ -710,7 +540,7 @@ def __load_item(item):
 
     """Create new fully-loaded Item"""
 
-    itm = Item()
+    itm = dtf.core.item.Item()
 
     itm.name = item.name
     itm.type = item.type
@@ -730,13 +560,13 @@ def __item_installed(name, item_type):
 
     """Generic test for installed content"""
 
-    if item_type == TYPE_MODULE:
+    if item_type == dtf.core.item.TYPE_MODULE:
         table = "modules"
-    elif item_type == TYPE_LIBRARY:
+    elif item_type == dtf.core.item.TYPE_LIBRARY:
         table = "libraries"
-    elif item_type == TYPE_BINARY:
+    elif item_type == dtf.core.item.TYPE_BINARY:
         table = "binaries"
-    elif item_type == TYPE_PACKAGE:
+    elif item_type == dtf.core.item.TYPE_PACKAGE:
         table = "packages"
     else:
         raise KeyError
@@ -753,62 +583,6 @@ def __item_installed(name, item_type):
     cur.execute(sql)
 
     return bool(cur.fetchone() is not None)
-
-
-def __process_zip_items(zip_file, items, force):
-
-    """Process items in a ZIP"""
-
-    for item in items:
-
-        item_type = get_xml_attrib(item, "type")
-        if item_type is None or item_type not in VALID_TYPES:
-            log.e(TAG, "Found tag with no 'type' attribute, skipping!")
-            continue
-
-        if item_type not in VALID_TYPES:
-            log.e(TAG, "Illegal 'type' attribute found, skipping!")
-            continue
-
-        name = get_xml_attrib(item, "name")
-        if name is None:
-            log.e(TAG, "Found NULL named moduled, skipping!")
-            continue
-
-        # Ok, lets start.  We can generically parse.
-        local_item = Item()
-
-        local_item.type = item_type
-        local_item.major_version = get_xml_attrib(item, "majorVersion")
-        local_item.minor_version = get_xml_attrib(item, "minorVersion")
-        local_item.health = get_xml_attrib(item, "health")
-        local_item.author = get_xml_attrib(item, "author")
-        local_item.about = get_xml_attrib(item, "about")
-
-        install_name = get_xml_attrib(item, "installName")
-        local_name = get_xml_attrib(item, "localName")
-
-        if install_name is None:
-            log.d(TAG, "install_name is null, using name...")
-            install_name = name
-        if local_name is None:
-            log.d(TAG, "local_name is null, using name...")
-            local_name = name
-
-        local_item.name = name
-        local_item.install_name = install_name
-        local_item.local_name = local_name
-
-        if item_type == TYPE_BINARY:
-            rtn = __install_zip_binary(zip_file, local_item, force)
-        elif item_type == TYPE_LIBRARY:
-            rtn = __install_zip_library(zip_file, local_item, force)
-        elif item_type == TYPE_MODULE:
-            rtn = __install_zip_module(zip_file, local_item, force)
-        elif item_type == TYPE_PACKAGE:
-            rtn = __install_zip_package(zip_file, local_item, force)
-
-    return rtn
 
 
 def __do_single_binary_install(item):
@@ -903,109 +677,83 @@ def __do_single_package_install(item):
     return 0
 
 
-def __do_zip_binary_install(zip_file, item):
+def __do_zip_binary_install(export_zip, item):
 
     """Perform the ZIP binary installation"""
 
-    name = item.name
-    local_name = item.local_name
-    install_name = item.install_name
-
     # First copy the new file.
-    if copy_zip_file(zip_file, local_name,
-                     install_name, DTF_BINARIES_DIR) != 0:
-        log.e(TAG, "Error copying binary '%s'" % (local_name))
+    if export_zip.install_item_to(item, DTF_BINARIES_DIR) != 0:
+        log.e(TAG, "Error copying binary '%s'" % item.local_name)
         return -1
 
     # Update database
     if __update_binary(item) == 0:
         log.e(TAG, "Failed to update binary '%s' details in database."
-              % (name))
+              % (item.name))
         return -2
 
     return 0
 
 
-def __do_zip_library_install(zip_file, item):
+def __do_zip_library_install(export_zip, item):
 
     """Perform the ZIP library installation"""
 
-    name = item.name
-    local_name = item.local_name
-    install_name = item.install_name
-
     # First copy the new file.
-    if copy_zip_tree(zip_file, local_name,
-                     install_name, DTF_LIBRARIES_DIR) != 0:
-        log.e(TAG, "Error copying library '%s'" % (local_name))
+    if export_zip.install_item_to(item, DTF_LIBRARIES_DIR) != 0:
+        log.e(TAG, "Error copying library '%s'" % item.local_name)
         return -1
 
     # Update database
     if __update_library(item) == 0:
         log.e(TAG, "Failed to update library '%s' details in database."
-              % (name))
+              % (item.name))
         return -2
 
     return 0
 
 
-def __do_zip_module_install(zip_file, item):
+def __do_zip_module_install(export_zip, item):
 
     """Perform the ZIP module installation"""
 
-    name = item.name
-    local_name = item.local_name
-    install_name = item.install_name
-
     # First copy the new file.
-    if copy_zip_file(zip_file, local_name,
-                     install_name, DTF_MODULES_DIR) != 0:
-        log.e(TAG, "Error copying module '%s'" % (local_name))
+    if export_zip.install_item_to(item, DTF_MODULES_DIR) != 0:
+        log.e(TAG, "Error copying module '%s'" % item.local_name)
         return -1
 
     # Update database
     if __update_module(item) == 0:
         log.e(TAG, "Failed to update module '%s' details in database."
-              % (name))
+              % (item.name))
         return -2
 
     return 0
 
 
-def __do_zip_package_install(zip_file, item):
+def __do_zip_package_install(export_zip, item):
 
     """Perform the ZIP package installation"""
 
-    name = item.name
-    local_name = item.local_name
-    install_name = item.install_name
-
     # First copy the new file.
-    if copy_zip_tree(zip_file, local_name,
-                     install_name, DTF_PACKAGES_DIR) != 0:
-        log.e(TAG, "Error copying package '%s'" % (local_name))
+    if export_zip.install_item_to(item, DTF_PACKAGES_DIR) != 0:
+        log.e(TAG, "Error copying package '%s'" % item.local_name)
         return -1
 
     # Update database
     if __update_package(item) == 0:
         log.e(TAG, "Failed to update package '%s' details in database."
-              % (name))
+              % (item.name))
         return -2
 
     return 0
 
 
-def __install_zip_binary(zip_file, item, force_mode):
+def __install_zip_binary(export_zip, item, force_mode):
 
     """Install a binary from a ZIP"""
 
     rtn = 0
-
-    # Does the resource even exist?
-    if not file_in_zip(zip_file, item.local_name):
-        log.w(TAG, "'%s' defined, but local file '%s' does not exist!"
-              % (item.name, item.local_name))
-        return -1
 
     try:
         # First check if we know about this binary
@@ -1020,16 +768,16 @@ def __install_zip_binary(zip_file, item, force_mode):
 
                 if __prompt_install(item, installed_item):
                     log.d(TAG, "User would like to install")
-                    rtn = __do_zip_binary_install(zip_file, item)
+                    rtn = __do_zip_binary_install(export_zip, item)
                 else:
                     log.w(TAG, "Binary installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_binary_install(zip_file, item)
+                rtn = __do_zip_binary_install(export_zip, item)
         else:
             log.d(TAG, "This is a new binary, installing.")
-            rtn = __do_zip_binary_install(zip_file, item)
+            rtn = __do_zip_binary_install(export_zip, item)
 
     except KeyError:
         log.w(TAG, "Error checking if the binary was installed. Skipping")
@@ -1038,17 +786,11 @@ def __install_zip_binary(zip_file, item, force_mode):
     return rtn
 
 
-def __install_zip_library(zip_file, item, force_mode):
+def __install_zip_library(export_zip, item, force_mode):
 
     """Install a library from a ZIP"""
 
     rtn = 0
-
-    # Does the resource even exist?
-    if not directory_in_zip(zip_file, item.local_name):
-        log.w(TAG, "'%s' defined, but directory '%s' does not exist!"
-              % (item.name, item.local_name))
-        return -1
 
     try:
         # First check if we know about this library
@@ -1063,16 +805,16 @@ def __install_zip_library(zip_file, item, force_mode):
 
                 if __prompt_install(item, installed_item):
                     log.d(TAG, "User would like to install")
-                    rtn = __do_zip_library_install(zip_file, item)
+                    rtn = __do_zip_library_install(export_zip, item)
                 else:
                     log.w(TAG, "Library installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_library_install(zip_file, item)
+                rtn = __do_zip_library_install(export_zip, item)
         else:
             log.d(TAG, "This is a new library, installing.")
-            rtn = __do_zip_library_install(zip_file, item)
+            rtn = __do_zip_library_install(export_zip, item)
 
     except KeyError:
         log.w(TAG, "Error checking if the library was installed. Skipping")
@@ -1081,17 +823,11 @@ def __install_zip_library(zip_file, item, force_mode):
     return rtn
 
 
-def __install_zip_module(zip_file, item, force_mode):
+def __install_zip_module(export_zip, item, force_mode):
 
     """Install a module from a ZIP"""
 
     rtn = 0
-
-    # Does the resource even exist?
-    if not file_in_zip(zip_file, item.local_name):
-        log.w(TAG, "'%s' defined, but local file '%s' does not exist!"
-              % (item.name, item.local_name))
-        return -1
 
     try:
         # First check if we know about this module
@@ -1106,16 +842,16 @@ def __install_zip_module(zip_file, item, force_mode):
 
                 if __prompt_install(item, installed_item):
                     log.d(TAG, "User would like to install")
-                    rtn = __do_zip_module_install(zip_file, item)
+                    rtn = __do_zip_module_install(export_zip, item)
                 else:
                     log.w(TAG, "Module installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_module_install(zip_file, item)
+                rtn = __do_zip_module_install(export_zip, item)
         else:
             log.d(TAG, "This is a new module, installing.")
-            rtn = __do_zip_module_install(zip_file, item)
+            rtn = __do_zip_module_install(export_zip, item)
 
     except KeyError:
         log.w(TAG, "Error checking if the module was installed. Skipping")
@@ -1124,17 +860,11 @@ def __install_zip_module(zip_file, item, force_mode):
     return rtn
 
 
-def __install_zip_package(zip_file, item, force_mode):
+def __install_zip_package(export_zip, item, force_mode):
 
     """Install a package from a ZIP"""
 
     rtn = 0
-
-    # Does the resource even exist?
-    if not directory_in_zip(zip_file, item.local_name):
-        log.w(TAG, "'%s' defined, but directory '%s' does not exist!"
-              % (item.name, item.local_name))
-        return -1
 
     try:
         # First check if we know about this package
@@ -1149,16 +879,16 @@ def __install_zip_package(zip_file, item, force_mode):
 
                 if __prompt_install(item, installed_item):
                     log.d(TAG, "User would like to install")
-                    rtn = __do_zip_package_install(zip_file, item)
+                    rtn = __do_zip_package_install(export_zip, item)
                 else:
                     log.w(TAG, "Package installation skipped.")
             # Force
             else:
                 log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_package_install(zip_file, item)
+                rtn = __do_zip_package_install(export_zip, item)
         else:
             log.d(TAG, "This is a new package, installing.")
-            rtn = __do_zip_package_install(zip_file, item)
+            rtn = __do_zip_package_install(export_zip, item)
 
     except KeyError:
         log.w(TAG, "Error checking if the package was installed. Skipping")
@@ -1633,39 +1363,25 @@ def install_zip(zip_file_name, force=False):
     """Install a ZIP file"""
 
     rtn = 0
-    manifest_data = None
-    manifest_root = None
+    export_zip = mp.ExportZip(zip_file_name)
 
-    zip_f = ZipFile(zip_file_name, 'r')
+    for item in export_zip.iter_items():
 
-    log.d(TAG, "Parsing manifest file...")
+        if not export_zip.assert_item(item):
+            log.w(TAG, "'%s' defined, but local file '%s' does not exist!"
+                  % (item.name, item.local_name))
+            continue
 
-    # Get Manifest
-    if not file_in_zip(zip_f, MANIFEST_NAME):
-        log.e(TAG, "Error extracting '%s' from ZIP archive - does it exist?"
-              % (MANIFEST_NAME))
-        return -3
+        item_type = item.type
 
-    manifest_data = zip_f.read(MANIFEST_NAME)
-
-    # Read Manifest
-    try:
-        manifest_root = etree.XML(manifest_data)
-    except etree.XMLSyntaxError:
-        log.e(TAG, "Error parsing XML file '%s'! Exiting."
-              % MANIFEST_NAME)
-        return -4
-
-    # Processing Stuff
-    items = manifest_root.xpath("/Items/Item")
-
-    rtn = __process_zip_items(zip_f, items, force)
-
-    if rtn == 0:
-        log.i(TAG, "ZIP content '%s' installed successfully!"
-              % zip_file_name)
-    else:
-        log.e(TAG, "Unable to install ZIP file: %d" % rtn)
+        if item_type == dtf.core.item.TYPE_BINARY:
+            rtn |= __install_zip_binary(export_zip, item, force)
+        elif item_type == dtf.core.item.TYPE_LIBRARY:
+            rtn |= __install_zip_library(export_zip, item, force)
+        elif item_type == dtf.core.item.TYPE_MODULE:
+            rtn |= __install_zip_module(export_zip, item, force)
+        elif item_type == dtf.core.item.TYPE_PACKAGE:
+            rtn |= __install_zip_package(export_zip, item, force)
 
     return rtn
 
@@ -1682,9 +1398,9 @@ def delete_binary(name, force=False):
     # First check if we know about the binary
     if is_binary_installed(name):
 
-        item = Item()
+        item = dtf.core.item.Item()
         item.name = name
-        item.type = TYPE_BINARY
+        item.type = dtf.core.item.TYPE_BINARY
 
         installed_item = __load_item(item)
 
@@ -1716,9 +1432,9 @@ def delete_library(name, force=False):
     # First check if we know about the library
     if is_library_installed(name):
 
-        item = Item()
+        item = dtf.core.item.Item()
         item.name = name
-        item.type = TYPE_LIBRARY
+        item.type = dtf.core.item.TYPE_LIBRARY
 
         installed_item = __load_item(item)
 
@@ -1750,9 +1466,9 @@ def delete_module(name, force=False):
     # First check if we know about the module
     if is_module_installed(name):
 
-        item = Item()
+        item = dtf.core.item.Item()
         item.name = name
-        item.type = TYPE_MODULE
+        item.type = dtf.core.item.TYPE_MODULE
 
         installed_item = __load_item(item)
 
@@ -1784,9 +1500,9 @@ def delete_package(name, force=False):
     # First check if we know about the package
     if is_package_installed(name):
 
-        item = Item()
+        item = dtf.core.item.Item()
         item.name = name
-        item.type = TYPE_PACKAGE
+        item.type = dtf.core.item.TYPE_PACKAGE
 
         installed_item = __load_item(item)
 
