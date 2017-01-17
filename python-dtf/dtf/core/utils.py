@@ -16,6 +16,7 @@
 """ dtf Utilities """
 
 from hashlib import md5
+from urlparse import urlparse
 import errno
 import os
 import os.path
@@ -179,3 +180,12 @@ def directory_in_zip(zip_f, directory_name):
 
     return any(x.startswith("%s/" % directory_name.rstrip("/"))
                for x in zip_f.namelist())
+
+
+def is_valid_url(url_string):
+
+    """Test and return valid URL"""
+
+    parsed_url = urlparse(url_string)
+
+    return bool(parsed_url.scheme)

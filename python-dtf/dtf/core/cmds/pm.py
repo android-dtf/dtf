@@ -66,6 +66,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         print "    install     Install a dtf ZIP or single item."
         print "    list        List all installed items."
         print "    purge       Purge all installed items, reset DB."
+        print "    repo        Manage content repos."
         print ""
 
         return 0
@@ -286,6 +287,71 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             return packagemanager.purge()
         else:
             return 0
+
+    def do_repo(self, args):
+
+        """Manage repos"""
+
+        if len(args) < 1:
+            print "Usage: dtf pm repo ACTION [args]"
+            print ""
+            print "  ACTIONs"
+            print "    add [repo_name] [url]"
+            print "    remove [repo_name]"
+            print "    list"
+
+            return 0
+
+        cmd = args.pop(0)
+
+        if cmd == 'add':
+            return self.do_repo_add(args)
+        elif cmd == 'remove':
+            return self.do_repo_remove(args)
+        elif cmd == 'list':
+            return self.do_repo_list()
+        else:
+            log.e(TAG, "Invalid repo command: %s"
+                  % cmd)
+            return -1
+
+    @classmethod
+    def do_repo_add(cls, args):
+
+        """Add a repo"""
+
+        if len(args) != 2:
+            log.e(TAG, "A repo name and URL is required!")
+            return -1
+
+        repo_name = args.pop(0)
+        url = args.pop(0)
+
+        return packagemanager.add_repo(repo_name, url)
+
+    @classmethod
+    def do_repo_remove(cls, args):
+
+        """remove a repo"""
+
+        if len(args) != 1:
+            log.e(TAG, "Must specify a repo name!")
+            return -1
+
+        repo_name = args.pop()
+
+        return packagemanager.remove_repo(repo_name)
+
+    @classmethod
+    def do_repo_list(cls):
+
+        """List out repos"""
+
+        print "Configured repos:"
+        for repo, url in packagemanager.get_repos():
+            print "  %s (%s)" % (repo, url)
+
+        return 0
 
     @classmethod
     def format_version(cls, version_string):
@@ -658,6 +724,8 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             rtn = self.do_list(args)
         elif sub_cmd == "purge":
             rtn = self.do_purge()
+        elif sub_cmd == "repo":
+            rtn = self.do_repo(args)
         else:
             log.e(TAG, "Sub-command '%s' not found!" % sub_cmd)
             rtn = self.usage()

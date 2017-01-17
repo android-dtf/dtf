@@ -493,7 +493,41 @@ def find_local_module(root, name):
     else:
         return 0
 
-# Installing content
+
+# Repo management
+def add_repo(repo_name, url):
+
+    """Add a repo to the DB"""
+
+    # First, validate the URL
+    if not utils.is_valid_url(url):
+        log.e(TAG, "Invalid URL provided (missing http/s)")
+        return -2
+
+    # Next, make sure this repo doesnt exist
+    if __has_repo(repo_name):
+        log.e(TAG, "Repo name '%s' already exists!" % repo_name)
+        return -3
+
+    return __add_repo(repo_name, url)
+
+
+def remove_repo(repo_name):
+
+    """Remove a repo"""
+
+    if not __has_repo(repo_name):
+        log.e(TAG, "Repo name '%s' doesn't exist!" % repo_name)
+        return -3
+
+    return __do_repo_delete(repo_name)
+
+
+def get_repos():
+
+    """Get listing of repos"""
+
+    return __do_get_repos()
 
 
 # INTERNAL ONLY #######################################################
@@ -998,6 +1032,59 @@ def __update_package(item):
     return cur.rowcount
 
 
+def __add_repo(repo_name, url):
+
+    """Add a repo to DB"""
+
+    conn = sqlite3.connect(DTF_DB)
+    cur = conn.cursor()
+
+    entry = [(repo_name, url)]
+
+    sql = ('INSERT INTO repos (repo_name, url)'
+           'VALUES (?, ?)')
+
+    cur.executemany(sql, entry)
+    conn.commit()
+
+    return 0
+
+
+def __has_repo(repo_name):
+
+    """Check if a repo exists"""
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    cur = dtf_db.cursor()
+
+    sql = ('SELECT id '
+           'FROM repos '
+           "WHERE repo_name='%s' "
+           'LIMIT 1' % repo_name)
+
+    cur.execute(sql)
+
+    return bool(cur.fetchone() is not None)
+
+
+def __do_get_repos():
+
+    """return list(repo, url)"""
+
+    repo_list = list()
+
+    dtf_db = sqlite3.connect(DTF_DB)
+    cur = dtf_db.cursor()
+
+    sql = ('SELECT repo_name, url '
+           'FROM repos')
+
+    for repo in cur.execute(sql):
+        repo_list.append((repo[0], repo[1]))
+
+    return repo_list
+
+
 def __do_binary_delete(item):
 
     """Perform the binary removal"""
@@ -1084,6 +1171,22 @@ def __do_package_delete(item):
     conn.commit()
 
     return 0
+
+
+def __do_repo_delete(repo_name):
+
+    """Remove repo"""
+
+    conn = sqlite3.connect(DTF_DB)
+    cur = conn.cursor()
+
+    sql = ('DELETE FROM repos '
+           "WHERE repo_name='%s'" % repo_name)
+
+    cur.execute(sql)
+    conn.commit()
+
+    return 0
 # End INTERNAL #####################################################
 
 
@@ -1164,6 +1267,20 @@ def initialize_db():
 
     if not rtn:
         log.e(TAG, "Error creating packages table, exiting")
+        return rtn
+
+    # Create Repo Table
+    sql = ('CREATE TABLE IF NOT EXISTS repos'
+           '('
+           'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+           'repo_name TEXT UNIQUE NOT NULL, '
+           'url TEXT'
+           ')')
+
+    rtn = dtf_db.execute(sql)
+
+    if not rtn:
+        log.e(TAG, "Error creating repos table, exiting")
         return rtn
 
     dtf_db.commit()
