@@ -20,7 +20,7 @@ Each module can be installed with dtf-pm(1), or tested/executed locally from a p
     author|Author = The author of the module.
     health|Health = One of the following.
     name|N/A = The name of the module (should match name of class.
-    version|Version - The version of the module, in [major].[minor] format.
+    version|Version - The version of the module, in semantic version format.
 
 Python modules can also take advantage of the following properties (no Bash support):
 
