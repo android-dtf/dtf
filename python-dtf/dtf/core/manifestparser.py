@@ -63,8 +63,7 @@ def __item_from_xml(item, relative_root="./"):
     local_item = dtf.core.item.Item()
 
     local_item.type = item_type
-    local_item.major_version = __get_xml_attrib(item, "majorVersion")
-    local_item.minor_version = __get_xml_attrib(item, "minorVersion")
+    local_item.version = __get_xml_attrib(item, "version")
     local_item.health = __get_xml_attrib(item, "health")
     local_item.author = __get_xml_attrib(item, "author")
     local_item.about = __get_xml_attrib(item, "about")
@@ -154,11 +153,10 @@ class Manifest(object):
             item_xml.attrib['type'] = dtf.core.item.TYPE_BINARY
             item_xml.attrib['name'] = item.name
 
-            if item.major_version is None or item.minor_version is None:
+            if item.version is None:
                 log.w(TAG, "Skipping version for %s" % item.name)
             else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
+                item_xml.attrib['version'] = item.version
 
             if item.health is None:
                 log.w(TAG, "Skipping health for %s" % item.name)
@@ -188,11 +186,10 @@ class Manifest(object):
             item_xml.attrib['type'] = dtf.core.item.TYPE_LIBRARY
             item_xml.attrib['name'] = item.name
 
-            if item.major_version is None or item.minor_version is None:
+            if item.version is None:
                 log.w(TAG, "Skipping version for %s" % item.name)
             else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
+                item_xml.attrib['version'] = item.version
 
             if item.health is None:
                 log.w(TAG, "Skipping health for %s" % item.name)
@@ -222,11 +219,10 @@ class Manifest(object):
             item_xml.attrib['type'] = dtf.core.item.TYPE_MODULE
             item_xml.attrib['name'] = item.name
 
-            if item.major_version is None or item.minor_version is None:
+            if item.version is None:
                 log.w(TAG, "Skipping version for %s" % item.name)
             else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
+                item_xml.attrib['version'] = item.version
 
             if item.health is None:
                 log.w(TAG, "Skipping health for %s" % item.name)
@@ -261,11 +257,10 @@ class Manifest(object):
             item_xml.attrib['type'] = dtf.core.item.TYPE_PACKAGE
             item_xml.attrib['name'] = item.name
 
-            if item.major_version is None or item.minor_version is None:
+            if item.version is None:
                 log.w(TAG, "Skipping version for %s" % item.name)
             else:
-                item_xml.attrib['majorVersion'] = item.major_version
-                item_xml.attrib['minorVersion'] = item.minor_version
+                item_xml.attrib['version'] = item.version
 
             if item.health is None:
                 log.w(TAG, "Skipping health for %s" % item.name)

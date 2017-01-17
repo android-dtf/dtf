@@ -18,6 +18,7 @@
 # Eventually this will be changed
 # pylint: disable=too-many-instance-attributes
 
+import semantic_version
 
 VALID_HEALTH_VALUES = ['stable',
                        'working',
@@ -35,6 +36,18 @@ VALID_TYPES = [TYPE_BINARY, TYPE_LIBRARY,
                TYPE_MODULE, TYPE_PACKAGE]
 
 
+def is_valid_version(version_string):
+
+    """Check if version string is correct"""
+
+    try:
+        semantic_version.Version(version_string)
+    except ValueError:
+        return False
+
+    return True
+
+
 class Item(object):  # pylint: disable=too-few-public-methods
 
     """Class for working with content"""
@@ -45,8 +58,7 @@ class Item(object):  # pylint: disable=too-few-public-methods
     type = type
     author = None
     about = None
-    major_version = None
-    minor_version = None
+    version = None
     health = None
 
     def __init__(self):
@@ -59,38 +71,18 @@ class Item(object):  # pylint: disable=too-few-public-methods
         self.type = None
         self.author = None
         self.about = None
-        self.major_version = None
-        self.minor_version = None
+        self.version = None
         self.health = None
-
-    def make_version(self):
-
-        """Create version string"""
-
-        if self.major_version is None and self.minor_version is None:
-            return None
-        else:
-            if self.major_version is None:
-                mjr = "0"
-            else:
-                mjr = self.major_version
-
-            if self.minor_version is None:
-                mnr = "0"
-            else:
-                mnr = self.minor_version
-
-            return "%s.%s" % (mjr, mnr)
 
     def __repr__(self):
 
-        """Tostrig for item"""
+        """Tostring for item"""
 
         temp = "Name: %s (%s)\n" % (self.name, self.type)
         if self.type == TYPE_MODULE:
             temp += "  About: %s\n" % self.about
         temp += "  Installs as: %s\n" % self.install_name
         temp += "  Author: %s\n" % self.author
-        temp += "  Version: %s\n" % self.make_version()
+        temp += "  Version: %s\n" % self.version
         temp += "  Health: %s" % self.health
         return temp

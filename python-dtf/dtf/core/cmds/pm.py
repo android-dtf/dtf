@@ -288,23 +288,15 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             return 0
 
     @classmethod
-    def format_version(cls, minor, major):
+    def format_version(cls, version_string):
 
         """Format version of item"""
 
-        if minor is None and major is None:
+        if version_string is None:
             return "No Version"
 
         else:
-            major_version = major
-            minor_version = minor
-
-            if major is None:
-                major_version = "0"
-            if minor is None:
-                minor_version = "0"
-
-            return "v%s.%s" % (major_version, minor_version)
+            return "v%s" % version_string
 
     @classmethod
     def generate_export_items(cls):
@@ -361,8 +353,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         for binary in binary_list:
 
             # Format version
-            version = self.format_version(binary.minor_version,
-                                          binary.major_version)
+            version = self.format_version(binary.version)
 
             print "\t%s (%s)" % (binary.name, version)
             if verbosity == LIST_VERBOSE:
@@ -389,8 +380,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         for library in library_list:
 
             # Format version
-            version = self.format_version(library.minor_version,
-                                          library.major_version)
+            version = self.format_version(library.version)
 
             print "\t%s (%s)" % (library.name, version)
             if verbosity == LIST_VERBOSE:
@@ -418,8 +408,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         for module in module_list:
 
             # Format version
-            version = self.format_version(module.minor_version,
-                                          module.major_version)
+            version = self.format_version(module.version)
 
             print "\t%s (%s)" % (module.name, version)
             if verbosity == LIST_VERBOSE:
@@ -447,8 +436,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         for package in package_list:
 
             # Format version
-            version = self.format_version(package.minor_version,
-                                          package.major_version)
+            version = self.format_version(package.version)
 
             print "\t%s (%s)" % (package.name, version)
             if verbosity == LIST_VERBOSE:
@@ -505,7 +493,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         return item
 
-    def parse_single_item(self, args):
+    def parse_single_item(self, args):  # pylint: disable=too-many-branches
 
         """Parse args, return Item"""
 
@@ -531,14 +519,13 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         version = args.single_version
         if version is not None:
-            try:
-                (item.major_version, item.minor_version) = version.split('.')
-            except ValueError:
+            if dtf.core.item.is_valid_version(version):
+                item.version = version
+            else:
                 log.e(TAG, "Version string is not valid. Exiting.")
                 return None
         else:
-            item.major_version = None
-            item.minor_version = None
+            item.version = None
 
         try:
             item.author = " ".join(args.single_author)

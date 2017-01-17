@@ -16,7 +16,6 @@
 """ dtf Checker script """
 import os
 import os.path
-import re
 import shlex
 import subprocess
 import sys
@@ -215,13 +214,12 @@ def do_version_checks(item, strict):
 
     """Run version checks"""
 
-    if item.minor_version is None or item.major_version is None:
+    if item.version is None:
         log.w(TAG, "[WARN] Version is none, this should be set!")
         if strict:
             return -1
-    elif (not re.match("^[0-9]*$", item.minor_version) and
-          not re.match("^[0-9]*$", item.major_version)):
-        log.e(TAG, "[FAIL] invalid version (should be major.minor)")
+    elif not dtf.core.item.is_valid_version(item.version):
+        log.e(TAG, "[FAIL] invalid version (must be semvar)")
         return -1
     else:
         log.i(TAG, "[PASS] Valid version.")

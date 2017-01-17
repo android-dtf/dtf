@@ -198,14 +198,13 @@ def parse_python_module(module_path, name):
 
     version = mod_inst.version
     if version is not None:
-        try:
-            (item.major_version, item.minor_version) = version.split('.')
-        except ValueError:
-            log.e(TAG, "Version string is not valid. Exiting.")
+        if dtf.core.item.is_valid_version(version):
+            item.version = version
+        else:
+            log.e(TAG, "Invalid version specified. Exiting.")
             return None
     else:
-        item.major_version = None
-        item.minor_version = None
+        item.version = None
 
     # Remove the compiled file name
     compiled_python_file = "%sc" % module_path
@@ -253,14 +252,13 @@ def parse_bash_module(module_path, name):
 
     version = get_dict_attrib(attributes, "Version")
     if version is not None:
-        try:
-            (item.major_version, item.minor_version) = version.split('.')
-        except ValueError:
-            log.e(TAG, "Version string is not valid. Exiting.")
+        if dtf.core.item.is_valid_version(version):
+            item.version = version
+        else:
+            log.e(TAG, "Invalid version specified. Exiting.")
             return None
     else:
-        item.major_version = None
-        item.minor_version = None
+        item.version = None
 
     # Return our item.
     return item
@@ -288,7 +286,7 @@ def get_binaries(name_only=False):
     # This returns a list of items
     else:
 
-        sql = ('SELECT name, major_version, minor_version, '
+        sql = ('SELECT name, version, '
                'about, author, health '
                'FROM binaries '
                'ORDER BY name')
@@ -304,11 +302,10 @@ def get_binaries(name_only=False):
 
             item.type = dtf.core.item.TYPE_BINARY
             item.name = line[0]
-            item.major_version = line[1]
-            item.minor_version = line[2]
-            item.about = line[3]
-            item.author = line[4]
-            item.health = line[5]
+            item.version = line[1]
+            item.about = line[2]
+            item.author = line[3]
+            item.health = line[4]
 
             bins.append(item)
 
@@ -336,7 +333,7 @@ def get_libraries(name_only=False):
     # This returns a list of items
     else:
 
-        sql = ('SELECT name, major_version, minor_version, '
+        sql = ('SELECT name, version, '
                'about, author, health '
                'FROM libraries '
                'ORDER BY name')
@@ -352,11 +349,10 @@ def get_libraries(name_only=False):
 
             item.type = dtf.core.item.TYPE_LIBRARY
             item.name = line[0]
-            item.major_version = line[1]
-            item.minor_version = line[2]
-            item.about = line[3]
-            item.author = line[4]
-            item.health = line[5]
+            item.version = line[1]
+            item.about = line[2]
+            item.author = line[3]
+            item.health = line[4]
 
             libs.append(item)
 
@@ -384,7 +380,7 @@ def get_modules(name_only=False):
     # This returns a list of items
     else:
 
-        sql = ('SELECT name, major_version, minor_version, '
+        sql = ('SELECT name, version, '
                'about, author, health '
                'FROM modules '
                'ORDER BY name')
@@ -400,11 +396,10 @@ def get_modules(name_only=False):
 
             item.type = dtf.core.item.TYPE_MODULE
             item.name = line[0]
-            item.major_version = line[1]
-            item.minor_version = line[2]
-            item.about = line[3]
-            item.author = line[4]
-            item.health = line[5]
+            item.version = line[1]
+            item.about = line[2]
+            item.author = line[3]
+            item.health = line[4]
 
             mods.append(item)
 
@@ -432,7 +427,7 @@ def get_packages(name_only=False):
     # This returns a list of items
     else:
 
-        sql = ('SELECT name, major_version, minor_version, '
+        sql = ('SELECT name, version, '
                'about, author, health '
                'FROM packages '
                'ORDER BY name')
@@ -448,11 +443,10 @@ def get_packages(name_only=False):
 
             item.type = dtf.core.item.TYPE_PACKAGE
             item.name = line[0]
-            item.major_version = line[1]
-            item.minor_version = line[2]
-            item.about = line[3]
-            item.author = line[4]
-            item.health = line[5]
+            item.version = line[1]
+            item.about = line[2]
+            item.author = line[3]
+            item.health = line[4]
 
             packages.append(item)
 
@@ -549,8 +543,7 @@ def __load_item(item):
     itm.local_name = None
     itm.author = get_item_attrib(item, "author")
     itm.about = get_item_attrib(item, "about")
-    itm.major_version = get_item_attrib(item, "major_version")
-    itm.minor_version = get_item_attrib(item, "minor_version")
+    itm.version = get_item_attrib(item, "version")
     itm.health = get_item_attrib(item, "health")
 
     return itm
@@ -910,13 +903,13 @@ def __update_binary(item):
 
     cur.execute(sql)
 
-    entry = [(item.name, item.major_version, item.minor_version, item.author,
+    entry = [(item.name, item.version, item.author,
               item.health, item.install_name)]
 
     # Update a Binary Entry
-    sql = ('INSERT INTO binaries (name, major_version, minor_version, '
+    sql = ('INSERT INTO binaries (name, version, '
            'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?, ?)')
+           'VALUES (?, ?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -937,13 +930,13 @@ def __update_library(item):
 
     cur.execute(sql)
 
-    entry = [(item.name, item.major_version, item.minor_version, item.author,
+    entry = [(item.name, item.version, item.author,
               item.health, item.install_name)]
 
     # Update a Library Entry
-    sql = ('INSERT INTO libraries (name, major_version, minor_version, '
+    sql = ('INSERT INTO libraries (name, version, '
            'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?, ?)')
+           'VALUES (?, ?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -964,13 +957,13 @@ def __update_module(item):
 
     cur.execute(sql)
 
-    entry = [(item.name, item.about, item.major_version, item.minor_version,
+    entry = [(item.name, item.about, item.version,
               item.author, item.health, item.install_name)]
 
     # Update a Module Entry
-    sql = ('INSERT INTO modules (name, about, major_version, minor_version, '
+    sql = ('INSERT INTO modules (name, about, version, '
            'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?, ?, ?)')
+           'VALUES (?, ?, ?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -991,13 +984,13 @@ def __update_package(item):
 
     cur.execute(sql)
 
-    entry = [(item.name, item.major_version, item.minor_version, item.author,
+    entry = [(item.name, item.version, item.author,
               item.health, item.install_name)]
 
     # Update a Package Entry
-    sql = ('INSERT INTO packages (name, major_version, minor_version, '
+    sql = ('INSERT INTO packages (name, version, '
            'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?, ?)')
+           'VALUES (?, ?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -1107,8 +1100,7 @@ def initialize_db():
            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
            'name TEXT UNIQUE NOT NULL, '
            'about TEXT, '
-           'major_version TEXT, '
-           'minor_version TEXT, '
+           'version TEXT, '
            'author TEXT, '
            'health TEXT,'
            'install_name TEXT'
@@ -1126,8 +1118,7 @@ def initialize_db():
            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
            'name TEXT UNIQUE NOT NULL, '
            'about TEXT, '
-           'major_version TEXT, '
-           'minor_version TEXT, '
+           'version TEXT, '
            'author TEXT, '
            'health TEXT, '
            'install_name TEXT'
@@ -1145,8 +1136,7 @@ def initialize_db():
            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
            'name TEXT UNIQUE NOT NULL, '
            'about TEXT, '
-           'major_version TEXT, '
-           'minor_version TEXT, '
+           'version TEXT, '
            'author TEXT, '
            'health TEXT, '
            'install_name TEXT'
@@ -1164,8 +1154,7 @@ def initialize_db():
            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
            'name TEXT UNIQUE NOT NULL, '
            'about TEXT, '
-           'major_version TEXT, '
-           'minor_version TEXT, '
+           'version TEXT, '
            'author TEXT, '
            'health TEXT, '
            'install_name TEXT'
