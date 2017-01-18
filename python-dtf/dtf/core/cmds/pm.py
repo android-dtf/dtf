@@ -135,7 +135,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         # Install single.
         else:
-            return self.install_single(parsed_args, single_type)
+            return self.parse_and_install_single(parsed_args, single_type)
 
     @classmethod
     def do_delete(cls, args):
@@ -591,7 +591,8 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
                 log.e(TAG, "Version string is not valid. Exiting.")
                 return None
         else:
-            item.version = None
+            log.w(TAG, "No version provided, using v1.0.0")
+            item.version = "1.0.0"
 
         try:
             item.author = " ".join(args.single_author)
@@ -621,12 +622,11 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         else:
             return None
 
-    def install_single(self, args, single_type):
+    def parse_and_install_single(self, args, single_type):
 
         """Parse and install single item"""
 
         force_mode = args.force
-        rtn = 0
 
         # Check for auto-mode:
         if args.single_auto:
@@ -648,20 +648,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
                 log.e(TAG, "Error parsing single item!")
                 return -5
 
-        # Now do the installation.
-        if single_type == TYPE_BINARY:
-            rtn = packagemanager.install_single_binary(item,
-                                                       force=force_mode)
-        elif single_type == TYPE_LIBRARY:
-            rtn = packagemanager.install_single_library(item,
-                                                        force=force_mode)
-        elif single_type == TYPE_MODULE:
-            rtn = packagemanager.install_single_module(item,
-                                                       force=force_mode)
-        elif single_type == TYPE_PACKAGE:
-            rtn = packagemanager.install_single_package(item,
-                                                        force=force_mode)
-        return rtn
+        return packagemanager.install_single(item, force=force_mode)
 
     @classmethod
     def check_local_exists(cls, item):

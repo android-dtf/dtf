@@ -776,154 +776,6 @@ def __do_zip_package_install(export_zip, item):
     return 0
 
 
-def __install_zip_binary(export_zip, item, force_mode):
-
-    """Install a binary from a ZIP"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this binary
-        if is_binary_installed(item.name):
-
-            # Prompt for install.
-            if not force_mode:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_zip_binary_install(export_zip, item)
-                else:
-                    log.w(TAG, "Binary installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_binary_install(export_zip, item)
-        else:
-            log.d(TAG, "This is a new binary, installing.")
-            rtn = __do_zip_binary_install(export_zip, item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the binary was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
-def __install_zip_library(export_zip, item, force_mode):
-
-    """Install a library from a ZIP"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this library
-        if is_library_installed(item.name):
-
-            # Prompt for install.
-            if not force_mode:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_zip_library_install(export_zip, item)
-                else:
-                    log.w(TAG, "Library installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_library_install(export_zip, item)
-        else:
-            log.d(TAG, "This is a new library, installing.")
-            rtn = __do_zip_library_install(export_zip, item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the library was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
-def __install_zip_module(export_zip, item, force_mode):
-
-    """Install a module from a ZIP"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this module
-        if is_module_installed(item.name):
-
-            # Prompt for install.
-            if not force_mode:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_zip_module_install(export_zip, item)
-                else:
-                    log.w(TAG, "Module installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_module_install(export_zip, item)
-        else:
-            log.d(TAG, "This is a new module, installing.")
-            rtn = __do_zip_module_install(export_zip, item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the module was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
-def __install_zip_package(export_zip, item, force_mode):
-
-    """Install a package from a ZIP"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this package
-        if is_package_installed(item.name):
-
-            # Prompt for install.
-            if not force_mode:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_zip_package_install(export_zip, item)
-                else:
-                    log.w(TAG, "Package installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_zip_package_install(export_zip, item)
-        else:
-            log.d(TAG, "This is a new package, installing.")
-            rtn = __do_zip_package_install(export_zip, item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the package was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
 def __update_binary(item):
 
     """Update a binary in the DB"""
@@ -1315,155 +1167,52 @@ def create_data_dirs():
 # End Initialization ###############################################
 
 
-# Package Installation #############################################
-def install_single_binary(item, force=False):
+# Internal Package Installation ####################################
+def __generic_install(item, force_mode, check_function,
+                      install_function, install_args):
 
-    """Install a single binary"""
-
-    rtn = 0
+    """Generic check and caller"""
 
     try:
-        # First check if we know about this binary
-        if is_binary_installed(item.name):
+        # First check if we know about this item
+        if check_function(item.name):
 
-            # Prompt for install.
-            if not force:
+            log.d(TAG, "Item exists, need to check")
+
+            # If forced, don't even check.
+            if force_mode:
+                log.i(TAG, "Forcing component installation.")
+                return install_function(*install_args)
+
+            installed_item = __load_item(item)
+
+            # Ok, next, we check the versions.
+            if dtf.core.item.item_is_newer(installed_item, item):
+                log.i(TAG, "Upgrading %s from v%s to v%s"
+                      % (item.name, installed_item.version, item.version))
+                return install_function(*install_args)
+
+            # Otherwise we need to prompt
+            else:
                 print ("[WARNING] An item with this name is already installed."
                        " See details below.")
 
-                installed_item = __load_item(item)
-
                 if __prompt_install(item, installed_item):
                     log.d(TAG, "User would like to install")
-                    rtn = __do_single_binary_install(item)
+                    return install_function(*install_args)
                 else:
-                    log.w(TAG, "Binary installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_single_binary_install(item)
+                    log.w(TAG, "Installation skipped.")
+                    return 0
         else:
-            log.d(TAG, "This is a new binary, installing.")
-            rtn = __do_single_binary_install(item)
+            log.d(TAG, "This is a new item, installing.")
+            return install_function(*install_args)
 
     except KeyError:
-        log.w(TAG, "Error checking if the binary was installed. Skipping")
-        rtn = -4
-
-    return rtn
+        log.w(TAG, "Error checking if the item was installed. Skipping")
+        return -4
 
 
-def install_single_library(item, force=False):
-
-    """Install a single library"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this libraary
-        if is_library_installed(item.name):
-
-            # Prompt for install.
-            if not force:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_single_library_install(item)
-                else:
-                    log.w(TAG, "Library installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_single_library_install(item)
-        else:
-            log.d(TAG, "This is a new library, installing.")
-            rtn = __do_single_library_install(item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the library was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
-def install_single_module(item, force=False):
-
-    """Install a single module"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this module
-        if is_module_installed(item.name):
-
-            # Prompt for install.
-            if not force:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_single_module_install(item)
-                else:
-                    log.w(TAG, "Module installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_single_module_install(item)
-        else:
-            log.d(TAG, "This is a new module, installing.")
-            rtn = __do_single_module_install(item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the module was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
-def install_single_package(item, force=False):
-
-    """Install a single package"""
-
-    rtn = 0
-
-    try:
-        # First check if we know about this package
-        if is_binary_installed(item.name):
-
-            # Prompt for install.
-            if not force:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
-
-                installed_item = __load_item(item)
-
-                if __prompt_install(item, installed_item):
-                    log.d(TAG, "User would like to install")
-                    rtn = __do_single_package_install(item)
-                else:
-                    log.w(TAG, "Package installation skipped.")
-            # Force
-            else:
-                log.d(TAG, "Forcing component installation.")
-                rtn = __do_single_package_install(item)
-        else:
-            log.d(TAG, "This is a new package, installing.")
-            rtn = __do_single_package_install(item)
-
-    except KeyError:
-        log.w(TAG, "Error checking if the package was installed. Skipping")
-        rtn = -4
-
-    return rtn
-
-
+# Install Content ######################################################
 def install_zip(zip_file_name, force=False):
 
     """Install a ZIP file"""
@@ -1481,16 +1230,49 @@ def install_zip(zip_file_name, force=False):
         item_type = item.type
 
         if item_type == dtf.core.item.TYPE_BINARY:
-            rtn |= __install_zip_binary(export_zip, item, force)
+            rtn |= __generic_install(item, force, is_binary_installed,
+                                     __do_zip_binary_install,
+                                     (export_zip, item))
+
         elif item_type == dtf.core.item.TYPE_LIBRARY:
-            rtn |= __install_zip_library(export_zip, item, force)
+            rtn |= __generic_install(item, force, is_library_installed,
+                                     __do_zip_library_install,
+                                     (export_zip, item))
+
         elif item_type == dtf.core.item.TYPE_MODULE:
-            rtn |= __install_zip_module(export_zip, item, force)
+            rtn |= __generic_install(item, force, is_module_installed,
+                                     __do_zip_module_install,
+                                     (export_zip, item))
+
         elif item_type == dtf.core.item.TYPE_PACKAGE:
-            rtn |= __install_zip_package(export_zip, item, force)
+            rtn |= __generic_install(item, force, is_package_installed,
+                                     __do_zip_package_install,
+                                     (export_zip, item))
 
     return rtn
 
+
+def install_single(item, force=False):
+
+    """Install a single item"""
+
+    item_type = item.type
+
+    if item_type == dtf.core.item.TYPE_BINARY:
+        return __generic_install(item, force, is_binary_installed,
+                                 __do_single_binary_install, (item,))
+
+    elif item_type == dtf.core.item.TYPE_LIBRARY:
+        return __generic_install(item, force, is_library_installed,
+                                 __do_single_library_install, (item,))
+
+    elif item_type == dtf.core.item.TYPE_MODULE:
+        return __generic_install(item, force, is_module_installed,
+                                 __do_single_module_install, (item,))
+
+    elif item_type == dtf.core.item.TYPE_PACKAGE:
+        return __generic_install(item, force, is_package_installed,
+                                 __do_single_package_install, (item,))
 # End Package Installation ##############################################
 
 

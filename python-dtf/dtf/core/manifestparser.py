@@ -68,6 +68,10 @@ def __item_from_xml(item, relative_root="./"):
     local_item.author = __get_xml_attrib(item, "author")
     local_item.about = __get_xml_attrib(item, "about")
 
+    if local_item.version is None:
+        log.w(TAG, "No version for '%s', using 1.0.0" % name)
+        local_item.version = "1.0.0"
+
     install_name = __get_xml_attrib(item, "installName")
     local_name = __get_xml_attrib(item, "localName")
 
@@ -104,10 +108,15 @@ def parse_manifest(manifest_data, relative_root="./"):
         return -4
 
     # Processing Stuff
-    items = manifest_root.xpath("/Items/Item")
+    xml_items = manifest_root.xpath("/Items/Item")
 
-    for item in items:
-        item_list.append(__item_from_xml(item, relative_root=relative_root))
+    for xml_item in xml_items:
+
+        item = __item_from_xml(xml_item, relative_root=relative_root)
+        if item is None:
+            continue
+
+        item_list.append(item)
 
     manifest = Manifest()
     manifest.items = item_list
