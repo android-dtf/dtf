@@ -130,7 +130,7 @@ def parse_manifest_file(manifest_file_name):
     """Parse a standalone manifest.xml"""
 
     manifest_data = open(manifest_file_name).read()
-    root_dir = os.path.dirname(manifest_file_name)
+    root_dir = os.path.normpath(os.path.dirname(manifest_file_name))
 
     return parse_manifest(manifest_data, relative_root=root_dir)
 
