@@ -544,7 +544,7 @@ def __prompt_install(local_item, installed_item):
     print str(local_item)
 
     print ""
-    print "Do you want to install this module? [y/N]",
+    print "Do you want to install this %s? [y/N]" % (installed_item.type),
     resp = raw_input()
 
     return bool(resp.lower() == "y")
@@ -1168,7 +1168,8 @@ def create_data_dirs():
 
 
 # Internal Package Installation ####################################
-def __generic_install(item, force_mode, check_function,
+# pylint: disable=too-many-arguments,too-many-return-statements
+def __generic_install(item, force_mode, new_only, check_function,
                       install_function, install_args):
 
     """Generic check and caller"""
@@ -1181,7 +1182,8 @@ def __generic_install(item, force_mode, check_function,
 
             # If forced, don't even check.
             if force_mode:
-                log.i(TAG, "Forcing component installation.")
+                log.i(TAG, "Forcing component installation: %s (%s)"
+                      % (item.name, item.type))
                 return install_function(*install_args)
 
             installed_item = __load_item(item)
@@ -1191,6 +1193,10 @@ def __generic_install(item, force_mode, check_function,
                 log.i(TAG, "Upgrading %s from v%s to v%s"
                       % (item.name, installed_item.version, item.version))
                 return install_function(*install_args)
+
+            elif new_only:
+                log.w(TAG, "Skipping due to older version: %s" % item.name)
+                return 0
 
             # Otherwise we need to prompt
             else:
@@ -1204,7 +1210,8 @@ def __generic_install(item, force_mode, check_function,
                     log.w(TAG, "Installation skipped.")
                     return 0
         else:
-            log.d(TAG, "This is a new item, installing.")
+            log.i(TAG, "Installing new item: %s (%s)"
+                  % (item.name, item.type))
             return install_function(*install_args)
 
     except KeyError:
@@ -1213,7 +1220,7 @@ def __generic_install(item, force_mode, check_function,
 
 
 # Install Content ######################################################
-def install_zip(zip_file_name, force=False):
+def install_zip(zip_file_name, force=False, new_only=False):
 
     """Install a ZIP file"""
 
@@ -1230,22 +1237,26 @@ def install_zip(zip_file_name, force=False):
         item_type = item.type
 
         if item_type == dtf.core.item.TYPE_BINARY:
-            rtn |= __generic_install(item, force, is_binary_installed,
+            rtn |= __generic_install(item, force, new_only,
+                                     is_binary_installed,
                                      __do_zip_binary_install,
                                      (export_zip, item))
 
         elif item_type == dtf.core.item.TYPE_LIBRARY:
-            rtn |= __generic_install(item, force, is_library_installed,
+            rtn |= __generic_install(item, force, new_only,
+                                     is_library_installed,
                                      __do_zip_library_install,
                                      (export_zip, item))
 
         elif item_type == dtf.core.item.TYPE_MODULE:
-            rtn |= __generic_install(item, force, is_module_installed,
+            rtn |= __generic_install(item, force, new_only,
+                                     is_module_installed,
                                      __do_zip_module_install,
                                      (export_zip, item))
 
         elif item_type == dtf.core.item.TYPE_PACKAGE:
-            rtn |= __generic_install(item, force, is_package_installed,
+            rtn |= __generic_install(item, force, new_only,
+                                     is_package_installed,
                                      __do_zip_package_install,
                                      (export_zip, item))
 
@@ -1259,19 +1270,19 @@ def install_single(item, force=False):
     item_type = item.type
 
     if item_type == dtf.core.item.TYPE_BINARY:
-        return __generic_install(item, force, is_binary_installed,
+        return __generic_install(item, force, False, is_binary_installed,
                                  __do_single_binary_install, (item,))
 
     elif item_type == dtf.core.item.TYPE_LIBRARY:
-        return __generic_install(item, force, is_library_installed,
+        return __generic_install(item, force, False, is_library_installed,
                                  __do_single_library_install, (item,))
 
     elif item_type == dtf.core.item.TYPE_MODULE:
-        return __generic_install(item, force, is_module_installed,
+        return __generic_install(item, force, False, is_module_installed,
                                  __do_single_module_install, (item,))
 
     elif item_type == dtf.core.item.TYPE_PACKAGE:
-        return __generic_install(item, force, is_package_installed,
+        return __generic_install(item, force, False, is_package_installed,
                                  __do_single_package_install, (item,))
 # End Package Installation ##############################################
 

@@ -30,6 +30,8 @@ REPORTS_DIRECTORY = 'reports'
 DBS_DIRECTORY = '.dbs'
 LOCAL_MODULES_DIRECTORY = 'local_modules'
 
+TAG = 'dtf-utils'
+
 
 def __upsearch(file_name, dir_name):
 
@@ -189,3 +191,10 @@ def is_valid_url(url_string):
     parsed_url = urlparse(url_string)
 
     return bool(parsed_url.scheme)
+
+
+def is_http_url(url_string):
+
+    """Check scheme of a URL"""
+
+    return bool(urlparse(url_string).scheme == 'http')

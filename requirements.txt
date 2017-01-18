@@ -9,3 +9,4 @@ pytest==3.0.3
 pytest-runner==2.9
 wheel==0.29.0
 semantic_version==2.6.0
+requests==2.12.4

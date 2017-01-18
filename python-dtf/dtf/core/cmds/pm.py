@@ -17,8 +17,11 @@
 
 import os
 import os.path
+import tempfile
 import zipfile
 from argparse import ArgumentParser
+
+import requests
 
 from dtf.module import Module
 import dtf.globals
@@ -26,6 +29,7 @@ import dtf.logging as log
 import dtf.core.item
 import dtf.core.manifestparser as mp
 import dtf.core.packagemanager as packagemanager
+import dtf.core.utils as utils
 
 TAG = "pm"
 
@@ -67,6 +71,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         print "    list        List all installed items."
         print "    purge       Purge all installed items, reset DB."
         print "    repo        Manage content repos."
+        print "    upgrade     Upgrade repo content."
         print ""
 
         return 0
@@ -107,12 +112,16 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         parser.add_argument('--force', dest='force', action='store_const',
                             const=True, default=False,
                             help="Force installation of component(s).")
+        parser.add_argument('--new-only', dest='new_only',
+                            action='store_const', const=True, default=False,
+                            help="Install only if new version.")
 
         parsed_args = parser.parse_args(args)
 
         zip_file_name = parsed_args.zipfile
         single_type = parsed_args.single_type
         force_mode = parsed_args.force
+        new_only = parsed_args.new_only
 
         if zip_file_name is not None and single_type is not None:
             log.e(TAG, "Cannot install both DTF ZIP and single item. Exiting.")
@@ -126,7 +135,8 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         if zip_file_name is not None:
             if zipfile.is_zipfile(zip_file_name):
                 return packagemanager.install_zip(zip_file_name,
-                                                  force=force_mode)
+                                                  force=force_mode,
+                                                  new_only=new_only)
 
             else:
                 log.e(TAG, "'%s' is not a valid ZIP file or does not exist."
@@ -314,6 +324,60 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             log.e(TAG, "Invalid repo command: %s"
                   % cmd)
             return -1
+
+    def do_upgrade(self, args):
+
+        """Do content upgrade"""
+
+        parser = ArgumentParser(prog='pm upgrade',
+                                description='Upgrade managed content.')
+        parser.add_argument('-v', '--dont-verify-ssl', dest='verify',
+                            action='store_const', const=False, default=True,
+                            help="Allow SSL certificate issues.")
+        parser.add_argument('-a', '--allow-http', dest='allow_http',
+                            action='store_const', const=True, default=False,
+                            help="Allow HTTP downloads.")
+        parser.add_argument('-f', '--force', dest='force',
+                            action='store_const', const=True, default=False,
+                            help="Force install of component(s).")
+        parser.add_argument('-p', '--prompt-all', dest='new_only',
+                            action='store_const', const=False, default=True,
+                            help="Prompt install regardless of version.")
+
+        parsed_args = parser.parse_args(args)
+
+        verify = parsed_args.verify
+        allow_http = parsed_args.allow_http
+        force = parsed_args.force
+        new_only = parsed_args.new_only
+
+        for repo_name, url in packagemanager.get_repos():
+
+            log.i(TAG, "Requesting content from '%s' (%s).."
+                  % (repo_name, url))
+
+            if utils.is_http_url(url) and not allow_http:
+                log.w(TAG, "Skipping '%s' due to HTTP (use --allow-http)"
+                      % repo_name)
+                continue
+
+            file_f = self.download_temp_file(url, verify=verify)
+
+            if file_f is None:
+                continue
+
+            if not zipfile.is_zipfile(file_f.name):
+                log.w(TAG, "Pulled content is not a valid ZIP file, skipping!")
+                continue
+
+            log.i(TAG, "Starting install...")
+            packagemanager.install_zip(file_f.name, force=force,
+                                       new_only=new_only)
+
+            file_f.close()
+
+        log.i(TAG, "Upgrade complete.")
+        return 0
 
     @classmethod
     def do_repo_add(cls, args):
@@ -678,6 +742,31 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         return item
 
+    @classmethod
+    def download_temp_file(cls, url, verify=True):
+
+        """Download a file from URL to tempfile"""
+
+        try:
+            req = requests.get(url, verify=verify, stream=True)
+
+        except requests.exceptions.RequestException as excpt:
+
+            log.e(TAG, "Error downloading repo data!")
+            print excpt
+            return None
+
+        temp_f = tempfile.NamedTemporaryFile()
+
+        for chunk in req.iter_content(chunk_size=1024):
+            if chunk:
+                temp_f.write(chunk)
+
+        # Reset the seek
+        temp_f.seek(0)
+
+        return temp_f
+
     def execute(self, args):
 
         """Main module executor"""
@@ -713,6 +802,8 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             rtn = self.do_purge()
         elif sub_cmd == "repo":
             rtn = self.do_repo(args)
+        elif sub_cmd == "upgrade":
+            rtn = self.do_upgrade(args)
         else:
             log.e(TAG, "Sub-command '%s' not found!" % sub_cmd)
             rtn = self.usage()
