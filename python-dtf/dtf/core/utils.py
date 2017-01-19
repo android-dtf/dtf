@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from hashlib import md5
 from urlparse import urlparse
+from builtins import input as __input
 import errno
 import os
 import os.path
@@ -199,3 +200,10 @@ def is_http_url(url_string):
     """Check scheme of a URL"""
 
     return bool(urlparse(url_string).scheme == 'http')
+
+
+def compat_input(*string):
+
+    """Compatability input()/raw_input()"""
+
+    return __input(*string)

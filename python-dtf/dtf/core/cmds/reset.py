@@ -38,7 +38,7 @@ class reset(Module):  # pylint: disable=invalid-name
         print('Are you sure you want to delete the dtf project in this '
               'directory? This cannot be reversed! [y/N]', end=" ")
 
-        inp = raw_input()
+        inp = utils.compat_input()
 
         if inp.lower() == 'y':
             os.remove(utils.CONFIG_FILE_NAME)

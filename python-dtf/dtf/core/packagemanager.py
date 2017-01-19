@@ -545,7 +545,7 @@ def __prompt_install(local_item, installed_item):
     print('')
     print("Do you want to install this %s? [y/N]"
           % (installed_item.type), end=" ")
-    resp = raw_input()
+    resp = utils.compat_input()
 
     return bool(resp.lower() == "y")
 
@@ -559,7 +559,7 @@ def __prompt_delete(installed_item):
     print('')
     print("Are you sure you want to delete this item (NO UNDO)? [y/N]",
           end=" ")
-    resp = raw_input()
+    resp = utils.compat_input()
 
     return bool(resp.lower() == "y")
 

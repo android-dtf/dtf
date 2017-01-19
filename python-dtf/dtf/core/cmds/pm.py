@@ -293,7 +293,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         print('Note: This will not delete any project data.')
         print('Are you sure you want to do this? [N/y]', end=" ")
 
-        res = raw_input()
+        res = utils.compat_input()
 
         if res.lower() == "y":
             return packagemanager.purge()
