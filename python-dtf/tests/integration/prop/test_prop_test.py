@@ -15,6 +15,7 @@
 #
 """Integration tests for the "prop test" utility"""
 
+from __future__ import absolute_import
 import dtf.testutils as testutils
 
 

@@ -15,6 +15,7 @@
 #
 """Helpers for interacting with manifest.xml + packages"""
 
+from __future__ import absolute_import
 import os
 import tempfile
 import zipfile
@@ -384,7 +385,7 @@ class ExportZip(object):
 
         copy(temp_f.name, install_path)
 
-        os.chmod(install_path, 0755)
+        os.chmod(install_path, 0o755)
 
         temp_f.close()
 

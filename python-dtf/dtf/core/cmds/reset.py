@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 """Built-in module for reseting a project"""
+
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 
 import dtf.core.utils as utils
@@ -32,8 +35,8 @@ class reset(Module):  # pylint: disable=invalid-name
 
         """Main module executor"""
 
-        print ('Are you sure you want to delete the dtf project in this '
-               'directory? This cannot be reversed! [y/N]'),
+        print('Are you sure you want to delete the dtf project in this '
+              'directory? This cannot be reversed! [y/N]', end=" ")
 
         inp = raw_input()
 

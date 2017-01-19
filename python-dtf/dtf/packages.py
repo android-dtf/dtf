@@ -15,6 +15,8 @@
 #
 """dtf public package querying"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import imp
 import cStringIO
 import os
@@ -124,7 +126,7 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
                 line = line.strip("\n")
                 if line == "":
                     continue
-                print line
+                print(line)
 
         rtn = -10
     except KeyboardInterrupt:
@@ -183,7 +185,7 @@ def __launch_bash_module(module_path, args):
                 line = line.strip("\n")
                 if line == "":
                     continue
-                print line
+                print(line)
         return -5
     except KeyboardInterrupt:
         log.e(TAG, "Bash module forcibly killed!")

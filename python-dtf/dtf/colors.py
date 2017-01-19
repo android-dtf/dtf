@@ -15,6 +15,7 @@
 #
 """Wrapper API for using colors in dtf modules"""
 
+from __future__ import absolute_import
 from colored import fg, attr
 
 import dtf.globals as glbl

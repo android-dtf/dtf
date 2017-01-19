@@ -15,6 +15,7 @@
 #
 """pytest for using dtf logging"""
 
+from __future__ import absolute_import
 import dtf.testutils as testutils
 import pytest
 

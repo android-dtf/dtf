@@ -15,6 +15,8 @@
 #
 """Test utilities for running dtf tests"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 import os
 import shutil
@@ -181,7 +183,18 @@ class IntegrationTest(unittest.TestCase):
 
         rtn = dtf(cmd, input_data=input_data)
 
-        print rtn.stdout, rtn.stderr
+        print(rtn.stdout, rtn.stderr)
+
+        return rtn
+
+    @classmethod
+    def run_check(cls, cmd):
+
+        """Run a dtf_check command"""
+
+        rtn = dtf_check(cmd)
+
+        print(rtn.stdout, rtn.stderr)
 
         return rtn
 
@@ -282,6 +295,30 @@ def dtf(command, input_data=None):
 
     if input_data:
         kwargs = {'input': input_data}
+
+    stdout, stderr = process.communicate(**kwargs)
+
+    return Result(process.returncode,
+                  stdout.decode(stdout_encoding),
+                  stderr.decode(stdout_encoding))
+
+
+def dtf_check(command):
+
+    """Invoke the dtf_checker script"""
+
+    env = os.environ.copy()
+
+    env['GLOG_LEVEL'] = '5'
+
+    full_command = "dtf_check %s" % (command)
+
+    process = Popen(full_command, stdout=PIPE, stderr=PIPE, stdin=PIPE,
+                    shell=True, env=env)
+
+    stdout_encoding = get_stdout_encoding()
+
+    kwargs = {}
 
     stdout, stderr = process.communicate(**kwargs)
 

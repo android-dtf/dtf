@@ -15,6 +15,8 @@
 #
 """ dtf's package manager """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import os.path
 import tempfile
@@ -62,17 +64,17 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         """Print Usage"""
 
-        print "dtf Package Manager"
-        print ""
-        print "Subcommands:"
-        print "    delete      Delete an item from main database."
-        print "    export      Export entire main database to dtf ZIP."
-        print "    install     Install a dtf ZIP or single item."
-        print "    list        List all installed items."
-        print "    purge       Purge all installed items, reset DB."
-        print "    repo        Manage content repos."
-        print "    upgrade     Upgrade repo content."
-        print ""
+        print('dtf Package Manager')
+        print('')
+        print('Subcommands:')
+        print('    delete      Delete an item from main database.')
+        print('    export      Export entire main database to dtf ZIP.')
+        print('    install     Install a dtf ZIP or single item.')
+        print('    list        List all installed items.')
+        print('    purge       Purge all installed items, reset DB.')
+        print('    repo        Manage content repos.')
+        print('    upgrade     Upgrade repo content.')
+        print('')
 
         return 0
 
@@ -285,11 +287,11 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         """Purge dtf DB"""
 
-        print "!!!! WARNING !!!!"
-        print ""
-        print "This will delete all installed content and reset the database!!"
-        print "Note: This will not delete any project data."
-        print "Are you sure you want to do this? [N/y]",
+        print('!!!! WARNING !!!!')
+        print('')
+        print('This will delete all installed content and reset the database!')
+        print('Note: This will not delete any project data.')
+        print('Are you sure you want to do this? [N/y]', end=" ")
 
         res = raw_input()
 
@@ -303,12 +305,12 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         """Manage repos"""
 
         if len(args) < 1:
-            print "Usage: dtf pm repo ACTION [args]"
-            print ""
-            print "  ACTIONs"
-            print "    add [repo_name] [url]"
-            print "    remove [repo_name]"
-            print "    list"
+            print('Usage: dtf pm repo ACTION [args]')
+            print('')
+            print('  ACTIONs')
+            print('    add [repo_name] [url]')
+            print('    remove [repo_name]')
+            print('    list')
 
             return 0
 
@@ -411,9 +413,9 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         """List out repos"""
 
-        print "Configured repos:"
+        print('Configured repos:')
         for repo, url in packagemanager.get_repos():
-            print "  %s (%s)" % (repo, url)
+            print("  %s (%s)" % (repo, url))
 
         return 0
 
@@ -474,49 +476,50 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         # If we are trying to be quiet, just print each item.
         if verbosity == LIST_QUIET:
             for binary in binary_list:
-                print binary.name
+                print(binary.name)
             return
 
         # Otherwise, iterate over and print more
-        print "Installed Binaries"
+        print('Installed Binaries')
 
         for binary in binary_list:
 
             # Format version
             version = self.format_version(binary.version)
 
-            print "\t%s (%s)" % (binary.name, version)
+            print("\t%s (%s)" % (binary.name, version))
             if verbosity == LIST_VERBOSE:
-                print "\t   About: %s" % binary.about
-                print "\t   Author: %s" % binary.author
-                print "\t   Health: %s" % binary.health
+                print("\t   About: %s" % binary.about)
+                print("\t   Author: %s" % binary.author)
+                print("\t   Health: %s" % binary.health)
 
         return 0
 
     def print_installed_libraries(self, verbosity):
 
         """Print installed libraries"""
+
         library_list = packagemanager.get_libraries()
 
         # If we are trying to be quiet, just print each item.
         if verbosity == LIST_QUIET:
             for library in library_list:
-                print library.name
+                print(library.name)
             return
 
         # Otherwise, iterate over and print more
-        print "Installed Libraries"
+        print('Installed Libraries')
 
         for library in library_list:
 
             # Format version
             version = self.format_version(library.version)
 
-            print "\t%s (%s)" % (library.name, version)
+            print("\t%s (%s)" % (library.name, version))
             if verbosity == LIST_VERBOSE:
-                print "\t   About: %s" % library.about
-                print "\t   Author: %s" % library.author
-                print "\t   Health: %s" % library.health
+                print("\t   About: %s" % library.about)
+                print("\t   Author: %s" % library.author)
+                print("\t   Health: %s" % library.health)
 
         return 0
 
@@ -529,22 +532,22 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         # If we are trying to be quiet, just print each item.
         if verbosity == LIST_QUIET:
             for module in module_list:
-                print module.name
+                print(module.name)
             return
 
         # Otherwise, iterate over and print more
-        print "Installed Modules"
+        print('Installed Modules')
 
         for module in module_list:
 
             # Format version
             version = self.format_version(module.version)
 
-            print "\t%s (%s)" % (module.name, version)
+            print("\t%s (%s)" % (module.name, version))
             if verbosity == LIST_VERBOSE:
-                print "\t   About: %s" % module.about
-                print "\t   Author: %s" % module.author
-                print "\t   Health: %s" % module.health
+                print("\t   About: %s" % module.about)
+                print("\t   Author: %s" % module.author)
+                print("\t   Health: %s" % module.health)
 
         return 0
 
@@ -557,22 +560,22 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         # If we are trying to be quiet, just print each item.
         if verbosity == LIST_QUIET:
             for package in package_list:
-                print package.name
+                print(package.name)
             return
 
         # Otherwise, iterate over and print more
-        print "Installed Packages"
+        print('Installed Packages')
 
         for package in package_list:
 
             # Format version
             version = self.format_version(package.version)
 
-            print "\t%s (%s)" % (package.name, version)
+            print("\t%s (%s)" % (package.name, version))
             if verbosity == LIST_VERBOSE:
-                print "\t   About: %s" % package.about
-                print "\t   Author: %s" % package.author
-                print "\t   Health: %s" % package.health
+                print("\t   About: %s" % package.about)
+                print("\t   Author: %s" % package.author)
+                print("\t   Health: %s" % package.health)
 
         return 0
 
@@ -753,7 +756,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         except requests.exceptions.RequestException as excpt:
 
             log.e(TAG, "Error downloading repo data!")
-            print excpt
+            print(excpt)
             return None
 
         temp_f = tempfile.NamedTemporaryFile()

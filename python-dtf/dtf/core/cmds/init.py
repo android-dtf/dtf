@@ -15,6 +15,8 @@
 #
 """Built-in module for creating dtf project"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import os.path
 import re
@@ -187,9 +189,9 @@ class init(Module):  # pylint: disable=invalid-name
         version = self.getprop('ro.build.id')
         version_string = "%s-%s_%s" % (brand, name, version)
 
-        print "dtf would like to use the following version string:"
-        print "\n%s\n" % version_string
-        print "The version string is only used to identify this project.\n"
+        print('dtf would like to use the following version string:')
+        print("\n%s\n" % version_string)
+        print("The version string is only used to identify this project.\n")
 
         res = raw_input("Would you like to change it? [N/y] ").lower()
 
@@ -230,11 +232,11 @@ class init(Module):  # pylint: disable=invalid-name
                 log.e(TAG, "Initialization aborted.")
                 return None
         else:
-            print "Found many devices. Please select from the following list:"
+            print('Found many devices. Please select from the following list:')
 
             i = 1
             for serial, status in devices:
-                print "#%d. %s (%s)" % (i, serial, status)
+                print("#%d. %s (%s)" % (i, serial, status))
                 i += 1
 
             res = raw_input("\nWhich device #? ")

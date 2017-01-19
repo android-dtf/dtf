@@ -16,6 +16,8 @@
 
 """Helper script to generate globals.ini"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import fnmatch
 import os
 import sys
@@ -42,7 +44,7 @@ def main():
 
     parser = ConfigParser.SafeConfigParser()
 
-    print "Doing globals.ini creation..."
+    print('Doing globals.ini creation...')
 
     # Add dtfClient details
     if do_client_section(parser) != 0:
@@ -101,11 +103,11 @@ def do_client_section(parser):
     for file_name in os.listdir('included/dtfClient/'):
         if fnmatch.fnmatch(file_name, '*.apk'):
             apk_name = file_name
-            print "Found dtfClient APK: %s" % apk_name
+            print("Found dtfClient APK: %s" % apk_name)
             break
 
     if apk_name is None:
-        print "Unable to find dtfClient APK!"
+        print('Unable to find dtfClient APK!')
         return -1
 
     full_apk_name = "%s/dtfClient/%s" % (INCLUDED_DIR, apk_name)
@@ -128,7 +130,7 @@ def do_bindings_section(parser):
         out_name = bind_file_in_dir(local, prefix)
 
         if out_name is None:
-            print "Error finding match: %s, %s" % binding, local_dir
+            print("Error finding match: %s, %s" % (binding, local_dir))
 
         parser.set('Bindings', binding, out_name)
 
@@ -137,7 +139,7 @@ def do_bindings_section(parser):
         local_dir = "included/%s" % local
 
         if not os.path.isdir(local_dir):
-            print "Unable to bind dir: %s, %s" % (binding, local_dir)
+            print("Unable to bind dir: %s, %s" % (binding, local_dir))
             return -1
 
         out_dir = "%s/%s/" % (INCLUDED_DIR, local)

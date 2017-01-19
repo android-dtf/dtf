@@ -15,6 +15,7 @@
 #
 """pytest for using dtf property manager"""
 
+from __future__ import absolute_import
 import pytest
 
 import dtf.properties as prop

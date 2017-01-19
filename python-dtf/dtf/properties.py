@@ -15,6 +15,7 @@
 #
 """dtf property support"""
 
+from __future__ import absolute_import
 import ConfigParser
 from os.path import abspath, join, isfile
 from os import getcwd, pardir

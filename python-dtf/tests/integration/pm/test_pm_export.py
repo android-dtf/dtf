@@ -15,6 +15,7 @@
 #
 """Integration tests for the "pm export" utility"""
 
+from __future__ import absolute_import
 import os.path
 
 import dtf.testutils as testutils

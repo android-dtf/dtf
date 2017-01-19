@@ -15,6 +15,8 @@
 #
 """Built-in module for handling project properties"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import ConfigParser
 
 from dtf.module import Module
@@ -34,14 +36,14 @@ class prop(Module):  # pylint: disable=invalid-name
 
         """Display module usage"""
 
-        print "dtf Property Manager"
-        print "Subcommands:"
-        print "    get [sec] [prop]        Get a property."
-        print "    set [sec] [prop] [val]  Set a property."
-        print "    del [sec] [prop]        Delete a property."
-        print "    dump                    Dump current properties."
-        print "    test [sec] [prop]       Test if a value is set."
-        print ""
+        print('dtf Property Manager')
+        print('Subcommands:')
+        print('    get [sec] [prop]        Get a property.')
+        print('    set [sec] [prop] [val]  Set a property.')
+        print('    del [sec] [prop]        Delete a property.')
+        print('    dump                    Dump current properties.')
+        print('    test [sec] [prop]       Test if a value is set.')
+        print('')
 
         return 0
 
@@ -66,7 +68,7 @@ class prop(Module):  # pylint: disable=invalid-name
             except PropertyError:
                 rtn = -1
 
-            print value
+            print(value)
 
         return rtn
 
@@ -116,11 +118,11 @@ class prop(Module):  # pylint: disable=invalid-name
         config.read(utils.CONFIG_FILE_NAME)
 
         for section in config.sections():
-            print "[%s]" % section
+            print("[%s]" % section)
             for name, value in config.items(section):
-                print "%s = %s" % (name, value)
+                print("%s = %s" % (name, value))
 
-            print ""
+            print('')
 
         return 0
 
@@ -171,7 +173,7 @@ class prop(Module):  # pylint: disable=invalid-name
             rtn = self.do_test(args)
 
         else:
-            print "Sub-command '%s' not found!" % sub_cmd
+            print("Sub-command '%s' not found!" % sub_cmd)
             rtn = self.usage()
 
         return rtn

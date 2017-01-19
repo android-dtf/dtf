@@ -15,6 +15,7 @@
 #
 """API for interacting with dtfClient application"""
 
+from __future__ import absolute_import
 import os
 import socket
 import struct
@@ -178,7 +179,7 @@ class DtfClient(object):
 
         sock.send(RESP_OK)
 
-        local_f = file(local_file_name, 'wb')
+        local_f = open(local_file_name, 'wb')
 
         bytes_left = long_file_size
 

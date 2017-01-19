@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 """ dtf Main Launcher """
+
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
 import subprocess
 import os
@@ -49,11 +52,11 @@ def usage():
 
     """Print dtf usage brief"""
 
-    print ("Android Device Testing Framework (dtf) v%s"
-           % constants.VERSION)
-    print 'Usage: dtf [module|command] <arguments>'
-    print ''
-    print "Run with '-h' or 'help' for additional information."
+    print("Android Device Testing Framework (dtf) v%s"
+          % constants.VERSION)
+    print('Usage: dtf [module|command] <arguments>')
+    print('')
+    print("Run with '-h' or 'help' for additional information.")
 
     return -1
 
@@ -62,21 +65,21 @@ def usage_full():
 
     """Print full dtf usage"""
 
-    print ("Android Device Testing Framework (dtf) v%s"
-           % constants.VERSION)
-    print 'Usage: dtf [module|command] <arguments>'
-    print '   Built-in Commands:'
-    print '    archive     Archive your dtf project files.'
-    print '    binding     Print dtf helper bindings.'
-    print '    client      Install/remove the dtf client.'
-    print '    help        Prints this help screen.'
-    print '    init        Initializes a project.'
-    print '    local       Display all local modules.'
-    print '    pm          The dtf package manager.'
-    print '    prop        The dtf property manager.'
-    print '    reset       Removes the dtf config from current directory.'
-    print '    status      Determine if project device is attached.'
-    print '    version     Print version number.'
+    print("Android Device Testing Framework (dtf) v%s"
+          % constants.VERSION)
+    print('Usage: dtf [module|command] <arguments>')
+    print('   Built-in Commands:')
+    print('    archive     Archive your dtf project files.')
+    print('    binding     Print dtf helper bindings.')
+    print('    client      Install/remove the dtf client.')
+    print('    help        Prints this help screen.')
+    print('    init        Initializes a project.')
+    print('    local       Display all local modules.')
+    print('    pm          The dtf package manager.')
+    print('    prop        The dtf property manager.')
+    print('    reset       Removes the dtf config from current directory.')
+    print('    status      Determine if project device is attached.')
+    print('    version     Print version number.')
 
     return 0
 
@@ -167,7 +170,7 @@ def main():
         sys.exit(usage_full())
     # Version information
     elif command_name in ['-v', '--version', 'version']:
-        print constants.VERSION
+        print(constants.VERSION)
         sys.exit(0)
 
     # Almost all commands with dtf require you to be in a project directory,

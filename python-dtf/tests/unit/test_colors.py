@@ -15,6 +15,8 @@
 #
 """pytest for using dtf coloring"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import dtf.colors as colors
 import dtf.testutils as testutils
 
@@ -25,38 +27,38 @@ def test_error():
 
     """Log an error message"""
 
-    print "This message is an %s" % colors.error("error.")
+    print("This message is an %s" % colors.error("error."))
 
 
 def test_warning():
 
     """Log an warning message"""
 
-    print "This message is a %s" % colors.warning("warning.")
+    print("This message is a %s" % colors.warning("warning."))
 
 
 def test_info():
 
     """Log an info message"""
 
-    print "This message is a %s" % colors.info("info message.")
+    print("This message is a %s" % colors.info("info message."))
 
 
 def test_verbose():
 
     """Log an verbose message"""
 
-    print "This message is a %s" % colors.verbose("verbose message.")
+    print("This message is a %s" % colors.verbose("verbose message."))
 
 
 def test_debug():
 
     """Log an debug message"""
 
-    print "This message is a %s" % colors.debug("debug message.")
+    print("This message is a %s" % colors.debug("debug message."))
 
 def test_bold():
 
     """Log a bolded message"""
 
-    print "This message is %s" % colors.bold("important!")
+    print("This message is %s" % colors.bold("important!"))

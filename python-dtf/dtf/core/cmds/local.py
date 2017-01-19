@@ -15,6 +15,8 @@
 #
 """Built-in module for listing local modules"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 from os import listdir
 from os.path import isfile, join
 
@@ -40,10 +42,10 @@ class local(Module):  # pylint: disable=invalid-name
 
         """Main module executor"""
 
-        print "Local Modules:"
+        print('Local Modules:')
 
         for l_module in self.get_locals():
 
-            print "   %s" % l_module
+            print("   %s" % l_module)
 
         return 0

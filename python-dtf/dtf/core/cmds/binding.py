@@ -15,6 +15,8 @@
 #
 """Built-in module for getting a binding path"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 from dtf.globals import get_all_bindings, get_binding, GlobalPropertyError
 from dtf.module import Module
 import dtf.logging as log
@@ -33,7 +35,7 @@ class binding(Module):  # pylint: disable=invalid-name
 
         try:
             for bind_key, value in get_all_bindings():
-                print "%s : %s" % (bind_key, value)
+                print("%s : %s" % (bind_key, value))
         except GlobalPropertyError:
             log.e(TAG, "Unable to list bindings!")
             return -1
@@ -46,7 +48,7 @@ class binding(Module):  # pylint: disable=invalid-name
         """Print a single binding"""
 
         try:
-            print get_binding(bind_key)
+            print(get_binding(bind_key))
         except GlobalPropertyError:
             log.e(TAG, "Unable to find binding: %s" % bind_key)
             return -1

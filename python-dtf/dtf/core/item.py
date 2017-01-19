@@ -18,6 +18,7 @@
 # Eventually this will be changed
 # pylint: disable=too-many-instance-attributes
 
+from __future__ import absolute_import
 import semantic_version
 
 VALID_HEALTH_VALUES = ['stable',

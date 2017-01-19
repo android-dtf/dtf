@@ -15,6 +15,8 @@
 #
 """Internal Package Manager"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import imp
 import os
 import os.path
@@ -50,7 +52,7 @@ def copy_file(local_name, install_name, install_dir):
     log.d(TAG, "Copying '%s' to '%s'..." % (local_name, install_path))
     copy(local_name, install_path)
 
-    os.chmod(install_path, 0755)
+    os.chmod(install_path, 0o755)
 
     log.d(TAG, "Copy complete!")
 
@@ -535,16 +537,14 @@ def __prompt_install(local_item, installed_item):
 
     """Prompt user for item installation"""
 
-    print "Installed Item Details:"
-    print str(installed_item)
-
-    print ""
-
-    print "New Item Details:"
-    print str(local_item)
-
-    print ""
-    print "Do you want to install this %s? [y/N]" % (installed_item.type),
+    print('Installed Item Details:')
+    print(str(installed_item))
+    print('')
+    print('New Item Details:')
+    print(str(local_item))
+    print('')
+    print("Do you want to install this %s? [y/N]"
+          % (installed_item.type), end=" ")
     resp = raw_input()
 
     return bool(resp.lower() == "y")
@@ -554,11 +554,11 @@ def __prompt_delete(installed_item):
 
     """Prompt user to item deletion"""
 
-    print "Installed Item Details:"
-    print str(installed_item)
-
-    print ""
-    print "Are you sure you want to delete this item (NO UNDO)? [y/N]",
+    print('Installed Item Details:')
+    print(str(installed_item))
+    print('')
+    print("Are you sure you want to delete this item (NO UNDO)? [y/N]",
+          end=" ")
     resp = raw_input()
 
     return bool(resp.lower() == "y")
@@ -1200,8 +1200,8 @@ def __generic_install(item, force_mode, new_only, check_function,
 
             # Otherwise we need to prompt
             else:
-                print ("[WARNING] An item with this name is already installed."
-                       " See details below.")
+                print("[WARNING] An item with this name is already installed."
+                      " See details below.")
 
                 if __prompt_install(item, installed_item):
                     log.d(TAG, "User would like to install")

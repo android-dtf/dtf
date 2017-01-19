@@ -15,6 +15,7 @@
 #
 """Unit tests for testing included wrappers"""
 
+from __future__ import absolute_import
 import dtf.included as included
 import dtf.core.utils as utils
 import dtf.testutils as testutils

@@ -15,7 +15,8 @@
 #
 """Built-in module for client on device """
 
-
+from __future__ import absolute_import
+from __future__ import print_function
 import os.path
 from argparse import ArgumentParser
 
@@ -45,17 +46,17 @@ class client(Module):  # pylint: disable=invalid-name
 
         """Display module usage"""
 
-        print "dtf Client Manager"
-        print "Subcommands:"
-        print "    download   Download a file using dtfClient."
-        print "    execute    Execute a command using dtfClient."
-        print "    install    Install the dtf client on device."
-        print "    status     Print the install status of the client."
-        print "    remove     Uninstall the dtf client."
-        print "    restart    Restart dtfClient's socket service."
-        print "    upload     Upload file using dtfClient."
-        print "    mode       Configure connection mode."
-        print ""
+        print('dtf Client Manager')
+        print('Subcommands:')
+        print('    download   Download a file using dtfClient.')
+        print('    execute    Execute a command using dtfClient.')
+        print('    install    Install the dtf client on device.')
+        print('    status     Print the install status of the client.')
+        print('    remove     Uninstall the dtf client.')
+        print("    restart    Restart dtfClient's socket service.")
+        print('    upload     Upload file using dtfClient.')
+        print('    mode       Configure connection mode.')
+        print('')
 
         return 0
 
@@ -95,12 +96,12 @@ class client(Module):  # pylint: disable=invalid-name
         """Print the install status of the client"""
 
         if self.adb.is_installed(DTF_CLIENT):
-            print "dtf Client Status: Installed"
-            print ""
+            print('dtf Client Status: Installed')
+            print('')
 
         else:
-            print "dtf Client Status: Not Installed"
-            print ""
+            print('dtf Client Status: Not Installed')
+            print('')
 
     def do_remove(self):
 
@@ -246,8 +247,8 @@ class client(Module):  # pylint: disable=invalid-name
         """Execute a command using the dtfClient"""
 
         if len(args) != 1:
-            print "Usage:"
-            print "dtf client execute [command]"
+            print('Usage:')
+            print('dtf client execute [command]')
             return -1
 
         command_string = args.pop()
@@ -264,7 +265,7 @@ class client(Module):  # pylint: disable=invalid-name
         response, resp_code = self.client.execute_command(command_string)
 
         if resp_code == RESP_OK:
-            print response
+            print(response)
             return 0
         elif resp_code == ERR_SOCK:
             log.e(self.name, "Socket error!")
@@ -280,10 +281,11 @@ class client(Module):  # pylint: disable=invalid-name
 
         if len(args) < 1:
             current_mode = prop.get_prop('Client', 'mode')
-            print "Current Mode: %s" % current_mode
-            print ""
-            print "Usage:"
-            print "dtf client mode [usb|wifi <ip:port>]"
+            print("Current Mode: %s" % current_mode)
+            print('')
+            print('Usage:')
+            print('dtf client mode [usb|wifi <ip:port>]')
+
             return -1
 
         mode = args.pop(0)
@@ -374,7 +376,7 @@ class client(Module):  # pylint: disable=invalid-name
             rtn = self.do_mode(args)
 
         else:
-            print "Sub-command '%s' not found!" % sub_cmd
+            print("Sub-command '%s' not found!" % sub_cmd)
             rtn = self.usage()
 
         return rtn

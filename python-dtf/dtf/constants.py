@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 """dtf Constants"""
+
+from __future__ import absolute_import
 import dtf
 
 VERSION = dtf.__version__

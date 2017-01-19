@@ -1,5 +1,6 @@
 """Main dtf Module"""
 
+from __future__ import absolute_import
 import pkg_resources
 
 # Here we use the installed version as version number. For tests,

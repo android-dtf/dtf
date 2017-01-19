@@ -15,6 +15,8 @@
 #
 """Built-in module for archiving a project"""
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import zipfile
 
@@ -32,11 +34,11 @@ class archive(Module):  # pylint: disable=invalid-name
 
         """Module usage"""
 
-        print "dtf Archiver"
-        print ""
-        print "Subcommands:"
-        print "    create    Archive the current project."
-        print ""
+        print('dtf Archiver')
+        print('')
+        print('Subcommands:')
+        print('    create    Archive the current project.')
+        print('')
 
         return 0
 
@@ -99,7 +101,7 @@ class archive(Module):  # pylint: disable=invalid-name
             rtn = self.do_create(args)
 
         else:
-            print "Sub-command '%s' not found!" % sub_cmd
+            print("Sub-command '%s' not found!" % sub_cmd)
             rtn = self.usage()
 
         return rtn

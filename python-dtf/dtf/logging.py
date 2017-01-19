@@ -15,6 +15,7 @@
 #
 """dtf logging framework"""
 
+from __future__ import absolute_import
 from sys import stdout
 from time import localtime, strftime
 

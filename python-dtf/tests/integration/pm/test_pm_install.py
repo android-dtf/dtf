@@ -15,6 +15,7 @@
 #
 """Integration tests for the "pm install" utility"""
 
+from __future__ import absolute_import
 import dtf.testutils as testutils
 
 class PmInstallTests(testutils.BasicIntegrationTest):

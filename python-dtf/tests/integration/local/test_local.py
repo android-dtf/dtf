@@ -15,6 +15,7 @@
 #
 """Integration tests for 'local' command"""
 
+from __future__ import absolute_import
 import dtf.testutils as testutils
 import dtf.core.utils as utils
 

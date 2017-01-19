@@ -15,6 +15,7 @@
 #
 """Python wrapper for Android tools"""
 
+from __future__ import absolute_import
 from subprocess import Popen, PIPE
 from dtf.globals import get_binding
 

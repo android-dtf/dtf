@@ -15,6 +15,9 @@
 #
 """Built-in module for getting the status of a project"""
 
+from __future__ import absolute_import
+from __future__ import print_function
+
 from dtf.module import Module
 import dtf.adb as DtfAdb
 
@@ -39,13 +42,13 @@ class status(Module):  # pylint: disable=invalid-name
                 found = True
                 break
 
-        print "Status:",
+        print("Status:", end=" ")
 
         if found:
-            print "Connected"
+            print('Connected')
         else:
-            print "Not Connected"
+            print('Not Connected')
 
-        print "Serial Number: %s" % serial
+        print("Serial Number: %s" % serial)
 
         return 0
