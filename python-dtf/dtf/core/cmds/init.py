@@ -86,7 +86,8 @@ class init(Module):  # pylint: disable=invalid-name
     adb = None
 
     @classmethod
-    def do_shutdown(cls, signum, frame):  # pylint: disable=unused-argument
+    def do_shutdown(cls, signum, frame):
+        # pylint: disable=unused-argument
 
         """Handle a Ctrl+C"""
 

@@ -64,6 +64,7 @@ class prop(Module):  # pylint: disable=invalid-name
             prop_name = args[1]
 
             try:
+                # pylint: disable=redefined-variable-type
                 value = get_prop(section, prop_name)
 
             except PropertyError:
