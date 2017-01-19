@@ -26,6 +26,7 @@ import time
 from dtf.module import Module
 from dtf.properties import set_prop
 import dtf.adb as adb
+import dtf.core.compat as compat
 import dtf.core.utils as utils
 import dtf.logging as log
 import dtf.packages as pkg
@@ -193,10 +194,10 @@ class init(Module):  # pylint: disable=invalid-name
         print("\n%s\n" % version_string)
         print("The version string is only used to identify this project.\n")
 
-        res = utils.compat_input("Would you like to change it? [N/y] ").lower()
+        res = compat.raw_input("Would you like to change it? [N/y] ").lower()
 
         if res == 'y':
-            return utils.compat_input("Please enter a custom version string: ")
+            return compat.raw_input("Please enter a custom version string: ")
         else:
             return version_string
 
@@ -226,8 +227,8 @@ class init(Module):  # pylint: disable=invalid-name
             init_device = devices[0]
             serial = init_device['serial']
 
-            res = utils.compat_input("Got serial '%s', is this correct? [Y/n] "
-                                     % serial)
+            res = compat.raw_input("Got serial '%s', is this correct? [Y/n] "
+                                   % serial)
             if res.lower() == 'n':
                 log.e(TAG, "Initialization aborted.")
                 return None
@@ -239,7 +240,7 @@ class init(Module):  # pylint: disable=invalid-name
                 print("#%d. %s (%s)" % (i, serial, status))
                 i += 1
 
-            res = utils.compat_input("\nWhich device #? ")
+            res = compat.raw_input("\nWhich device #? ")
 
             try:
                 int_res = int(res)
@@ -352,8 +353,8 @@ class init(Module):  # pylint: disable=invalid-name
             log.e(TAG, "Configuration file already exists!")
             return -1
 
-        utils.compat_input("\nPlease connect test device "
-                           "(press Enter to continue) ")
+        compat.raw_input("\nPlease connect test device "
+                         "(press Enter to continue) ")
 
         # This might get in the way.
         try:

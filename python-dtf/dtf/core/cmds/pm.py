@@ -28,6 +28,7 @@ import requests
 from dtf.module import Module
 import dtf.globals
 import dtf.logging as log
+import dtf.core.compat as compat
 import dtf.core.item
 import dtf.core.manifestparser as mp
 import dtf.core.packagemanager as packagemanager
@@ -293,7 +294,7 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         print('Note: This will not delete any project data.')
         print('Are you sure you want to do this? [N/y]', end=" ")
 
-        res = utils.compat_input()
+        res = compat.raw_input()
 
         if res.lower() == "y":
             return packagemanager.purge()

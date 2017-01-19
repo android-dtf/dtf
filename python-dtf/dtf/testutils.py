@@ -24,9 +24,10 @@ import sys
 import tempfile
 import unittest
 import zipfile
-import ConfigParser
 
 from subprocess import Popen, PIPE
+
+import configparser
 
 import dtf.constants as constants
 import dtf.core.utils as utils
@@ -224,7 +225,7 @@ class BasicIntegrationTest(IntegrationTest):
 
         """Return basic config for offline"""
 
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
 
         config.add_section('Info')
         config.set('Info', 'sdk', constants.API_MAX)
@@ -241,7 +242,7 @@ class BasicIntegrationDeviceTest(IntegrationTest):
 
         """Return basic config for online"""
 
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
 
         config.add_section('Info')
         config.set('Info', 'sdk', constants.API_MAX)
@@ -256,7 +257,7 @@ def get_default_config(api=constants.API_MAX):
 
     """Factory for creating a config"""
 
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
 
     config.add_section('Info')
     config.set('Info', 'sdk', api)

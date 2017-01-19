@@ -16,8 +16,9 @@
 """Global dtf locations"""
 
 from __future__ import absolute_import
-import ConfigParser
 import os.path
+
+import configparser
 
 import dtf.core.utils as utils
 
@@ -61,14 +62,14 @@ def get_generic_global(section, prop):
     elif prop is None:
         raise GlobalPropertyError("Property cannot be null!")
 
-    global_conf = ConfigParser.ConfigParser()
+    global_conf = configparser.ConfigParser()
     global_conf.read(DTF_GLOBAL_CONFIG)
 
     try:
         return global_conf.get(section, prop)
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         raise GlobalPropertyError("Section not found: %s" % section)
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
         raise GlobalPropertyError("Property not found: %s" % prop)
 
 
@@ -79,7 +80,7 @@ def __get_section(section):
     if section is None:
         raise GlobalPropertyError("Section cannot be null!")
 
-    global_conf = ConfigParser.ConfigParser()
+    global_conf = configparser.ConfigParser()
     global_conf.read(DTF_GLOBAL_CONFIG)
 
     if not global_conf.has_section(section):

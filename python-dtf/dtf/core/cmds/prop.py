@@ -17,7 +17,8 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
-import ConfigParser
+
+import configparser
 
 from dtf.module import Module
 import dtf.logging as log
@@ -114,7 +115,7 @@ class prop(Module):  # pylint: disable=invalid-name
 
         """Dump entire configuration"""
 
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(utils.CONFIG_FILE_NAME)
 
         for section in config.sections():

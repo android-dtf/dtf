@@ -16,10 +16,10 @@
 """dtf property support"""
 
 from __future__ import absolute_import
-import ConfigParser
 from os.path import abspath, join, isfile
 from os import getcwd, pardir
 
+import configparser
 
 import dtf.core.utils as utils
 import dtf.logging as log
@@ -54,7 +54,7 @@ def __load_config():
 
     """Load the current project configuration"""
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read(CONFIG_FILE_NAME)
 
     return config
@@ -79,10 +79,10 @@ def get_prop(section, prop):
     # Caller needs to check return if he/she cares what the issue was.
     try:
         rtn = config.get(section, prop)
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         err = "Property section not found: %s" % section
         raise PropertyError(err)
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
         err = r"Property not found: %s\%s" % (section, prop)
         raise PropertyError(err)
 
@@ -120,7 +120,7 @@ def del_prop(section, prop):
     # Remove the parameter
     try:
         rtn = config.remove_option(section, prop)
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         log.w(TAG, "Property not removed (the section did not exist).")
         return -1
 
@@ -148,9 +148,9 @@ def test_prop(section, prop):
     try:
         config.get(section, prop)
         rtn = 1
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         rtn = 0
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
         rtn = 0
 
     return rtn

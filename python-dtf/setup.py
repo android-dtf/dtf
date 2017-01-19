@@ -19,7 +19,7 @@
 from __future__ import absolute_import
 from setuptools import setup
 import os
-
+import sys
 
 # Read in the version data.
 def generate_version_string():
@@ -34,6 +34,14 @@ def generate_version_string():
         return "%s.%s" % (values[0], values[1])
     else:
         return "%s.%s.%s" % (values[0], values[1], values[2])
+
+requires = ['colored',
+            'lxml',
+            'semantic_version',
+            'requests']
+
+if sys.version_info[:2] == (2, 6):
+        requires.append("configparser")
 
 setup(
     name='dtf',
@@ -66,7 +74,7 @@ setup(
               "dtf.core",
               "dtf.core.cmds"],
 
-    install_requires=['colored', 'lxml', 'semantic_version', 'requests'],
+    install_requires=requires,
     setup_requires=['pytest-runner'],
 
     entry_points={

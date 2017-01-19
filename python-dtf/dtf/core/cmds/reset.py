@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import os
 
+import dtf.core.compat as compat
 import dtf.core.utils as utils
 import dtf.logging as log
 
@@ -38,7 +39,7 @@ class reset(Module):  # pylint: disable=invalid-name
         print('Are you sure you want to delete the dtf project in this '
               'directory? This cannot be reversed! [y/N]', end=" ")
 
-        inp = utils.compat_input()
+        inp = compat.raw_input()
 
         if inp.lower() == 'y':
             os.remove(utils.CONFIG_FILE_NAME)

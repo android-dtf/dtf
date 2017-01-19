@@ -18,7 +18,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import imp
-import cStringIO
 import os
 import os.path
 import shlex
@@ -28,6 +27,7 @@ import traceback
 from contextlib import contextmanager
 
 import dtf.adb as adb
+import dtf.core.compat as compat
 import dtf.core.packagemanager as pm
 import dtf.core.utils as utils
 import dtf.logging as log
@@ -255,7 +255,7 @@ def launch_module(cmd, args, redirect=False):
 
     # If the caller explicitly asked to save stdout, lets do it.
     if redirect:
-        captured_f = cStringIO.StringIO()
+        captured_f = compat.StringIO()
 
         with stdout_redirector(captured_f):
 

@@ -17,13 +17,13 @@
 
 from __future__ import absolute_import
 from hashlib import md5
-from urlparse import urlparse
-from builtins import input as __input
 import errno
 import os
 import os.path
 import shutil
 import stat
+
+import dtf.core.compat as compat
 
 CONFIG_FILE_NAME = '.dtfini'
 LOG_FILE_NAME = '.dtflog'
@@ -190,7 +190,7 @@ def is_valid_url(url_string):
 
     """Test and return valid URL"""
 
-    parsed_url = urlparse(url_string)
+    parsed_url = compat.urlparse.urlparse(url_string)
 
     return bool(parsed_url.scheme)
 
@@ -199,11 +199,4 @@ def is_http_url(url_string):
 
     """Check scheme of a URL"""
 
-    return bool(urlparse(url_string).scheme == 'http')
-
-
-def compat_input(*string):
-
-    """Compatability input()/raw_input()"""
-
-    return __input(*string)
+    return bool(compat.urlparse.urlparse(url_string).scheme == 'http')
