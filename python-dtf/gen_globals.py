@@ -21,7 +21,8 @@ from __future__ import print_function
 import fnmatch
 import os
 import sys
-from configparser import ConfigParser
+
+import configparser
 
 OUTPUT_FILE = "included/globals.ini"
 INCLUDED_DIR = "~/.dtf/included"
@@ -42,7 +43,7 @@ def main():
 
     """Main loop"""
 
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.SafeConfigParser()
 
     print('Doing globals.ini creation...')
 
