@@ -21,7 +21,7 @@ from __future__ import print_function
 import fnmatch
 import os
 import sys
-import ConfigParser
+from configparser import ConfigParser
 
 OUTPUT_FILE = "included/globals.ini"
 INCLUDED_DIR = "~/.dtf/included"
