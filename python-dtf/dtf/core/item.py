@@ -53,8 +53,8 @@ def item_is_newer(installed_item, item):
 
     """Determine if an item is newer"""
 
-    return bool(semantic_version.Version(installed_item.version)
-                < semantic_version.Version(item.version))
+    return bool(semantic_version.Version(installed_item.version) <
+                semantic_version.Version(item.version))
 
 
 class Item(object):  # pylint: disable=too-few-public-methods

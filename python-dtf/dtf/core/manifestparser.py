@@ -405,8 +405,8 @@ class ExportZip(object):
         rmtree(install_path, ignore_errors=True)
 
         reduced_list = [file_f for file_f in self.zip_f.namelist()
-                        if file_f.startswith(local_name)
-                        and file_f != local_name+'/']
+                        if file_f.startswith(local_name) and
+                        file_f != local_name+'/']
 
         self.zip_f.extractall(dtf.globals.DTF_DATA_DIR, reduced_list)
 
