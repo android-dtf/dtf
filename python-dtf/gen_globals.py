@@ -58,7 +58,7 @@ def main():
         return -1
 
     # Write it out
-    with open(OUTPUT_FILE, 'wb') as configfile:
+    with open(OUTPUT_FILE, 'w') as configfile:
         parser.write(configfile)
 
     return 0
