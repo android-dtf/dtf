@@ -15,7 +15,9 @@
 #
 """Compatibility helpers"""
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,input-builtin,raw_input-builtin
+
+from __future__ import absolute_import
 
 try:
     raw_input = raw_input  # pylint: disable=redefined-builtin
