@@ -36,6 +36,7 @@ def generate_version_string():
         return "%s.%s.%s" % (values[0], values[1], values[2])
 
 requires = ['colored',
+            'configparser',
             'lxml',
             'semantic_version',
             'requests']
