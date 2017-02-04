@@ -197,7 +197,12 @@ do_install() {
     wget_link=https://raw.githubusercontent.com/android-dtf/dtf/${BRANCH}/release/${DEB_NAME}
 
     # wget the deb, sudo dpkg it.
-    wget -q "${wget_link}" -O "/tmp/${DEB_NAME}"
+    wget --no-verbose "${wget_link}" -O "/tmp/${DEB_NAME}"
+
+    if [ "$?" != "0" ]; then
+        error "Unable to download Debian file!"
+        exit 2
+    fi
 
     info "Installing the android-dtf Debian package..."
     sudo dpkg -i "/tmp/${DEB_NAME}"
