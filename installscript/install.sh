@@ -141,7 +141,7 @@ warning() {
 
 has_dpkg() {
 
-    dpkg -s "$1" >/dev/null || return 1
+    dpkg -s "$1" &>/dev/null || return 1
     return 0
 }
 
@@ -178,6 +178,7 @@ do_install() {
 
     info "Checking for required (manual) dependencies..."
 
+    debug "Checking for adb"
     if ! has_cmd adb; then
         error "\`adb\` (Android SDK) is required! You should configure this as instructed."
         exit 2
@@ -192,17 +193,18 @@ do_install() {
     info "Installing Ubuntu specific dependencies (mostly for lxml)..."
     sudo apt-get -qqy install libxml2-dev libxslt1-dev python-dev
 
-    info "Dependencies installed. Pulling the android-dtf .deb..."
+    info "Dependencies installed. Pulling the android-dtf Debian package..."
     wget_link=https://raw.githubusercontent.com/android-dtf/dtf/${BRANCH}/release/${DEB_NAME}
 
     # wget the deb, sudo dpkg it.
-    wget "${wget_link}" -O "/tmp/${DEB_NAME}"
+    wget -q "${wget_link}" -O "/tmp/${DEB_NAME}"
 
-    info "Installing the dtf Debian (.deb) package..."
+    info "Installing the android-dtf Debian package..."
     sudo dpkg -i "/tmp/${DEB_NAME}"
 
     info "dtf framework installation complete."
-    
+
+    debug "Cleaning up..."
     rm "/tmp/${DEB_NAME}"
     
     # As a last step, we install to install packages. TODO
