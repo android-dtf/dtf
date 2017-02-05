@@ -229,6 +229,14 @@ do_prompt_dependencies() {
     debug "Checking for java..."
     if ! has_cmd java; then
         prompt "Java is required. Press ENTER to install. (Ctrl+C to do this manually)"
+
+        # Some Ubuntu distro's may be missing this.
+        if ! has_cmd add-apt-repository; then
+            sudo apt update -qqy
+            info "Installing additional add-apt-repository package..."
+            sudo apt-get install -qqy software-properties-common
+        fi
+
         sudo add-apt-repository ppa:webupd8team/java
         sudo apt update -qqy
         sudo apt install -qqy oracle-java8-installer
