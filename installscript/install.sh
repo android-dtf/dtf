@@ -191,7 +191,7 @@ do_install() {
     do_prompt_dependencies
 
     info "Installing Ubuntu specific dependencies (mostly for lxml)..."
-    sudo apt-get -qqy install libxml2-dev libxslt1-dev python-dev
+    sudo apt-get -qqy install libxml2-dev libxslt1-dev python-dev zlib1g-dev
 
     info "Dependencies installed. Pulling the android-dtf Debian package..."
     wget_link=https://raw.githubusercontent.com/android-dtf/dtf/${BRANCH}/release/${DEB_NAME}
