@@ -9,19 +9,11 @@ The Android Device Testing Framework (`dtf`) is a data collection and analysis f
 
 Installing & Using
 ------------------
-`dtf` is offically supported on Ubuntu, particularly versions 14 and 15. To install `dtf` on Ubuntu, run the following command as root:
+`dtf` is offically supported on Ubuntu, particularly versions 14 through 16. To install `dtf` on Ubuntu, run the following command as root:
 
-    analyst@testing$ sudo ./install_dependencies.sh
-    analyst@testing$ sudo python setup.py install
-
-You can use another OS if you'd like, but your mileage will vary. To help, the following packages are required:
-
-- JRE 1.8
-- Python 2.7 or higher
-- adb
-- Python pip 
-- 'colored' pip module
-- 'lxml' python module
+    analyst@testing$ curl -sSL thecobraden.com/getdtf > install.sh
+    analyst@testing$ chmod u+x install.sh
+    analyst@testing$ ./install.sh
 
 ### Upgrading from 1.3.0
 If you previously installed `dtf` version 1.3.0, you can use the uninstall script to ensure there are no conflicts:
