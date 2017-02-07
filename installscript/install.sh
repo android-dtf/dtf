@@ -17,6 +17,7 @@
 # dtf installer
 
 BRANCH=master
+CLEAN=0
 DEBUG=0
 NO_COLOR=0
 PROMPT=1
@@ -39,9 +40,10 @@ dtf Installer Usage
 
 Options
 
-  --debug            Enable additional debugging.
   --auto             Disable prompts during install.
   --branch [branch]  Download from a specific branch.
+  --clean            Purge all old data.
+  --debug            Enable additional debugging.
 "
 }
 
@@ -60,6 +62,10 @@ parse_arguments() {
 
             (--auto)
                 PROMPT=0
+                ;;
+
+            (--clean)
+                CLEAN=1
                 ;;
 
             (--branch)
@@ -126,7 +132,7 @@ prompt() {
     if [ "$PROMPT" = "0" ]; then
         echo ""
     else
-        read n
+        read response
     fi
 }
 
@@ -213,8 +219,8 @@ do_install() {
     debug "Cleaning up..."
     rm "/tmp/${DEB_NAME}"
     
-    # As a last step, we install to install packages. TODO
-    # prompt_install_content
+    # As a last step, we install to install packages.
+    prompt_install_content
 
     info "dtf installation complete. Enjoy!"
 }
@@ -253,20 +259,34 @@ do_prompt_dependencies() {
 
 prompt_install_content() {
 
-    prompt "Would you like to automatically retrieve core components?"
-    warning "You've choosen to skip install core content. You'll have to manually install."
+    prompt "Would you like to automatically retrieve core components [Y/n]?"
 
-    dtf pm repo add core https://www.thecobraden.com/repos/core
+    if [ "$response" != "n" ]; then
 
-    info "Content installation complete."
+        info "Pulling core content..."
+        dtf pm repo add core https://www.thecobraden.com/dtf-repos/core
 
-    info "dtf Installation complete. Enjoy!"
+        # Add aosp-data TODO
+
+        debug "Performing sync..."
+        dtf pm upgrade
+
+        info "Content installation complete."
+    else
+        warning "You've choosen to skip install core content. You'll have to manually install."
+    fi
 }
 
 do_uninstall() {
 
-    info "Removing current dtf installation (not purge)..."
-    sudo apt-get remove -qqy android-dtf
+    if [ "$CLEAN" = "1" ]; then
+        info "Removing current dtf installation..."
+        sudo apt-get remove --purge -qqy android-dtf
+    else
+        info "Removing current dtf installation (not purge)..."
+        sudo apt-get remove -qqy android-dtf
+    fi
+
     info "dtf has been removed!"
 }
 
