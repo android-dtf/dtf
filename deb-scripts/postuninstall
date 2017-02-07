@@ -4,4 +4,7 @@ case "$1" in
     remove)
         pip uninstall -y dtf
         ;;
+    purge)
+        rm -rf ~/.dtf
+        ;;
 esac
