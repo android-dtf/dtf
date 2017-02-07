@@ -358,13 +358,14 @@ class ExportZip(object):
 
         """Add entire tree to ZIP"""
 
-        local_replace = os.path.dirname(item.local_name)
-
         for root, _, files in os.walk(item.local_name):
             for file_name in files:
                 file_path = os.path.join(root, file_name)
 
-                install_to = file_path.replace(local_replace, subdir, 1)
+                stripped_path = file_path.replace(item.local_name, "", 1)
+                install_to = os.path.normpath("%s/%s/%s"
+                                              % (subdir, item.name,
+                                                 stripped_path))
 
                 log.d(TAG, "Adding dir '%s' as '%s'"
                       % (file_path, install_to))
