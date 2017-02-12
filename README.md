@@ -22,7 +22,7 @@ Instead, `dtf` aims to allow testers to obtain information from their Android de
 
 Installing
 ----------
-`dtf` is offically supported on Ubuntu, particularly versions 14 through 16. At this time there is not support for Windows or OS X.
+`dtf` is offically supported on Ubuntu, particularly versions 14 through 16. At this time there is no support for Windows or OS X.
 
 ### Manual Prerequisites
 The only manual installation requirement for `dtf` is the Android SDK (`dtf` relies on the `adb` utility). It is recommended that you install [Android Studio](https://developer.android.com/studio/install.html), and add `adb` to your `$PATH`.
