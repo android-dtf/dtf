@@ -19,11 +19,15 @@ from __future__ import absolute_import
 import os
 
 import dtf.logging as log
+import dtf.properties as prop
+import dtf.core.packagemanager as pm
+from dtf.globals import DTF_PACKAGES_DIR
+from dtf.exceptions import DtfException
 
 TAG = "dtf-module"
 
 
-class Module(object):  # pylint: disable=too-few-public-methods
+class Module(object):
 
     """
     Base class for creating a python module with dtf. Override the
@@ -31,7 +35,7 @@ class Module(object):  # pylint: disable=too-few-public-methods
     """
 
     name = "MyModule"
-    version = "1.0"
+    version = "1.0.0"
     license = "N/A"
     health = "beta"
     author = "N/A"
@@ -72,3 +76,29 @@ class Module(object):  # pylint: disable=too-few-public-methods
             result = None
 
         return result
+
+    @classmethod
+    def get_diff_dir(cls):
+
+        """Determine which diffing db to use"""
+
+        # First check for a property override.
+        if prop.test_prop('Local', 'diff-data-dir'):
+            diff_dir = prop.get_prop('Local', 'diff-data-dir')
+
+            if not os.path.isdir(diff_dir):
+                raise DtfException("Unable to find diffing directory!")
+            else:
+                return diff_dir
+
+        # Not set
+        else:
+            sdk = prop.get_prop("Info", "sdk")
+            if pm.is_package_installed("aosp-data-%s" % sdk):
+
+                diff_dir = ("%s/aosp-data-%s"
+                            % (DTF_PACKAGES_DIR, sdk))
+
+                return diff_dir
+            else:
+                raise DtfException("AOSP data not installed for this API!")
