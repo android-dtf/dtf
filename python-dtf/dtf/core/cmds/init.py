@@ -237,8 +237,8 @@ class init(Module):  # pylint: disable=invalid-name
             print('Found many devices. Please select from the following list:')
 
             i = 1
-            for serial, status in devices:
-                print("#%d. %s (%s)" % (i, serial, status))
+            for device in devices:
+                print("#%d. %s (%s)" % (i, device['serial'], device['status']))
                 i += 1
 
             res = compat.raw_input("\nWhich device #? ")
