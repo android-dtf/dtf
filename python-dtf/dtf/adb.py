@@ -71,7 +71,7 @@ class DtfAdb(object):
             self.serial = get_mode_serial()
 
         # Determine if we are the new version of adb
-        self.pre_1_0_36 = bool(self.__is_old_adb_version())
+        self.pre_1_0_36 = self.__is_old_adb_version()
 
     def __is_old_adb_version(self):
 
@@ -85,7 +85,6 @@ class DtfAdb(object):
             split_version = version.split(".")
 
             if split_version[0] == "1" and split_version[1] == "0":
-
                 if int(split_version[2]) < 36:
                     return True
 
