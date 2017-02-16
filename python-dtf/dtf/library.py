@@ -66,7 +66,7 @@ class DbLibrary(object):
             raise DtfDbException("Database file not found : %s!" % db_path)
 
         self.db_path = db_path
-        self.db_connection_db = sqlite3.connect(db_path)
+        self.db_connection = sqlite3.connect(db_path)
 
         # Call post init for anyone needing additional stuff here
         self.post_init()
