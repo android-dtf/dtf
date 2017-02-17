@@ -17,6 +17,8 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import unicode_literals
+
 import imp
 import os
 import os.path
@@ -32,6 +34,7 @@ import dtf.core.packagemanager as pm
 import dtf.core.utils as utils
 import dtf.logging as log
 import dtf.properties as prop
+from dtf.exceptions import DtfException
 from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
                          DTF_MODULES_DIR, DTF_DB, DTF_INCLUDED_DIR)
 
@@ -124,7 +127,7 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
             log.e(TAG, "Unhandled Exception in module!")
             for line in traceback.format_exception(*exc_traceback)[3:]:
                 line = line.strip("\n")
-                if line == "":
+                if not line:
                     continue
                 print(line)
 
@@ -281,6 +284,9 @@ def launch_binary(binary, args, launcher=None):
     """Launch a binary"""
 
     path_to_binary = "%s/%s" % (DTF_BINARIES_DIR, binary)
+
+    if not is_binary_installed(binary):
+        raise DtfException("Binary %s not found!" % binary)
 
     if args is None:
         lex_args = []
