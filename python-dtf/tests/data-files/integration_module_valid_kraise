@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+import dtf.logging as log
+import dtf.module as module
+
+TAG = "TestModule"
+
+
+class test_kraise(module.Module):
+
+    """A Module class"""
+
+    about = 'Integration test'
+    author = 'Jake Valletta (jakev)'
+    health = 'stable'
+    name = 'test_kraise'
+    version = '1.0.0'
+
+    @module.sub_cmd("test")
+    def cmd_test(self, args):
+
+        raise KeyboardInterrupt("On no!")

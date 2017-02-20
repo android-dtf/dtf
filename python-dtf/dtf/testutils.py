@@ -229,6 +229,9 @@ class BasicIntegrationTest(IntegrationTest):
 
         config.add_section('Info')
         config.set('Info', 'sdk', constants.API_MAX)
+        config.set('Info', 'serial', 'emulator-5554')
+        config.add_section('Client')
+        config.set('Client', 'mode', adb.MODE_USB)
 
         return config
 

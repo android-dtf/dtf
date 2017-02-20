@@ -27,6 +27,22 @@ from dtf.exceptions import DtfException
 TAG = "dtf-module"
 
 
+def sub_cmd(name):
+
+    """Decorator for routing a sub command"""
+
+    def decorator(func):
+
+        """Save name of the sub command + function"""
+
+        func.sub_cmd_name = name
+        func.sub_cmd_route = func.__name__
+
+        return func
+
+    return decorator
+
+
 class Module(object):
 
     """
@@ -43,6 +59,8 @@ class Module(object):
 
     requires = []
     min_sdk = 0
+
+    launch_dir = ""
 
     __self__ = ''
 
@@ -102,3 +120,9 @@ class Module(object):
                 return diff_dir
             else:
                 raise DtfException("AOSP data not installed for this API!")
+
+    def cd_launch_dir(self):
+
+        """Change to the launch directory"""
+
+        os.chdir(self.launch_dir)

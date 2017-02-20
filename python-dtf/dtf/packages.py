@@ -20,6 +20,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import imp
+import inspect
 import os
 import os.path
 import shlex
@@ -81,7 +82,10 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
     mod_class = None
     mod_inst = None
 
-    # We should always be in TOP (unless we are `pm`)
+    # We should always be in TOP (unless we are `pm`).
+    # However, we should save off the current directory.
+    launch_dir = os.getcwd()
+
     if chdir and prop.TOP is not None:
         os.chdir(prop.TOP)
 
@@ -106,6 +110,7 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
     try:
         mod_class = getattr(module, cmd)
         mod_inst = mod_class()
+        mod_inst.launch_dir = launch_dir
 
     except AttributeError:
         log.e(TAG, "Unable to find class '%s' in module!" % cmd)
@@ -115,28 +120,18 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
         log.e(TAG, "Module prelaunch checks failed.")
         return -8
 
-    rtn = 0
+    # Save module name
+    mod_inst.__self__ = type(mod_inst).__name__
 
-    # Global exception handling
+    # Do python logging override
     try:
-        rtn = mod_inst.run(args)
-    except Exception:  # pylint:disable=broad-except
-        try:
-            exc_traceback = sys.exc_info()
-        finally:
-            log.e(TAG, "Unhandled Exception in module!")
-            for line in traceback.format_exception(*exc_traceback)[3:]:
-                line = line.strip("\n")
-                if not line:
-                    continue
-                print(line)
+        log.LOG_LEVEL_STDOUT = int(os.environ['GLOG_LEVEL'])
+    except KeyError:
+        pass
+    except ValueError:
+        log.w(TAG, "Invalid GLOG_LEVEL value (0-5 is allowed)")
 
-        rtn = -10
-    except KeyboardInterrupt:
-        log.e(TAG, "Python module forcibly killed!")
-        rtn = -11
-
-    return rtn
+    return __do_launch_python_module(mod_inst, args)
 
 
 def __launch_bash_module(module_path, args):
@@ -221,6 +216,97 @@ def __do_python_prelaunch_checks(mod_inst):
         return -1
 
     return 0
+
+
+# pylint:disable=too-many-branches,too-many-return-statements
+def __do_launch_python_module(mod_inst, args):
+
+    """Perform the actual launch"""
+
+    rtn = 0
+
+    # There are two ways to launch a module.
+    # The first is by having an execute(..) function.
+    # The second, is to use the new sub_cmd decorators.
+    # We check for execute, and call it. if we dont have it,
+    # we look for @sub_cmds, and fail if we dont have any/cant
+    # find one.
+    try:
+        if hasattr(mod_inst, 'execute'):
+            return getattr(mod_inst, 'execute')(args)
+
+        # if there are no args, there is way for a sub_cmd
+        elif len(args) == 0:
+
+            log.e(TAG, "Module '%s' does not define a entry point!"
+                  % mod_inst.__self__)
+            return -13
+
+        # positive args, no exec. how about a sub_cmd?
+        else:
+            sub_cmd_map = __determine_sub_cmd_map(mod_inst)
+            sub_cmd = args.pop()
+
+            if len(sub_cmd_map) == 0:
+                log.e(TAG, "Module '%s' has no exec or mappings!"
+                      % mod_inst.__self__)
+                return -14
+
+            if sub_cmd in sub_cmd_map:
+
+                entry_method = sub_cmd_map[sub_cmd]
+
+                launch = getattr(mod_inst, entry_method.sub_cmd_route)
+
+                if __route_has_args(launch):
+                    return launch(args)
+                else:
+                    return launch()
+            else:
+                log.e(TAG, "Module '%s' has no mapping for '%s'!"
+                      % (mod_inst.__self__, sub_cmd))
+                return -15
+
+    # Global exception handling
+    except Exception:  # pylint:disable=broad-except
+        try:
+            exc_traceback = sys.exc_info()
+        finally:
+            log.e(TAG, "Unhandled Exception in module!")
+            for line in traceback.format_exception(*exc_traceback)[3:]:
+                line = line.strip("\n")
+                if not line:
+                    continue
+                print(line)
+
+        rtn = -10
+    except KeyboardInterrupt:
+        log.e(TAG, "Python module forcibly killed!")
+        rtn = -11
+
+    return rtn
+
+
+def __determine_sub_cmd_map(mod_inst):
+
+    """Determine the mapping for sub commands"""
+
+    arg_map = {}
+
+    for _, inst in inspect.getmembers(mod_inst):
+        if hasattr(inst, 'sub_cmd_name'):
+            arg_map[inst.sub_cmd_name] = inst
+
+    return arg_map
+
+
+def __route_has_args(method_inst):
+
+    """Check if arguments exist"""
+
+    args = inspect.getargspec(method_inst)
+
+    return bool(len(args[0]) > 1)
 # End Internal
 
 
