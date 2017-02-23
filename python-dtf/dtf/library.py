@@ -24,7 +24,6 @@ import dtf.core.utils as utils
 import dtf.properties as prop
 
 TAG = "dtf-library"
-AOSP_PACKAGE_PREFIX = "aosp-data-"
 
 
 class DtfDbException(Exception):  # pylint: disable=too-few-public-methods
