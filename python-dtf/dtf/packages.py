@@ -41,6 +41,8 @@ from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
 
 TAG = "dtf-packages"
 
+USAGE_TAGS = ['-h', '--help', 'help']
+
 
 # Internal
 @contextmanager
@@ -235,26 +237,28 @@ def __do_launch_python_module(mod_inst, args):
         if hasattr(mod_inst, 'execute'):
             return getattr(mod_inst, 'execute')(args)
 
-        # if there are no args, there is way for a sub_cmd
-        elif len(args) == 0:
-
-            log.e(TAG, "Module '%s' does not define a entry point!"
-                  % mod_inst.__self__)
-            return -13
-
-        # positive args, no exec. how about a sub_cmd?
+        # no exec. how about a sub_cmd?
         else:
             sub_cmd_map = __determine_sub_cmd_map(mod_inst)
-            sub_cmd = args.pop()
 
+            # No mappings.
             if len(sub_cmd_map) == 0:
                 log.e(TAG, "Module '%s' has no exec or mappings!"
                       % mod_inst.__self__)
                 return -14
 
-            if sub_cmd in sub_cmd_map:
+            # Mappings exist. But do args?
+            if len(args) == 0:
+                return __auto_generate_usage(mod_inst, sub_cmd_map)
 
-                entry_method = sub_cmd_map[sub_cmd]
+            sub_cmd = args.pop(0)
+
+            # First, check for usage.
+            if sub_cmd in USAGE_TAGS:
+                return __auto_generate_usage(mod_inst, sub_cmd_map)
+            elif sub_cmd in sub_cmd_map:
+
+                entry_method = sub_cmd_map[sub_cmd][0]
 
                 launch = getattr(mod_inst, entry_method.sub_cmd_route)
 
@@ -263,6 +267,7 @@ def __do_launch_python_module(mod_inst, args):
                 else:
                     return launch()
             else:
+                __auto_generate_usage(mod_inst, sub_cmd_map)
                 log.e(TAG, "Module '%s' has no mapping for '%s'!"
                       % (mod_inst.__self__, sub_cmd))
                 return -15
@@ -295,7 +300,7 @@ def __determine_sub_cmd_map(mod_inst):
 
     for _, inst in inspect.getmembers(mod_inst):
         if hasattr(inst, 'sub_cmd_name'):
-            arg_map[inst.sub_cmd_name] = inst
+            arg_map[inst.sub_cmd_name] = (inst, inst.sub_cmd_usage)
 
     return arg_map
 
@@ -307,6 +312,22 @@ def __route_has_args(method_inst):
     args = inspect.getargspec(method_inst)
 
     return bool(len(args[0]) > 1)
+
+
+def __auto_generate_usage(mod_inst, arg_map):
+
+    """Generate a usage"""
+
+    print("dtf Module %s v%s" % (mod_inst.name, mod_inst.version))
+    print("")
+    print("Subcommands:")
+
+    for key, args in arg_map.iteritems():
+        print("  %s%s" % (key.ljust(10), args[1]))
+
+    print("")
+
+    return 0
 # End Internal
 
 

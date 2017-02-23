@@ -27,7 +27,7 @@ from dtf.exceptions import DtfException
 TAG = "dtf-module"
 
 
-def sub_cmd(name):
+def sub_cmd(name, usage=""):
 
     """Decorator for routing a sub command"""
 
@@ -37,6 +37,7 @@ def sub_cmd(name):
 
         func.sub_cmd_name = name
         func.sub_cmd_route = func.__name__
+        func.sub_cmd_usage = usage
 
         return func
 
