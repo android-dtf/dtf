@@ -323,7 +323,7 @@ def __auto_generate_usage(mod_inst, arg_map):
     print("Subcommands:")
 
     for key, args in arg_map.iteritems():
-        print("  %s%s" % (key.ljust(10), args[1]))
+        print("  %s%s" % (key.ljust(13), args[1]))
 
     print("")
 
