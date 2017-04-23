@@ -19,10 +19,10 @@ from __future__ import absolute_import
 from sys import stdout
 from time import localtime, strftime
 
+from colored import attr
+
 import dtf.core.utils as utils
 import dtf.colors as colors
-
-from colored import attr
 
 
 # Can override just like the shell

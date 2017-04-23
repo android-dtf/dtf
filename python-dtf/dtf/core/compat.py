@@ -16,6 +16,7 @@
 """Compatibility helpers"""
 
 # pylint: disable=invalid-name,input-builtin,raw_input-builtin
+# pylint: disable=wrong-import-position
 
 from __future__ import absolute_import
 
@@ -34,6 +35,7 @@ StringIO = StringIO
 try:
     import urlparse
 except ImportError:
+    # pylint: disable=no-name-in-module,import-error
     import urllib.parse as urlparse
 
 urlparse = urlparse

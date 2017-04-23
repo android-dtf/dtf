@@ -23,12 +23,6 @@ import os
 import os.path
 import tarfile
 
-import dtf.constants as constants
-import dtf.core.utils as utils
-import dtf.packages as pkg
-import dtf.logging as log
-from dtf.globals import DTF_INCLUDED_DIR
-
 # Coverage is used for tests.
 try:
     import coverage
@@ -36,6 +30,12 @@ except ImportError:
     pass
 else:
     coverage.process_startup()
+
+import dtf.constants as constants
+import dtf.core.utils as utils
+import dtf.packages as pkg
+import dtf.logging as log
+from dtf.globals import DTF_INCLUDED_DIR
 
 # Check for version before anything
 if sys.version_info < (2, 6, 0):
