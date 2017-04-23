@@ -2,6 +2,7 @@
 .dtf*
 .gradle
 build/
+man/*.[0-9]
 
 # OS generated files #
 ######################
