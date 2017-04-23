@@ -54,7 +54,6 @@ class Module(object):
     name = "MyModule"
     version = "1.0.0"
     license = "N/A"
-    health = "beta"
     author = "N/A"
     about = "A basic dtf module."
 

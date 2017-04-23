@@ -13,7 +13,6 @@ class test_nope(Module):
 
     about = 'Integration test'
     author = 'Jake Valletta (jakev)'
-    health = 'stable'
     name = 'test_nope'
     version = '1.0.0'
 

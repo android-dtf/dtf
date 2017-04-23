@@ -12,7 +12,6 @@ class test_raise(module.Module):
 
     about = 'Integration test'
     author = 'Jake Valletta (jakev)'
-    health = 'stable'
     name = 'test_raise'
     version = '1.0.0'
 

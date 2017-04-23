@@ -21,13 +21,6 @@
 from __future__ import absolute_import
 import semantic_version
 
-VALID_HEALTH_VALUES = ['stable',
-                       'working',
-                       'beta',
-                       'deprecated',
-                       'broken',
-                       None]
-
 TYPE_MODULE = 'module'
 TYPE_LIBRARY = 'library'
 TYPE_BINARY = 'binary'
@@ -68,7 +61,6 @@ class Item(object):  # pylint: disable=too-few-public-methods
     author = None
     about = None
     version = None
-    health = None
 
     def __init__(self):
 
@@ -81,7 +73,6 @@ class Item(object):  # pylint: disable=too-few-public-methods
         self.author = None
         self.about = None
         self.version = None
-        self.health = None
 
     def __repr__(self):
 
@@ -93,5 +84,4 @@ class Item(object):  # pylint: disable=too-few-public-methods
         temp += "  Installs as: %s\n" % self.install_name
         temp += "  Author: %s\n" % self.author
         temp += "  Version: %s\n" % self.version
-        temp += "  Health: %s" % self.health
         return temp

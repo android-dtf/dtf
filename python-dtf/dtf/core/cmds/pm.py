@@ -107,8 +107,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
         parser.add_argument('--about', nargs='+', metavar="val",
                             dest='single_about', default=None,
                             help="About string for a module. [SINGLE ONLY].")
-        parser.add_argument('--health', metavar="val", dest='single_health',
-                            default=None, help="Item health [SINGLE ONLY].")
         parser.add_argument('--auto', dest='single_auto', action='store_const',
                             const=True, default=False,
                             help="Automatically parse module [SINGLE ONLY].")
@@ -492,7 +490,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             if verbosity == LIST_VERBOSE:
                 print("\t   About: %s" % binary.about)
                 print("\t   Author: %s" % binary.author)
-                print("\t   Health: %s" % binary.health)
 
         return 0
 
@@ -520,7 +517,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             if verbosity == LIST_VERBOSE:
                 print("\t   About: %s" % library.about)
                 print("\t   Author: %s" % library.author)
-                print("\t   Health: %s" % library.health)
 
         return 0
 
@@ -548,7 +544,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             if verbosity == LIST_VERBOSE:
                 print("\t   About: %s" % module.about)
                 print("\t   Author: %s" % module.author)
-                print("\t   Health: %s" % module.health)
 
         return 0
 
@@ -576,7 +571,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             if verbosity == LIST_VERBOSE:
                 print("\t   About: %s" % package.about)
                 print("\t   Author: %s" % package.author)
-                print("\t   Health: %s" % package.health)
 
         return 0
 
@@ -644,12 +638,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
             return None
 
         item.type = args.single_type
-
-        if args.single_health not in dtf.core.item.VALID_HEALTH_VALUES:
-            log.e(TAG, "Invalid health specified. Exiting.")
-            return None
-
-        item.health = args.single_health
 
         version = args.single_version
         if version is not None:

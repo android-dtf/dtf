@@ -68,15 +68,6 @@ class PmInstallTests(testutils.BasicIntegrationTest):
         rtn = self.run_cmd("pm install --single TEST --name TEST")
         assert(rtn.return_code == 251)
 
-    def test_install_bad_health(self):
-
-        """Attempt to install bad health"""
-
-        data_file = testutils.DataFile("integration_pm_module_install_bash")
-
-        rtn = self.run_cmd("pm install --health BAD --single module --name %s" % str(data_file))
-        assert(rtn.return_code == 251)
-
     def test_install_manual_version(self):
 
         """Install module with manual version"""

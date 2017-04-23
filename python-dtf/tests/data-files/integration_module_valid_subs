@@ -12,7 +12,6 @@ class test_sub(module.Module):
 
     about = 'Integration test - valid module'
     author = 'Jake Valletta (jakev)'
-    health = 'stable'
     name = 'test_module'
     version = '1.0.0'
 

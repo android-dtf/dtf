@@ -65,7 +65,6 @@ def __item_from_xml(item, relative_root="./"):
 
     local_item.type = item_type
     local_item.version = __get_xml_attrib(item, "version")
-    local_item.health = __get_xml_attrib(item, "health")
     local_item.author = __get_xml_attrib(item, "author")
     local_item.about = __get_xml_attrib(item, "about")
 
@@ -168,11 +167,6 @@ class Manifest(object):
             else:
                 item_xml.attrib['version'] = item.version
 
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
-
             if item.author is None:
                 log.w(TAG, "Skipping author for %s" % item.name)
             else:
@@ -201,11 +195,6 @@ class Manifest(object):
             else:
                 item_xml.attrib['version'] = item.version
 
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
-
             if item.author is None:
                 log.w(TAG, "Skipping author for %s" % item.name)
             else:
@@ -233,11 +222,6 @@ class Manifest(object):
                 log.w(TAG, "Skipping version for %s" % item.name)
             else:
                 item_xml.attrib['version'] = item.version
-
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
 
             if item.about is None:
                 log.w(TAG, "Skipping about for %s" % item.name)
@@ -271,11 +255,6 @@ class Manifest(object):
                 log.w(TAG, "Skipping version for %s" % item.name)
             else:
                 item_xml.attrib['version'] = item.version
-
-            if item.health is None:
-                log.w(TAG, "Skipping health for %s" % item.name)
-            else:
-                item_xml.attrib['health'] = item.health
 
             if item.author is None:
                 log.w(TAG, "Skipping author for %s" % item.name)

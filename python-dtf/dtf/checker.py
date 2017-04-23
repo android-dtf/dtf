@@ -176,40 +176,14 @@ def do_auto_checks(item, strict_checks):
 
     """Run the auto checks"""
 
-    # Check Health
-    if do_health_checks(item, strict_checks) != 0:
-        return -1
     # Check Version
-    elif do_version_checks(item, strict_checks) != 0:
+    if do_version_checks(item, strict_checks) != 0:
         return -1
     # Check rest
     elif do_other_checks(item, strict_checks) != 0:
         return -1
     else:
         return 0
-
-
-def do_health_checks(item, strict):
-
-    """Run health checks"""
-
-    health = item.health
-
-    if health is None:
-        log.w(TAG, "[WARN] Health is none, this should be set!")
-        if strict:
-            return -1
-    elif health not in dtf.core.item.VALID_HEALTH_VALUES:
-        log.e(TAG, "[FAIL] invalid health specified!")
-        return -1
-    elif health in ['broken', 'deprecated']:
-        log.w(TAG, "[WARN] Broken or deprecated modules should be fixed!")
-        if strict:
-            return -1
-    else:
-        log.i(TAG, "[PASS] Valid health.")
-
-    return 0
 
 
 def do_version_checks(item, strict):

@@ -13,6 +13,5 @@ class test_noexecargs(Module):
 
     about = 'Integration test'
     author = 'Jake Valletta (jakev)'
-    health = 'stable'
     name = 'test_noexecargs'
     version = '1.0.0'

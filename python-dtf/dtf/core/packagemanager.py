@@ -192,13 +192,6 @@ def parse_python_module(module_path, name):
     item.author = mod_inst.author
     item.about = mod_inst.about
 
-    health = mod_inst.health
-    if health not in dtf.core.item.VALID_HEALTH_VALUES:
-        log.e(TAG, "Invalid health specified. Exiting.")
-        return None
-
-    item.health = health
-
     version = mod_inst.version
     if version is not None:
         if dtf.core.item.is_valid_version(version):
@@ -246,13 +239,6 @@ def parse_bash_module(module_path, name):
     item.author = get_dict_attrib(attributes, "Author")
     item.about = get_dict_attrib(attributes, "About")
 
-    health = get_dict_attrib(attributes, "Health")
-    if health not in dtf.core.item.VALID_HEALTH_VALUES:
-        log.e(TAG, "Invalid health specified. Exiting.")
-        return None
-
-    item.health = health
-
     version = get_dict_attrib(attributes, "Version")
     if version is not None:
         if dtf.core.item.is_valid_version(version):
@@ -290,7 +276,7 @@ def get_binaries(name_only=False):
     else:
 
         sql = ('SELECT name, version, '
-               'about, author, health '
+               'about, author '
                'FROM binaries '
                'ORDER BY name')
 
@@ -308,7 +294,6 @@ def get_binaries(name_only=False):
             item.version = line[1]
             item.about = line[2]
             item.author = line[3]
-            item.health = line[4]
 
             bins.append(item)
 
@@ -337,7 +322,7 @@ def get_libraries(name_only=False):
     else:
 
         sql = ('SELECT name, version, '
-               'about, author, health '
+               'about, author '
                'FROM libraries '
                'ORDER BY name')
 
@@ -355,7 +340,6 @@ def get_libraries(name_only=False):
             item.version = line[1]
             item.about = line[2]
             item.author = line[3]
-            item.health = line[4]
 
             libs.append(item)
 
@@ -384,7 +368,7 @@ def get_modules(name_only=False):
     else:
 
         sql = ('SELECT name, version, '
-               'about, author, health '
+               'about, author '
                'FROM modules '
                'ORDER BY name')
 
@@ -402,7 +386,6 @@ def get_modules(name_only=False):
             item.version = line[1]
             item.about = line[2]
             item.author = line[3]
-            item.health = line[4]
 
             mods.append(item)
 
@@ -431,7 +414,7 @@ def get_packages(name_only=False):
     else:
 
         sql = ('SELECT name, version, '
-               'about, author, health '
+               'about, author '
                'FROM packages '
                'ORDER BY name')
 
@@ -449,7 +432,6 @@ def get_packages(name_only=False):
             item.version = line[1]
             item.about = line[2]
             item.author = line[3]
-            item.health = line[4]
 
             packages.append(item)
 
@@ -579,7 +561,6 @@ def __load_item(item):
     itm.author = get_item_attrib(item, "author")
     itm.about = get_item_attrib(item, "about")
     itm.version = get_item_attrib(item, "version")
-    itm.health = get_item_attrib(item, "health")
 
     return itm
 
@@ -791,12 +772,12 @@ def __update_binary(item):
     cur.execute(sql)
 
     entry = [(item.name, item.version, item.author,
-              item.health, item.install_name)]
+              item.install_name)]
 
     # Update a Binary Entry
     sql = ('INSERT INTO binaries (name, version, '
-           'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?)')
+           'author, install_name)'
+           'VALUES (?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -818,12 +799,12 @@ def __update_library(item):
     cur.execute(sql)
 
     entry = [(item.name, item.version, item.author,
-              item.health, item.install_name)]
+              item.install_name)]
 
     # Update a Library Entry
     sql = ('INSERT INTO libraries (name, version, '
-           'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?)')
+           'author, install_name)'
+           'VALUES (?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -845,12 +826,12 @@ def __update_module(item):
     cur.execute(sql)
 
     entry = [(item.name, item.about, item.version,
-              item.author, item.health, item.install_name)]
+              item.author, item.install_name)]
 
     # Update a Module Entry
     sql = ('INSERT INTO modules (name, about, version, '
-           'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?, ?)')
+           'author, install_name)'
+           'VALUES (?, ?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -872,12 +853,12 @@ def __update_package(item):
     cur.execute(sql)
 
     entry = [(item.name, item.version, item.author,
-              item.health, item.install_name)]
+              item.install_name)]
 
     # Update a Package Entry
     sql = ('INSERT INTO packages (name, version, '
-           'author, health, install_name)'
-           'VALUES (?, ?, ?, ?, ?)')
+           'author, install_name)'
+           'VALUES (?, ?, ?, ?)')
 
     cur.executemany(sql, entry)
     conn.commit()
@@ -1058,7 +1039,6 @@ def initialize_db():
            'about TEXT, '
            'version TEXT, '
            'author TEXT, '
-           'health TEXT,'
            'install_name TEXT'
            ')')
 
@@ -1076,7 +1056,6 @@ def initialize_db():
            'about TEXT, '
            'version TEXT, '
            'author TEXT, '
-           'health TEXT, '
            'install_name TEXT'
            ')')
 
@@ -1094,7 +1073,6 @@ def initialize_db():
            'about TEXT, '
            'version TEXT, '
            'author TEXT, '
-           'health TEXT, '
            'install_name TEXT'
            ')')
 
@@ -1112,7 +1090,6 @@ def initialize_db():
            'about TEXT, '
            'version TEXT, '
            'author TEXT, '
-           'health TEXT, '
            'install_name TEXT'
            ')')
 

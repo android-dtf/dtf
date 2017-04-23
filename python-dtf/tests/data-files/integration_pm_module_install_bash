@@ -16,7 +16,6 @@
 
 #@About: Get an APK (optionally with DEX) from device.
 #@Author: Jake Valletta (jakev)
-#@Health: stable
 #@Version: 1.1.0
 
 . $DTF_CORE
