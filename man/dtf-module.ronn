@@ -8,8 +8,7 @@ A dtf-module(7) can be either a python class or shell script. A module performs 
 Python modules must extend the **dtf.Module** class, where the class name is the same as the file name. The entry point to a dtf-module(7) is the **execute(self, args)** method, and must be implemented. Python modules can take advantage of a dtf-library(7) using **import**. Python modules also use functionality exposed by **dtf.\***. The use of **dtf.core.\*** classes are strongly discouraged.
 
 ## BASH MODULES
-Bash modules do not contain nearly as much functionality as a python-based dtf-module(7). A bash dtf-module(7) is designed to perform symbol tasks or for prototyping. Bash modules must have a supporte
-d shebang, starting in "#!" and ending with "sh", such as "#!/usr/bin/ksh". Bash modules can source API's from the **DTF_CORE** and **DTF_LOG** environment variables as follows:
+Bash modules do not contain nearly as much functionality as a python-based dtf-module(7). A bash dtf-module(7) is designed to perform simple tasks or for prototyping. Bash modules must have a supported shebang, starting in "#!" and ending with "sh", such as "#!/usr/bin/ksh". Bash modules can source API's from the **DTF_CORE** and **DTF_LOG** environment variables as follows:
     \. $DTF_CORE
     \. $DTF_LOG
 
@@ -18,7 +17,6 @@ Each module can be installed with dtf-pm(1), or tested/executed locally from a p
 
     about|About = A one sentence description of the module.
     author|Author = The author of the module.
-    health|Health = One of the following.
     name|N/A = The name of the module (should match name of class.
     version|Version - The version of the module, in semantic version format.
 
@@ -36,9 +34,8 @@ A trival python dtf-module(7) example called newmodule is:
 
         about = "A new, fun module"
         author = "Some Hacker (mygithub)"
-        health = "stable"
         name = "newmodule"
-        version = "1.3"
+        version = "1.3.0"
 
         def execute(self, args):
 
@@ -53,13 +50,6 @@ A trival bash dtf-module(7) example called newmodule is:
     \. $DTF_LOG
 
     log_i "Hello world!"`
-
-## MODULE HEALTH
-    stable - Fully working.
-    working - Mostly working, some features may not be implemented.
-    beta - Currently being developed.
-    deprecated - Contains errors and use is discouraged.
-    broken - Contains known errors and use is strongly discouraged.
 
 ## AUTHOR
 Jake Valletta <javallet@gmail.com>
