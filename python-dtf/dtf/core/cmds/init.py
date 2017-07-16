@@ -104,22 +104,34 @@ class init(Module):  # pylint: disable=invalid-name
         self.adb.shell_command("getprop %s" % value)
         return self.adb.get_output()[0]
 
-    def determine_cpu_bits(self):
+    def determine_cpu_arch(self):
 
-        """Determine if it is 32 or 64 bit"""
+        """Determine the CPU architecture"""
 
         arch = self.getprop('ro.product.cpu.abi')
         if arch is None:
             log.e(TAG, "Unable to determine processor architecture!")
             return None
 
-        if arch.find('armeabi') != -1:
-            return '32'
+        # We will offically support ARM and Intel. anything else
+        # is not supported.
+        if arch == "x86":
+            arch = "x86"
+            cpu_bits = "32"
+        elif arch == "x86_64":
+            arch = "x86"
+            cpu_bits = "64"
+        elif arch.find("armeabi") != -1:
+            arch = "arm"
+            cpu_bits = "32"
         elif re.search("arm.*64", arch):
-            return '64'
+            arch = "arm"
+            cpu_bits = "64"
         else:
-            log.e(TAG, "Unsupported CPU architecture: %s" % arch)
-            return None
+            log.e(TAG, "Unsupported CPU profile: %s" % arch)
+            return None, None
+
+        return arch, cpu_bits
 
     def determine_vm_type(self, sdk, cpu_bits):
 
@@ -252,6 +264,7 @@ class init(Module):  # pylint: disable=invalid-name
 
         return init_device
 
+    # pylint: disable=too-many-statements
     def initialize_device(self, init_device):
 
         """Perform the actual initialization"""
@@ -306,10 +319,13 @@ class init(Module):  # pylint: disable=invalid-name
         log.d(TAG, "Using version string: %s" % version_string)
         set_prop('Info', 'version-string', version_string)
 
-        # Determine CPU bitness
-        cpu_bits = self.determine_cpu_bits()
+        # Determine architecture and CPU bitness
+        arch, cpu_bits = self.determine_cpu_arch()
         if cpu_bits is None:
             self.do_shutdown(None, None)
+
+        log.d(TAG, "CPU Architecture: %s" % arch)
+        set_prop("Info", "cpu-arch", arch)
 
         log.d(TAG, "Using %s-bit CPU" % cpu_bits)
         set_prop('Info', 'cpu-bits', cpu_bits)
