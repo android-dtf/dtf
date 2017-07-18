@@ -19,10 +19,10 @@ before_install:
 - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 # We also need to grab the build tools.
-- echo y | android update sdk --all --filter platform-tools,build-tools-25.0.1,android-22,android-25,extra-android-m2repository,sys-img-armeabi-v7a-android-22 --no-ui --force
+- echo y | android update sdk --all --filter platform-tools,build-tools-25.0.1,android-22,android-25,extra-android-m2repository,sys-img-x86-android-22 --no-ui --force
 
 # Create and start a AVD
-- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+- echo no | android create avd --force -n test -t android-22 --abi x86
 - emulator -avd test -no-skin -no-audio -no-window &
 
 install:
