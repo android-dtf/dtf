@@ -228,7 +228,7 @@ class DtfAdb(object):
 
         self.shell_command("ls -ld %s" % dir_name)
 
-        line = self.stdout[0]
+        line = [x for x in self.stdout if x][0]
 
         if line[-26:] == " No such file or directory":
             return False
