@@ -47,6 +47,7 @@ def __upsearch(file_name, dir_name):
             return None
         return __upsearch(file_name, new_dir)
 
+
 TOP = __upsearch(CONFIG_FILE_NAME, getcwd())
 
 

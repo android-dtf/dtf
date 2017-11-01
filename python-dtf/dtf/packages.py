@@ -99,7 +99,8 @@ def __launch_python_module(path, cmd, args, chdir=True, skip_checks=False):
     # If we got here, we try to load as a python module.
     try:
         module = imp.load_source(cmd, path)
-    except:  # pylint:disable=bare-except
+    # pylint:disable=bare-except
+    except:  # NOQA
         msg = sys.exc_info()[0]
         log.e(TAG, "An Exception occured while calling load_source()")
         log.e(TAG, "Exception: %s" % msg)

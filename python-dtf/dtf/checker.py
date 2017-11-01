@@ -273,6 +273,7 @@ def main():
     # Do checks
     return do_checks(module_name, all_checks, strict_checks)
 
+
 if __name__ == "__main__":
 
     sys.exit(main())
