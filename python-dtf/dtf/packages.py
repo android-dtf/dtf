@@ -37,7 +37,7 @@ import dtf.logging as log
 import dtf.properties as prop
 from dtf.exceptions import DtfException
 from dtf.globals import (DTF_BINARIES_DIR, DTF_LIBRARIES_DIR,
-                         DTF_MODULES_DIR, DTF_DB, DTF_INCLUDED_DIR)
+                         DTF_MODULES_DIR, DTF_DB)
 
 TAG = "dtf-packages"
 
@@ -155,8 +155,8 @@ def __launch_bash_module(module_path, args):
     new_env = os.environ
 
     # These are used for sourcing
-    new_env['DTF_LOG'] = DTF_INCLUDED_DIR + "/dtf_log.sh"
-    new_env['DTF_CORE'] = DTF_INCLUDED_DIR + "/dtf_core.sh"
+    new_env['DTF_LOG'] = "%s/bash/dtf_log.sh" % utils.get_dtf_lib_dir()
+    new_env['DTF_CORE'] = "%s/bash/dtf_core.sh" % utils.get_dtf_lib_dir()
 
     # We need to be in TOP to get the serial.
     # First, store the current dir.

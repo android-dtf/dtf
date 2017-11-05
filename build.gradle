@@ -113,6 +113,13 @@ task makeDeb(type:Deb) {
         fileMode 0644
         include '**/*.7'
     }
+
+    /* Bash support */
+    from('bash-dtf/') {
+	into '/usr/local/lib/android-dtf/bash/'
+	fileMode 0644
+	include '**/*.sh'
+    }
 }
 
 // Run all tests
@@ -157,7 +164,7 @@ task doCoverage(type:Exec) {
 task doCheckBashisms {
     doLast {
       exec {
-        workingDir 'python-dtf/included'
+        workingDir 'bash-dtf'
         commandLine 'bash', '-c', 'checkbashisms -f ./*.sh'
       }
       exec {
@@ -171,7 +178,7 @@ task doCheckBashisms {
 task doShellCheck {
     doLast {
       exec {
-        workingDir 'python-dtf/included'
+        workingDir 'bash-dtf'
         commandLine 'bash', '-c', 'shellcheck ./*.sh'
       }
       exec {

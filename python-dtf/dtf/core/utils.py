@@ -69,6 +69,13 @@ def get_dtf_data_dir():
     return os.path.expanduser('~') + '/.dtf'
 
 
+def get_dtf_lib_dir():
+
+    """Return the location of the dtf lib dir."""
+
+    return "/usr/local/lib/android-dtf"
+
+
 def md5_local(file_path):
 
     """MD5 a local file"""
