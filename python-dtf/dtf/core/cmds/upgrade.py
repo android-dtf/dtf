@@ -111,7 +111,8 @@ class upgrade(module.Module):  # pylint: disable=invalid-name
             return -1
 
         log.i(self.name, "Update script downloaded. To complete install run:")
-        log.i(self.name, "  sudo %s" % upgrade_script_name)
+        log.i(self.name, "  chmod u+x %s" % upgrade_script_name)
+        log.i(self.name, "  %s" % upgrade_script_name)
 
         return 0
 
