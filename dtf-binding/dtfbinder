@@ -154,19 +154,6 @@ launch_baksmali()
     return $?
 }
 
-launch_dex2jar()
-{
-    _classpath="."
-    for k in "$(dtf binding dtf_dex2jar)"/lib/*.jar
-    do
-        _classpath="${_classpath}:${k}"
-    done
-
-    java -Xms512m -Xmx1024m -classpath "${_classpath}" "com.googlecode.dex2jar.tools.Dex2jarCmd" "$@"
-
-    return $?
-}
-
 launch_smali()
 {
     jarfile=$(dtf binding dtf_smali)
@@ -214,9 +201,6 @@ case $calling_bind in
         return $? ;;
     dtf_baksmali)
         launch_baksmali "$@"
-        return $? ;;
-    dtf_dex2jar)
-        launch_dex2jar "$@"
         return $? ;;
     dtf_smali)
         launch_smali "$@"

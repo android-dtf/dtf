@@ -35,7 +35,8 @@ class binding(Module):  # pylint: disable=invalid-name
 
         try:
             for bind_key, value in get_all_bindings():
-                print("%s : %s" % (bind_key, value))
+                if bind_key.startswith('dtf_'):
+                    print("%s : %s" % (bind_key, value))
         except GlobalPropertyError:
             log.e(TAG, "Unable to list bindings!")
             return -1

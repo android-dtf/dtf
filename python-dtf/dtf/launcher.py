@@ -21,7 +21,6 @@ import sys
 import subprocess
 import os
 import os.path
-import tarfile
 
 # Coverage is used for tests.
 try:
@@ -32,10 +31,12 @@ else:
     coverage.process_startup()
 
 import dtf.constants as constants
+import dtf.core.autoconfig as autoconfig
 import dtf.core.utils as utils
+import dtf.core.packagemanager as packagemanager
 import dtf.packages as pkg
 import dtf.logging as log
-from dtf.globals import DTF_INCLUDED_DIR
+import dtf.globals as dtfglobals
 
 # Check for version before anything
 if sys.version_info < (2, 6, 0):
@@ -79,6 +80,7 @@ def usage_full():
     print('    prop        The dtf property manager.')
     print('    reset       Removes the dtf config from current directory.')
     print('    status      Determine if project device is attached.')
+    print('    upgrade     Perform dtf upgrades.')
     print('    version     Print version number.')
 
     return 0
@@ -88,24 +90,10 @@ def is_first_run():
 
     """Determine if this is first run"""
 
-    if os.path.isdir(DTF_INCLUDED_DIR):
+    if os.path.isdir(dtfglobals.DTF_INCLUDED_DIR):
         return False
     else:
         return True
-
-
-def unpack_included():
-
-    """Unzip the included TAR"""
-
-    utils.mkdir_recursive(DTF_INCLUDED_DIR)
-
-    tar_path = "%s/included.tar" % (os.path.split(__file__)[0])
-
-    with tarfile.TarFile(tar_path, 'r') as included_tar:
-        included_tar.extractall(DTF_INCLUDED_DIR)
-
-    return 0
 
 
 def find_built_in_module(cmd):
@@ -152,9 +140,10 @@ def main():
     if check_dependencies() != 0:
         return -2
 
-    # If this is first run, we need to extract the included files
+    # If this is first run, we need to do a couple of things.
+    # Note: I exit here; doesn't matter what you tried to run.
     if is_first_run():
-        unpack_included()
+        sys.exit(do_first_run_process())
 
     # Next, check args.
     if len(sys.argv) < 2:
@@ -179,7 +168,7 @@ def main():
         return pkg.launch_builtin_module('pm', sys.argv, chdir=False,
                                          skip_checks=True)
 
-    elif command_name in ['init', 'binding']:
+    elif command_name in ['init', 'binding', 'upgrade']:
         return pkg.launch_builtin_module(command_name, sys.argv,
                                          skip_checks=True)
 
@@ -208,6 +197,30 @@ def main():
         rtn = -4
 
     return rtn
+
+
+def do_first_run_process():
+
+    """Perform the file time run install"""
+
+    log.i(TAG, "First time launch of dtf detected...")
+
+    # Set things up if they haven't been already
+    if packagemanager.create_data_dirs() != 0:
+        log.e(TAG, "Unable to setup dtf data directories!")
+        return -4
+
+    if not os.path.isfile(dtfglobals.DTF_DB):
+        if packagemanager.initialize_db() != 0:
+            log.e(TAG, "Error creating and populating dtf db!!")
+            return -7
+
+    if autoconfig.initialize_from_local(is_full=True) != 0:
+        log.e(TAG, "Unable to initialize global settings!")
+        return -5
+
+    log.i(TAG, "Initial auto setup is completed!")
+    return 0
 
 
 if __name__ == "__main__":

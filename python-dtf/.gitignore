@@ -1,6 +1,4 @@
-dtf/*.tar
 dtf/VERSION
-included/globals.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

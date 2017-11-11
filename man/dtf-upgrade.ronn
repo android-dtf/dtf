@@ -1,0 +1,25 @@
+dtf-uograde(1) -- Update components of dtf(1)
+=============================================
+
+## SYNOPSIS
+dtf upgrade [subcommand] [<args>]
+
+Subcommands:
+    core       Update dtf framework.
+    included   Update just the bundled TAR.
+
+## DESCRIPTION  
+dtf-upgrade(1) is used to keep dtf(1) up-to-date.
+
+## EXAMPLES
+Update the included TAR and reconfigure dtf(1)'s bindings:
+    $ dtf upgrade included
+
+Download the install/upgrade script to update dtf(1):
+    $ dtf upgrade core
+
+## AUTHOR
+Jake Valletta <javallet@gmail.com>
+
+## DTF
+Part of the dtf(1) suite.

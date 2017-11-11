@@ -767,16 +767,6 @@ class pm(Module):  # pylint: disable=invalid-name,too-many-public-methods
 
         rtn = 0
 
-        # Set things up if they haven't been already
-        if packagemanager.create_data_dirs() != 0:
-            log.e(TAG, "Unable to setup dtf data directories!")
-            return -4
-
-        if not os.path.isfile(DTF_DB):
-            if packagemanager.initialize_db() != 0:
-                log.e(TAG, "Error creating and populating dtf db!!")
-                return -7
-
         if len(args) < 1:
             return self.usage()
 

@@ -67,19 +67,6 @@ This product includes software developed by:
   * The Apache Software Foundation (http://www.apache.org/)
 *******************************************************************************
 
-Various portions of the compiled code are taken from the dex2jar project, written
-and copyrighted by Ryszard Wiśniewski, released under the following Apache 
-License, Version 2.0:
-
-*******************************************************************************
-dex2jar - Tools to work with android .dex and java .class files
-Copyright (c) 2009-2012 Panxiaobo
-
-contributors
-  - Panxiaobo <pxb1988@gmail.com>
-  - yyjdelete <yyjdelete@gmail.com>
-*******************************************************************************
-
 Various portions of the compiled code are taken from the Red Naga project, 
 written and copyrighted by Tim Strazzere, released under the following Apache 
 License, Version 2.0:

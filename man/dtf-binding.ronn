@@ -9,9 +9,11 @@ dtf-binding(1) prints a single dtf binding or all bindings for built-in tools. T
 
 ## EXAMPLES
 To print all bindings, run dtf-binding(1) with no arguments:
-    $ dtf binding
+
+	$ dtf binding
 
 To print a single binding, supply it as argument 1:
+
     $ dtf binding dtf_apktool
 
 The purpose of this system is to allow hotswapping of built-in tools. For example, suppose a specific version of smali is desired for a given project. You can edit the file "~/.dtf/included/globals.ini" to reflect this. Now, when using dtf(1), this new tool will be used.

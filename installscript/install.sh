@@ -219,6 +219,12 @@ do_install() {
     debug "Cleaning up..."
     rm "/tmp/${DEB_NAME}"
     
+    # Run dtf to start basic setup of DB + included.
+    dtf
+
+	# Next, incase this is an upgrade, let's update the config.
+	dtf upgrade core --reconfigure
+
     # As a last step, we install to install packages.
     prompt_install_content
 

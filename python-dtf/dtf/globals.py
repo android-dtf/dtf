@@ -16,8 +16,8 @@
 """Global dtf locations"""
 
 from __future__ import absolute_import
+from __future__ import print_function
 import os.path
-
 import configparser
 
 import dtf.core.utils as utils
@@ -30,7 +30,11 @@ DTF_PACKAGES_DIR = DTF_DATA_DIR + "/packages/"
 DTF_DB = DTF_DATA_DIR + "/main.db"
 
 DTF_INCLUDED_DIR = DTF_DATA_DIR + "/included"
-DTF_GLOBAL_CONFIG = DTF_INCLUDED_DIR + "/globals.ini"
+DTF_GLOBAL_CONFIG = DTF_DATA_DIR + "/globals.ini"
+
+CONFIG_SECTION_BINDINGS = 'Bindings'
+CONFIG_SECTION_CLIENT = 'Client'
+CONFIG_SECTION_CONFIG = 'Config'
 
 
 class GlobalPropertyError(Exception):
@@ -43,14 +47,15 @@ def get_binding(dtf_binding):
 
     """Read binding from global config"""
 
-    return os.path.expanduser(get_generic_global("Bindings", dtf_binding))
+    return os.path.expanduser(get_generic_global(CONFIG_SECTION_BINDINGS,
+                                                 dtf_binding))
 
 
 def get_all_bindings():
 
     """Get all bindings"""
 
-    return __get_section("Bindings")
+    return __get_section(CONFIG_SECTION_BINDINGS)
 
 
 def get_generic_global(section, prop):
@@ -71,6 +76,16 @@ def get_generic_global(section, prop):
         raise GlobalPropertyError("Section not found: %s" % section)
     except configparser.NoOptionError:
         raise GlobalPropertyError("Property not found: %s" % prop)
+
+
+def get_copy():
+
+    """Return a memory-resident copy"""
+
+    global_conf = configparser.ConfigParser()
+    global_conf.read(DTF_GLOBAL_CONFIG)
+
+    return global_conf
 
 
 def __get_section(section):
