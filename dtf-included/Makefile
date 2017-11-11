@@ -34,7 +34,7 @@ version:
 
 tar: version
 	cd out; \
-		tar -cf ../build/included.tar ./*
+	  tar -cf ../build/included.tar ./*
 
 fatTar: abe apktool axmlprinter smali tar
 
