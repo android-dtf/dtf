@@ -1,9 +1,13 @@
+import groovy.swing.SwingBuilder
+
 apply plugin: 'com.android.application'
 apply plugin: 'findbugs'
 
+System.setProperty('java.awt.headless', 'false')
+
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId PACKAGE_NAME
@@ -30,14 +34,9 @@ android {
             signingConfig signingConfigs.release
 
             applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def newName = output.outputFile.name
-                    def versionString = PACKAGE_NAME + "-" + VERSION_NAME + "-" + VERSION_CODE + "-"
+                variant.outputs.all { output ->
 
-                    newName = newName.replace("app-", versionString)
-
-                    //noinspection GroovyAssignabilityCheck
-                    output.outputFile = new File(output.outputFile.parent, newName)
+                    outputFileName = "${variant.name}-${variant.versionName}-${variant.versionCode}-${variant.buildType.name}.apk"
                 }
             }
 
@@ -58,32 +57,53 @@ android {
         classpath = files()
 
         effort = 'max'
+		reportLevel = 'high'
 
         reports {
-            xml.enabled = true
-        html.enabled = true
+			html.enabled = true
+			xml.enabled = false
         }
     }
 }
 
-// Tricks for password prompt
-gradle.taskGraph.whenReady { taskGraph ->
-      if(taskGraph.hasTask(':app:packageRelease')) {
+task askForPasswords << {
 
-        sleep(500)
+    def console = System.console()
+    def storePw
+    def keyPw
 
-        def storePw = ''
-        def keyPw = ''
-
-        storePw = new String(System.console().readPassword("\n\nPlease enter keystore password: "))
-        keyPw = new String(System.console().readPassword("\nPlease enter alias password: "))
-
-        if(storePw.size() <= 0 || keyPw.size() <= 0) {
-          throw new InvalidUserDataException("Invalid Keys.")
+    if (console) {
+        storePw = new String(console.readPassword("\nKeystore password: "))
+        keyPw = new String(console.readPassword("Key password: "))
+    } else {
+        // Gradle is running as a daemon - prompt user to enter passwords via popup UI (#770)
+        new SwingBuilder().edt {
+            dialog(modal: true, title: 'Enter credentials', alwaysOnTop: true, resizable: true,
+                    locationRelativeTo: null, pack: true, show: true
+            ) {
+                vbox {
+                    label(text: "Keystore passphrase:")
+                    textField id: "storeText", input = passwordField()
+                    label(text: "Key passphrase:")
+                    textField id: "keyText", input = passwordField()
+                    button(defaultButton: true, text: 'OK', actionPerformed: {
+                        storePw = storeText.text;
+                        keyPw = keyText.text;
+                        dispose();
+                    })
+                }
+            }
         }
+    }
 
-        android.signingConfigs.release.storePassword = storePw
-        android.signingConfigs.release.keyPassword = keyPw
+	android.signingConfigs.release.storePassword = storePw
+	android.signingConfigs.release.keyPassword = keyPw
+}
+
+// Tricks for password prompt
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.matches("packageRelease")) {
+        theTask.dependsOn "askForPasswords"
     }
 }
 
