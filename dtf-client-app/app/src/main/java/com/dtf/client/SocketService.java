@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 public class SocketService
         extends Service {
@@ -183,7 +184,7 @@ public class SocketService
                     bytes[i] = ((byte)readed);
                     i++;
                 }
-                return new String(bytes, 0, chunk_size);
+                return new String(bytes, 0, chunk_size, "UTF-8");
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -320,7 +321,8 @@ public class SocketService
 
             try {
 
-                InputStream is = new ByteArrayInputStream(response.getBytes());
+                InputStream is = new ByteArrayInputStream(response.getBytes(
+                        Charset.forName("UTF-8")));
                 while (true) {
 
                     if (bytesLeft <= READ_SIZE_TRANSFER)
