@@ -1,2 +1,1 @@
-include dtf/*.tar
 include dtf/VERSION
