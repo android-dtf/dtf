@@ -42,7 +42,7 @@ fi
 
 # ============ Unit Tests ==============
 # Mock a ~/.dtf directory for unit tests.
-mkdir -p ~/.dtf/binaries/ ~/.dtf/included/ ~/.dtf/libraries/ ~/.dtf/modules/ ~/.dtf./packages/
+mkdir -p ~/.dtf/binaries/ ~/.dtf/included/ ~/.dtf/libraries/ ~/.dtf/modules/ ~/.dtf/packages/
 tar -xC ~/.dtf/included -f dtf/included.tar
 
 coverage run -m py.test tests/unit
