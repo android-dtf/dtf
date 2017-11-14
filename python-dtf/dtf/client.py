@@ -111,8 +111,8 @@ class DtfClient(object):
         # Create an unbound and not-connected socket.
         try:
             sock = socket.socket(socket_family, socket_type)
-        except socket.error as msg:
-            log.e(TAG, "Socket creation failed: " + msg)
+        except socket.error as err:
+            log.e(TAG, "Socket creation failed: " + err.message)
             return None
 
         try:
@@ -128,8 +128,9 @@ class DtfClient(object):
             try:
                 log.d(TAG, "Connecting to filesystem socket...")
                 sock.connect('/tmp/' + socket_name)
-            except socket.error as msg:
-                log.d(TAG, "Connecting to filesystem socket failed: " + msg)
+            except socket.error as err:
+                log.d(TAG, "Connecting to filesystem socket failed: "
+                      + err.message)
                 log.e(TAG, "Connecting to socket failed, giving up.")
                 return None
             else:
