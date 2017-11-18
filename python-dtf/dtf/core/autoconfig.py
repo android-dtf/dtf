@@ -68,8 +68,6 @@ def __find_apk(path):
     if apk_name is None:
         return None
 
-    print(apk_name)
-    print(path)
     full_apk_name = "%s/%s" % (path, apk_name)
     return full_apk_name
 
