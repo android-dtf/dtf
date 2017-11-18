@@ -54,6 +54,26 @@ def __unpack_included(tar_path):
     return 0
 
 
+def __find_apk(path):
+
+    """Find APK in directory"""
+
+    apk_name = None
+
+    for file_name in os.listdir(path):
+        if fnmatch.fnmatch(file_name, '*.apk'):
+            apk_name = file_name
+            break
+
+    if apk_name is None:
+        return None
+
+    print(apk_name)
+    print(path)
+    full_apk_name = "%s/%s" % (path, apk_name)
+    return full_apk_name
+
+
 def __parse_version():
 
     """Parse and return version string"""
@@ -105,22 +125,25 @@ def __do_client_section(parser):
     """Populate the client section"""
 
     apk_name = None
+    dtf_client_path = "%s/dtfClient" % utils.get_dtf_lib_dir()
+    debug_apk_path = "%s/debug" % dtf_client_path
+    release_apk_path = "%s/release" % dtf_client_path
 
-    for file_name in os.listdir("%s/dtfClient/" % utils.get_dtf_lib_dir()):
-        if fnmatch.fnmatch(file_name, '*.apk'):
-            apk_name = file_name
-            break
+    # Check 'debug' dir first.
+    if os.path.isdir(debug_apk_path):
+        apk_name = __find_apk(debug_apk_path)
+    elif os.path.isdir(release_apk_path):
+        apk_name = __find_apk(release_apk_path)
 
     if apk_name is None:
+        log.e(TAG, "No dtfClient APK found!")
         return -1
-
-    full_apk_name = "%s/dtfClient/%s" % (utils.get_dtf_lib_dir(), apk_name)
 
     # Purge section before adding.
     parser.remove_section(dtfglobals.CONFIG_SECTION_CLIENT)
 
     parser.add_section(dtfglobals.CONFIG_SECTION_CLIENT)
-    parser.set(dtfglobals.CONFIG_SECTION_CLIENT, "apk_file", full_apk_name)
+    parser.set(dtfglobals.CONFIG_SECTION_CLIENT, "apk_file", apk_name)
 
     return 0
 
