@@ -81,7 +81,7 @@ def usage_full():
     print('    reset       Removes the dtf config from current directory.')
     print('    status      Determine if project device is attached.')
     print('    upgrade     Perform dtf upgrades.')
-    print('    version     Print version number.')
+    print('    version     Print version number (--full for verbose).')
 
     return 0
 
@@ -130,6 +130,27 @@ def check_dependencies():
     return 0
 
 
+def print_version(args):
+
+    """Print the version (short or long)"""
+
+    # Long version
+    if len(args) > 0 and args[0] == '--full':
+        apk_version = dtfglobals.get_generic_global(
+            dtfglobals.CONFIG_SECTION_CLIENT, 'apk_version')
+        bundle_version = dtfglobals.get_generic_global(
+            dtfglobals.CONFIG_SECTION_BINDINGS, 'version')
+        python_version = constants.VERSION
+
+        print("Python Version: %s" % python_version)
+        print("dtfClient Version: %s" % apk_version)
+        print("Bindings Version Date: %s" % bundle_version)
+    else:
+        print(constants.VERSION)
+
+    return 0
+
+
 def main():
 
     """Main loop"""
@@ -159,8 +180,7 @@ def main():
         sys.exit(usage_full())
     # Version information
     elif command_name in ['-v', '--version', 'version']:
-        print(constants.VERSION)
-        sys.exit(0)
+        sys.exit(print_version(sys.argv))
 
     # Almost all commands with dtf require you to be in a project directory,
     # but some don't. Check for those next.

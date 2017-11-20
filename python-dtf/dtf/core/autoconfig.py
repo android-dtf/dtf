@@ -72,6 +72,16 @@ def __find_apk(path):
     return full_apk_name
 
 
+def __get_apk_version(apk_name):
+
+    """Attempt to find the dtfClient version"""
+
+    try:
+        return os.path.basename(apk_name).strip('.apk').split('-', 1)[1]
+    except IndexError:
+        return "N/A"
+
+
 def __parse_version():
 
     """Parse and return version string"""
@@ -137,11 +147,15 @@ def __do_client_section(parser):
         log.e(TAG, "No dtfClient APK found!")
         return -1
 
+    # Get the version.
+    apk_version = __get_apk_version(apk_name)
+
     # Purge section before adding.
     parser.remove_section(dtfglobals.CONFIG_SECTION_CLIENT)
 
     parser.add_section(dtfglobals.CONFIG_SECTION_CLIENT)
     parser.set(dtfglobals.CONFIG_SECTION_CLIENT, "apk_file", apk_name)
+    parser.set(dtfglobals.CONFIG_SECTION_CLIENT, "apk_version", apk_version)
 
     return 0
 
