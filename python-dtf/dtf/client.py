@@ -16,6 +16,7 @@
 """API for interacting with dtfClient application"""
 
 from __future__ import absolute_import
+from __future__ import print_function
 import os
 import socket
 import struct
@@ -140,6 +141,18 @@ class DtfClient(object):
 
         return sock
 
+    @classmethod
+    def __safe_recv(cls, sock, size, response=None):
+
+        """Handle any issues sending data"""
+
+        try:
+            sock.recv(size)
+
+        except socket.error as err:
+            log.e(TAG, "Error calling recv(): %s" % err)
+            return response
+
     def __do_download(self, remote_file_name, local_file_name):
 
         """Download a file using the dtfClient"""
@@ -152,12 +165,7 @@ class DtfClient(object):
 
         sock.send(CMD_DOWNLOAD)
 
-        try:
-            resp_code = sock.recv(1)
-        except OSError:
-            log.e(TAG, "Connection reset trying to read response!")
-            return RESP_ERROR
-
+        resp_code = self.__safe_recv(sock, 1, response=RESP_ERROR)
         if resp_code != RESP_OK:
             log.e(TAG, "Server rejected download request!")
             return resp_code
@@ -184,23 +192,33 @@ class DtfClient(object):
 
         bytes_left = long_file_size
 
+        transfer_success = False
         while True:
 
             if bytes_left <= SIZE_TRANSFER:
-                local_buf = sock.recv(bytes_left)
+                local_buf = self.__safe_recv(sock, bytes_left)
+                if local_buf is None:
+                    break
 
                 local_f.write(local_buf)
                 local_f.close()
+                transfer_success = True
                 break
             else:
-                local_buf = sock.recv(SIZE_TRANSFER)
+                local_buf = self.__safe_recv(sock, SIZE_TRANSFER)
+                if local_buf is None:
+                    break
+
                 local_f.write(local_buf)
 
                 bytes_left -= SIZE_TRANSFER
 
+        if not transfer_success:
+            log.e(TAG, "Error downloading file!")
+            return RESP_ERROR
+
         sock.send(RESP_OK)
         log.d(TAG, "Transfer complete!")
-
         return RESP_OK
 
     # pylint:disable=too-many-return-statements
@@ -221,12 +239,7 @@ class DtfClient(object):
 
         sock.send(CMD_UPLOAD)
 
-        try:
-            resp_code = sock.recv(1)
-        except OSError:
-            log.e(TAG, "Connection reset trying to read response!")
-            return RESP_ERROR
-
+        resp_code = self.__safe_recv(sock, 1, response=RESP_ERROR)
         if resp_code != RESP_OK:
             log.e(TAG, "Server rejected upload request!")
             return resp_code
@@ -244,8 +257,7 @@ class DtfClient(object):
         log.d(TAG, "Sending the filename...")
         sock.send(padded_file_name)
 
-        resp = sock.recv(1)
-
+        resp = self.__safe_recv(sock, 1, response=RESP_ERROR)
         if resp != RESP_OK:
             log.e(TAG, "Error with filename!")
             return resp
@@ -261,8 +273,7 @@ class DtfClient(object):
                 sock.send(local_f.read(SIZE_TRANSFER))
                 bytes_left -= SIZE_TRANSFER
 
-        resp = sock.recv(1)
-
+        resp = self.__safe_recv(sock, 1, response=RESP_ERROR)
         if resp != RESP_OK:
             log.e(TAG, "Error uploading file!")
             return resp
@@ -283,12 +294,7 @@ class DtfClient(object):
 
         sock.send(CMD_EXECUTE)
 
-        try:
-            resp_code = sock.recv(1)
-        except OSError:
-            log.e(TAG, "Connection reset trying to read response!")
-            return (response, RESP_ERROR)
-
+        resp_code = self.__safe_recv(sock, 1, response=RESP_ERROR)
         if resp_code != RESP_OK:
             log.e(TAG, "Server rejected execute request!")
             return (response, resp_code)
@@ -316,17 +322,28 @@ class DtfClient(object):
         bytes_left = int_cmd_size
         response = ""
 
+        transfer_success = False
         while True:
             if bytes_left <= SIZE_TRANSFER:
-                local_buf = sock.recv(bytes_left)
+                local_buf = self.__safe_recv(sock, bytes_left)
+                if local_buf is None:
+                    break
 
                 response += local_buf
+                transfer_success = True
                 break
             else:
-                local_buf = sock.recv(SIZE_TRANSFER)
+                local_buf = self.__safe_recv(sock, SIZE_TRANSFER)
+                if local_buf is None:
+                    break
+
                 response += local_buf
 
                 bytes_left -= SIZE_TRANSFER
+
+        if not transfer_success:
+            log.e(TAG, "Error downloading file!")
+            return ("", RESP_ERROR)
 
         sock.send(RESP_OK)
         log.d(TAG, "Command complete!")

@@ -271,8 +271,8 @@ class client(Module):  # pylint: disable=invalid-name
             log.e(self.name, "Socket error!")
             return -1
         else:
-            log.e(self.name, "Something went wrong with the command: %s"
-                  % resp_code)
+            log.e(self.name, "Something went wrong with the command (Err: %s)"
+                  % ord(resp_code))
             return -1
 
     def do_mode(self, args):
