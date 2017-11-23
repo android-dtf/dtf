@@ -26,6 +26,7 @@ import time
 from dtf.module import Module
 from dtf.properties import set_prop
 import dtf.adb as adb
+import dtf.constants as const
 import dtf.core.compat as compat
 import dtf.core.utils as utils
 import dtf.logging as log
@@ -293,6 +294,10 @@ class init(Module):  # pylint: disable=invalid-name
         sdk = self.getprop('ro.build.version.sdk')
         log.d(TAG, "Using SDK API %s" % sdk)
         set_prop('Info', 'SDK', sdk)
+
+        if int(sdk) > const.API_MAX:
+            log.w(TAG, "API %s isn't supported by dtf (yet), results may vary!"
+                  % sdk)
 
         self.adb.shell_command('set')
         set_output = self.adb.get_output()
