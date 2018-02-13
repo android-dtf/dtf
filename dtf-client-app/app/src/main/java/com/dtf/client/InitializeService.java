@@ -30,7 +30,6 @@ import java.io.OutputStream;
 public class InitializeService extends IntentService {
 
     private final String TAG = "DtfInitializeService";
-    private final String BUSYBOX_BINARY = "busybox";
 
     public InitializeService() {
         super("InitializeService");
@@ -57,6 +56,18 @@ public class InitializeService extends IntentService {
 
     private int copyAssets() {
 
+        String busyboxFile = "";
+        if (Utils.isArm()) {
+            busyboxFile = "busybox-arm";
+        }
+        else if (Utils.isIntel()) {
+            busyboxFile = "busybox-i686";
+        }
+
+        else {
+            Log.e(TAG, "Unable to determine CPU type!");
+        }
+
         AssetManager assetManager = getAssets();
         String[] files = null;
         
@@ -68,16 +79,16 @@ public class InitializeService extends IntentService {
         }
 
         for(String filename : files) {
-            if (filename.equals(BUSYBOX_BINARY)) {
+            if (filename.equals(busyboxFile)) {
 
-                Log.d(TAG, "Copying asset: "+filename);
+                Log.d(TAG, "Copying asset: " + busyboxFile);
 
                 InputStream in = null;
                 OutputStream out = null;
 
                 try {
-                  in = assetManager.open(filename);
-                  File outFile = new File(this.getFilesDir()+"/", filename);
+                  in = assetManager.open(busyboxFile);
+                  File outFile = new File(this.getFilesDir()+"/", "busybox");
 
                   out = new FileOutputStream(outFile);
                   copyFile(in, out);
