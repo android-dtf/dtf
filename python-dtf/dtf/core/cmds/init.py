@@ -40,6 +40,7 @@ TYPE_ART = 'ART'
 SEANDROID_UNKNOWN = "Unknown"
 SEANDROID_PERMISSIVE = "Permissive"
 SEANDROID_ENFORCING = "Enforcing"
+SEANDROID_DISABLED = "Disabled"
 SEANDROID_OFF = "Off"
 
 
@@ -191,6 +192,8 @@ class init(Module):  # pylint: disable=invalid-name
             return SEANDROID_PERMISSIVE
         elif response == "enforcing":
             return SEANDROID_ENFORCING
+        elif response == "disabled":
+            return SEANDROID_DISABLED
         else:
             log.w(TAG, "Unable to determine SEAndroid state!")
             return SEANDROID_UNKNOWN
