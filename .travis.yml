@@ -23,7 +23,7 @@ before_install:
 
 # Create and start a AVD
 - echo no | $HOME/android-sdk/tools/bin/avdmanager create avd --force -n test -k "system-images;android-22;default;x86"
-- $HOME/android-sdk/emulator/emulator -avd test -no-skin -no-audio -no-window &
+- $HOME/android-sdk/emulator/emulator -avd test -no-skin -no-audio -no-window -gpu off &
 
 install:
 - pip install -r "requirements.txt"
