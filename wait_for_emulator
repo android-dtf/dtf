@@ -12,8 +12,10 @@ bootanim=""
 failcounter=0
 timeout_in_sec=360
 
+echo "Using adb: $(which adb)"
+
 until [[ "$bootanim" =~ "stopped" ]]; do
-  bootanim=`$HOME/android-sdk/platform-tools/bin/adb -e shell getprop init.svc.bootanim 2>&1 &`
+  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
   if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline"
     || "$bootanim" =~ "running" ]]; then
     let "failcounter += 1"
