@@ -11,18 +11,20 @@ before_install:
 - sudo apt-get install -y oracle-java8-set-default
 - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386 lib32z1 libreadline6-dev:i386 libncurses5-dev:i386; fi
 
-# We need to manually grab the SDK
-- wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-- tar xzf android-sdk_r24.4.1-linux.tgz
-- export ANDROID_HOME=${PWD}/android-sdk-linux
+- if test ! -e $HOME/android-sdk-dl/sdk-tools.zip ; then curl https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip > $HOME/android-sdk-dl/sdk-tools.zip ; fi
+- unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
+
+# Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
+- echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools' > /dev/null
+- echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools' > /dev/null
+- echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;26.0.1' > /dev/null
+- echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-22' > /dev/null
+
 - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
-# We also need to grab the build tools.
-- echo y | android update sdk --all --filter platform-tools,build-tools-25.0.1,android-22,android-25,extra-android-m2repository,sys-img-x86-android-22 --no-ui --force
-
 # Create and start a AVD
-- echo no | android create avd --force -n test -t android-22 --abi x86
+- echo no | $HOME/android-sdk/tools/bin/avdmanager create avd --force -n test -k "system-images;android-22;google_apis;x86"
 - emulator -avd test -no-skin -no-audio -no-window &
 
 install:
@@ -41,3 +43,24 @@ branches:
 
 git:
   depth: 5
+
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    # Android SDK
+    - $HOME/android-sdk-dl
+    - $HOME/android-sdk
+
+    # Gradle dependencies
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+    # Android build cache (see http://tools.android.com/tech-docs/build-cache)
+    - $HOME/.android/build-cache
+
+env:
+- ANDROID_HOME=$HOME/android-sdk
+
