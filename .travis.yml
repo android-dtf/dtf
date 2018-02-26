@@ -24,7 +24,7 @@ before_install:
 - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 # Create and start a AVD
-- echo no | $HOME/android-sdk/tools/bin/avdmanager create avd --force -n test -k "system-images;android-22;google_apis;x86"
+- echo no | $HOME/android-sdk/tools/bin/avdmanager create avd --force -n test -k "system-images;android-22;default;x86"
 - emulator -avd test -no-skin -no-audio -no-window &
 
 install:
