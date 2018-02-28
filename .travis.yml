@@ -33,7 +33,7 @@ before_script:
 # Wait for emulator
 - ./wait_for_emulator
 
-script: ./gradlew useDebugApk doCoverage
+script: ./gradlew --no-daemon buildDebugApk doCoverage
 
 branches:
   only:
