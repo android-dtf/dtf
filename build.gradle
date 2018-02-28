@@ -169,21 +169,21 @@ task makeDeb(type:Deb) {
         // Bash support
         from('bash-dtf/') {
             into '/usr/local/lib/android-dtf/bash/'
-            fileMode 0640
+            fileMode 0644
             include '**/*.sh'
         }
 
         // dtfClient
         from('dtf-client-app/app/build/outputs/apk/') {
             into '/usr/local/lib/android-dtf/dtfClient/'
-            fileMode 0640
+            fileMode 0644
             include '**/*.apk'
         }
 
         // Included-tools TAR.
         from('dtf-included/build/') {
             into '/usr/local/lib/android-dtf/'
-            fileMode 0640
+            fileMode 0644
             include '**/*.tar'
         }
 
