@@ -29,7 +29,7 @@ android {
     buildTypes {
         release {
             debuggable true
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
 
@@ -108,7 +108,7 @@ tasks.whenTaskAdded { theTask ->
 }
 
 dependencies {
-    compile "com.android.support:support-core-utils:25.0.1"
+    compile "com.android.support:support-core-utils:25.4.0"
 }
 
 afterEvaluate {
