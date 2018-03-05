@@ -35,7 +35,7 @@ LOG_FILE = None
 # Open file on module import
 TOP = utils.get_project_root()
 if TOP is not None:
-    LOG_FILE = open(utils.LOG_FILE_NAME, 'a')
+    LOG_FILE = open("%s/%s" % (TOP, utils.LOG_FILE_NAME), 'a')
 
 
 def __get_date():
