@@ -74,7 +74,7 @@ TOP=$(upsearch .dtfini)
 # Change back to the launch directory
 dtf_reset_dir() {
 
-    cd "$LAUNCH_DIR"
+    cd "$LAUNCH_DIR" || exit 1
 }
 
 # Method to check if device is connected.

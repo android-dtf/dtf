@@ -14,7 +14,7 @@ apktool: setup
 	cd src/apktool; \
 	  ./gradlew build shadowJar; \
 	  cp ./brut.apktool/apktool-cli/build/libs/apktool-cli-all.jar ../../out/apktool.jar; \
-	  cp ./brut.apktool/apktool-lib/src/main/resources/prebuilt/aapt/linux/aapt ../../out/aapt
+	  cp ./brut.apktool/apktool-lib/src/main/resources/prebuilt/linux/aapt ../../out/aapt
 
 axmlprinter: setup
 	git clone https://github.com/rednaga/axmlprinter src/axmlprinter2
