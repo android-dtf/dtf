@@ -4,7 +4,7 @@ coverage==4.2
 flake8==3.5.0
 lxml==4.1.0
 pylint==1.7.4
-py==1.4.34
+py==1.10.0
 pytest==3.2.3
 pytest-runner==3.0
 wheel==0.29.0
